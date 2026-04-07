@@ -22,7 +22,7 @@ jobs:
       - name: Package addon
         uses: BigWigsMods/packager@v2
         with:
-          args: -p 1479940
+          args: -p 1479940 -n "{package-name}-{project-version}{nolib}{classic}:{package-name} v{project-version}{classic}{nolib}"
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
