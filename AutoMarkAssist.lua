@@ -15,15 +15,15 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.5"
+AMA.VERSION    = "2.7.6"
 AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.6.0-defaults"
 
 AMA.LATEST_WHATS_NEW = {
-    "Smart Dungeon CC now computes the best class-to-mark match from the configured CC pool instead of greedily assigning CC roles by party order.",
-    "Dungeon Smart CC reminders now refresh when the party roster changes, and kill-only CC pools no longer announce dedicated CC roles.",
-    "Disabling the addon now suppresses announcements, Smart CC behavior, and runtime mark-maintenance actions until AutoMarkAssist is re-enabled.",
-    "Release notes remain available from the About tab or with /ama whatsnew whenever you want to review the latest changes.",
+    "Dungeon Smart CC reminders can now stay manual: turn off the automatic party reminder and repeat assignments only when you want to with /ama ccannounce.",
+    "Announcement output now supports line-by-line formatting plus a customizable chat prefix, including the option to remove the prefix entirely.",
+    "Group announcements now stay aligned with raid-marker authority and are suppressed when you cannot actually place raid icons in the current group.",
+    "The addon now ships with a public-repo packaging workflow for tagged GitHub releases and automated CurseForge uploads.",
 }
 
 -- ============================================================
