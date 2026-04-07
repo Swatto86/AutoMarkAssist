@@ -1,0 +1,40 @@
+name: Package Release
+
+on:
+  push:
+    tags:
+      - "*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build packager arguments
+        id: packager_args
+        shell: bash
+        run: |
+          args=""
+
+          if [ -n "${{ vars.CF_PROJECT_ID }}" ]; then
+            args="$args -p ${{ vars.CF_PROJECT_ID }}"
+          fi
+
+          echo "args=${args# }" >> "$GITHUB_OUTPUT"
+
+      - name: Package addon
+        uses: BigWigsMods/packager@v2
+        with:
+          args: ${{ steps.packager_args.outputs.args }}
+        env:
+          CF_API_KEY: ${{ secrets.CF_API_KEY }}
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}

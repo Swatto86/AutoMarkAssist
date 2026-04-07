@@ -1,0 +1,7 @@
+package-as: AutoMarkAssist
+
+ignore:
+  - .github
+  - .gitignore
+  - .pkgmeta
+  - .release

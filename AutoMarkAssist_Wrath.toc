@@ -1,0 +1,20 @@
+## Interface: 38000, 30405
+## Title: |cFF00CCFFAutoMark|r|cFFFFFFFFAssist|r
+## Notes: Intelligent kill-priority marking for Classic through WotLK dungeons and raids. Automatically assigns icons to mobs on proximity, with dynamic bump-marking and cascade rebalancing.
+## Author: Swatto
+## Version: 2.7.5
+## X-Website: https://www.curseforge.com/wow/addons/automarkassist
+## X-Curse-Project-ID: 0
+## X-WoWI-ID: 0
+## X-License: All Rights Reserved
+## X-Category: Combat
+## SavedVariables: AutoMarkAssistDB
+
+AutoMarkAssist_DB_Classic.lua
+AutoMarkAssist_DB_TBC.lua
+AutoMarkAssist_DB_WotLK.lua
+AutoMarkAssist.lua
+AutoMarkAssist_Core.lua
+AutoMarkAssist_Minimap.lua
+AutoMarkAssist_Config.lua
+AutoMarkAssist_Events.lua

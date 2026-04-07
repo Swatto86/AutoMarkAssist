@@ -1,0 +1,20 @@
+# Ignore everything by default so the public repo only keeps the addon source
+# plus the minimal packaging automation files.
+*
+
+# Re-include directories so Git can find the explicitly allowed files below.
+!*/
+
+# Addon source files.
+!*.lua
+!*.toc
+
+# Packaging metadata and automation.
+!.gitignore
+!.pkgmeta
+!.github/
+!.github/workflows/
+!.github/workflows/release.yml
+
+# Keep local release artifacts out even if created later.
+.release/
