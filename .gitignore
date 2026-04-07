@@ -16,6 +16,8 @@
 !.github/workflows/
 !.github/workflows/release.yml
 !README.md
+!CurseForge/CHANGELOG.md
+!CurseForge/DESCRIPTION.md
 
 # Keep local release artifacts out even if created later.
 .release/
