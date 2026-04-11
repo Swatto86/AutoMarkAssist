@@ -15,14 +15,14 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.10"
+AMA.VERSION    = "2.7.11"
 AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Automatic scan mode now defaults to proximity only, and enabling mouseover auto-marking turns proximity off automatically.",
-    "Proximity and mouseover range checks now stay source-specific during bump-marking, rebalance, and death-cascade fill passes.",
-    "Mouseover-only setups no longer leak proximity-style background marks after dynamic reallocations.",
+    "Manual Mode now works even when auto-marking is turned off, so scroll-wheel marking remains available as its own operating mode.",
+    "The mouseover HUD, scroll catcher, and manual permission checks now stay aligned instead of leaving Manual Mode enabled but inert.",
+    "The General tab now explains that proximity and mouseover are mutually exclusive automatic scan modes while Manual Mode only pauses automatic scanning.",
 }
 
 -- ============================================================

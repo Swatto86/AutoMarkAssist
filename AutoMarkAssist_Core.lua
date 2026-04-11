@@ -434,11 +434,12 @@ end
 
 AMA.HasRaidTargetPermission = HasRaidTargetPermission
 
-function AMA.CanMarkReason()
+function AMA.CanMarkReason(options)
+    local ignoreEnabled = type(options) == "table" and options.ignoreEnabled
     if not AutoMarkAssistDB then
         return false, "DB not initialised"
     end
-    if not AutoMarkAssistDB.enabled then
+    if not ignoreEnabled and not AutoMarkAssistDB.enabled then
         return false, "disabled - use /ama enable or left-click the minimap icon"
     end
     if not HasRaidTargetPermission() then

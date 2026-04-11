@@ -372,12 +372,16 @@ frame:SetScript("OnEvent", function(self, event, ...)
     -- ──────────────────────────────────────────────────────────
     elseif event == "UPDATE_MOUSEOVER_UNIT" then
         if not AutoMarkAssistDB then return end
-        if not (AMA.IsAddonEnabled and AMA.IsAddonEnabled()) then return end
+        local addonEnabled = AMA.IsAddonEnabled and AMA.IsAddonEnabled()
+        if not addonEnabled and not AutoMarkAssistDB.manualMode then return end
         if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
         -- Manual mode always gets the HUD update regardless of distance;
         -- the player is explicitly choosing marks via the scroll wheel.
         if AutoMarkAssistDB.manualMode then
             AMA.ShowMarkPickerForMouseover()
+            return
+        end
+        if not addonEnabled then
             return
         end
         if AutoMarkAssistDB.mouseoverMode == false then

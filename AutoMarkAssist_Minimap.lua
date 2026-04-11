@@ -226,7 +226,7 @@ local function ManualCycleMarkOnMouseover(delta)
         CommitPendingManualMark("target switch")
     end
 
-    local canMark, blockReason = AMA.CanMarkReason()
+    local canMark, blockReason = AMA.CanMarkReason({ ignoreEnabled = true })
     if not canMark then
         AMA.Print("Cannot mark: " .. blockReason)
         return
@@ -538,14 +538,6 @@ function AMA.ShowMarkPickerForMouseover()
         HideMarkPickerHUD(true, "manual off")
         return
     end
-    -- Guard on 'enabled' to stay consistent with the scroll catcher, which
-    -- is only shown when both enabled AND manualMode are true.  Without this
-    -- the HUD can appear while the catcher is hidden, showing "scroll to
-    -- cycle" instructions that have no effect.
-    if not AutoMarkAssistDB.enabled then
-        HideMarkPickerHUD(true, "disabled")
-        return
-    end
     if not IsManualModifierDown() then
         HideMarkPickerHUD(true, "picker closed")
         return
@@ -648,14 +640,14 @@ minimapDotGreen:Hide()
 -- during state transition avoids renderer batch-state interference.
 function AMA.UpdateMinimapState()
     local enabled = AutoMarkAssistDB and AutoMarkAssistDB.enabled
-    local manual  = enabled and (AutoMarkAssistDB.manualMode == true)
+    local manual  = AutoMarkAssistDB and (AutoMarkAssistDB.manualMode == true)
     minimapIcon:SetVertexColor(1.0, 1.0, 1.0, 1)
-    if not enabled then
-        minimapDotRed:Show(); minimapDotGold:Hide(); minimapDotGreen:Hide()
-    elseif manual then
+    if manual then
         minimapDotRed:Hide(); minimapDotGold:Show(); minimapDotGreen:Hide()
-    else
+    elseif enabled then
         minimapDotRed:Hide(); minimapDotGold:Hide(); minimapDotGreen:Show()
+    else
+        minimapDotRed:Show(); minimapDotGold:Hide(); minimapDotGreen:Hide()
     end
     if not manual then HideMarkPickerHUD(true, "manual off") end
     if AMAScrollCatcher then

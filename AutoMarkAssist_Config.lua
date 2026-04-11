@@ -1224,6 +1224,15 @@ for ri, rdata in ipairs({ {2,"~11 yd"}, {3,"~10 yd"}, {4,"~28 yd"} }) do
 end
 ROW = ROW - 26
 
+local autoModeNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+autoModeNote:SetPoint("TOPLEFT", t1, "TOPLEFT", 28, ROW + 2)
+autoModeNote:SetWidth(470)
+autoModeNote:SetJustifyH("LEFT")
+autoModeNote:SetText("Choose one automatic scan mode at a time: enabling proximity turns off mouseover, and enabling mouseover turns off proximity. Manual Mode pauses automatic scanning without clearing your saved preference.")
+autoModeNote:SetTextColor(0.70, 0.70, 0.70, 1)
+ROW = ROW - math.max(32,
+    math.ceil((autoModeNote.GetStringHeight and autoModeNote:GetStringHeight()) or 0)) - 8
+
 E.Sep(t1, ROW);  ROW = ROW - 12
 
 E.Header(t1, "Manual Mode", 8, ROW);  ROW = ROW - 22

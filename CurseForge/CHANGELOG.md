@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 2.7.11 (2026-04-11)
+
+### Changed
+
+- Added a General-tab note that explains proximity and mouseover are mutually exclusive automatic scan modes, while Manual Mode pauses automatic scanning without clearing the preferred automatic mode.
+
+### Bug fixes
+
+- Fixed Manual Mode so it still works when auto-marking is disabled instead of appearing enabled while the HUD and scroll-wheel catcher remain inert.
+- Fixed the mouseover update flow so the manual mark picker still opens while auto-marking is off, but automatic mouseover marking remains gated by the enabled toggle.
+- Fixed the shared mark-permission check so manual scroll-wheel marking can bypass the auto-marking enabled gate without bypassing raid-marker permission rules.
+
 ## 2.7.10 (2026-04-11)
 
 ### Changed
