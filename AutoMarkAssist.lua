@@ -15,15 +15,15 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.8"
+AMA.VERSION    = "2.7.9"
 AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.6.0-defaults"
 
 AMA.LATEST_WHATS_NEW = {
-    "CurseForge file labels now publish in the hyphenated AutoMarkAssist-vX.Y.Z format through the GitHub packaging workflow.",
-    "The CurseForge addon description now points at the public GitHub repository and issue tracker for source browsing and bug reports.",
-    "Dungeon Smart CC reminders can now stay manual: turn off the automatic party reminder and repeat assignments only when you want to with /ama ccannounce.",
-    "Announcement output now supports line-by-line formatting plus a customizable chat prefix, including the option to remove the prefix entirely.",
+    "Mouseover auto-marking now has its own on/off toggle and no longer depends on the proximity scanner being enabled.",
+    "Automatic mark assignment now respects your configured HIGH, CC, MEDIUM, and LOW pools before falling back to Skull or Cross.",
+    "Slash commands, the minimap popup, and the config window now stay in sync when you toggle addon features during a run.",
+    "The config window now remembers its position, and manual scroll-order drag-and-drop stays accurate when the options UI is scaled down.",
 }
 
 -- ============================================================

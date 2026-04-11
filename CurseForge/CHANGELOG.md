@@ -1,5 +1,20 @@
 # AutoMarkAssist Changelog
 
+## 2.7.9 (2026-04-11)
+
+### Changed
+
+- Added a dedicated mouseover auto-mark toggle so mouseover and proximity scanning can be enabled independently.
+- The config window now remembers its last position between sessions.
+
+### Bug fixes
+
+- Fixed automatic mark assignment so configured HIGH, CC, MEDIUM, and LOW pools are respected before any Skull/Cross fallback is considered.
+- Fixed shared range checks so disabling proximity no longer breaks mouseover auto-marking, and mouseover range limits only apply to mouseover-driven marking.
+- Fixed stale settings state between slash commands, the minimap popup, and the General tab so the visible controls now reflect the real addon state immediately.
+- Fixed the Repeat Party CC button state so it no longer appears available while the addon is disabled or Manual Mode is active.
+- Fixed manual scroll-order drag-and-drop so dropping icons lands in the correct slot even when the options frame is scaled down.
+
 ## 2.7.8 (2026-04-07)
 
 ### Changed
