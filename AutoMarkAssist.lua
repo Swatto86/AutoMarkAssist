@@ -156,6 +156,7 @@ AMA.DB_DEFAULTS = {
     autoAnnounceDungeonCC = true,
     proximityMode    = true,
     proximityRange   = 4,
+    mouseoverMode    = true,
     mouseoverRangeEnabled = true,
     mouseoverRange   = 4,
     manualMode       = false,

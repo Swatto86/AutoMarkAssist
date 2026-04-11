@@ -795,15 +795,19 @@ AMA.minimapButton:SetScript("OnEnter", function()
             proxDetail = "|cFFFF0000OFF|r"
         end
         GameTooltip:AddLine("Proximity: " .. proxDetail)
-        local moEnabled = AutoMarkAssistDB.mouseoverRangeEnabled
+        local moMode = AutoMarkAssistDB.mouseoverMode ~= false
         local moDetail
-        if moEnabled then
-            moDetail = "|cFF00FF00ON|r  " ..
+        if moMode then
+            if AutoMarkAssistDB.mouseoverRangeEnabled then
+                moDetail = "|cFF00FF00ON|r  " ..
                 (AMA.PROXIMITY_RANGE_LABELS[AutoMarkAssistDB.mouseoverRange or 4] or "")
+            else
+                moDetail = "|cFF00FF00ON|r  Unlimited"
+            end
         else
             moDetail = "|cFFFF0000OFF|r"
         end
-        GameTooltip:AddLine("Mouseover range: " .. moDetail)
+        GameTooltip:AddLine("Mouseover: " .. moDetail)
         GameTooltip:AddLine("Manual mode: " .. OnOff(AutoMarkAssistDB.manualMode))
         GameTooltip:AddLine("Wheel direction: " .. (AMA.GetManualScrollDirectionLabel and AMA.GetManualScrollDirectionLabel() or "Scroll Down Starts Left"))
     end

@@ -364,7 +364,7 @@ local scrollOrderCells
 local invertScrollBtn
 
 -- Checkboxes that must be disabled when manual mode is active.
-local cbDynamic, cbCombatLock, cbRebal, cbSkip, cbCrit, cbProx, cbSmartDungeonCC, cbAutoDungeonCC
+local cbDynamic, cbCombatLock, cbRebal, cbSkip, cbCrit, cbProx, cbMouseover, cbMoRange, cbSmartDungeonCC, cbAutoDungeonCC
 
 -- ============================================================
 -- ELVUI-STYLE SKIN HELPERS
@@ -1154,9 +1154,12 @@ ROW = ROW - 26
 
 E.Sep(t1, ROW);  ROW = ROW - 12
 
-E.Header(t1, "Mouseover Range", 8, ROW);  ROW = ROW - 22
+E.Header(t1, "Mouseover Marking", 8, ROW);  ROW = ROW - 22
 
-local cbMoRange = E.Chk(t1, "Limit mouseover marking to a maximum range", 8, ROW, "mouseoverRangeEnabled")
+cbMouseover = E.Chk(t1, "Mark enemies on mouseover", 8, ROW, "mouseoverMode")
+ROW = ROW - 24
+
+cbMoRange = E.Chk(t1, "Limit mouseover marking to a maximum range", 8, ROW, "mouseoverRangeEnabled")
 ROW = ROW - 24
 
 moRangeBtns = {}
@@ -2907,16 +2910,20 @@ function AMA.RefreshConfigFrame()
         end
     end
 
-    -- When manual mode is active, disable Dynamic Marking and Proximity
-    -- Marking controls because they are mutually exclusive with manual
-    -- scroll-wheel marking.
+    -- When manual mode is active, disable automatic marking controls because
+    -- they are mutually exclusive with manual scroll-wheel marking.
     local manualOn = db.manualMode and true or false
+    local proximityRangeDisabled = manualOn or not db.proximityMode
+    local mouseoverDisabled = manualOn or db.mouseoverMode == false
+    local mouseoverRangeDisabled = mouseoverDisabled or not db.mouseoverRangeEnabled
     if cbDynamic  then cbDynamic:SetDisabled(manualOn)  end
     if cbCombatLock then cbCombatLock:SetDisabled(manualOn) end
     if cbRebal    then cbRebal:SetDisabled(manualOn)    end
     if cbSkip     then cbSkip:SetDisabled(manualOn)     end
     if cbCrit     then cbCrit:SetDisabled(manualOn)     end
     if cbProx     then cbProx:SetDisabled(manualOn)     end
+    if cbMouseover then cbMouseover:SetDisabled(manualOn) end
+    if cbMoRange then cbMoRange:SetDisabled(mouseoverDisabled) end
     if cbSmartDungeonCC then cbSmartDungeonCC:SetDisabled(manualOn) end
     if cbAutoDungeonCC then cbAutoDungeonCC:SetDisabled(manualOn) end
     if repeatDungeonCCBtn then repeatDungeonCCBtn:SetDisabled(manualOn) end
@@ -2927,7 +2934,12 @@ function AMA.RefreshConfigFrame()
     end
     if proxBtns then
         for _, btn in pairs(proxBtns) do
-            if btn.SetDisabled then btn:SetDisabled(manualOn) end
+            if btn.SetDisabled then btn:SetDisabled(proximityRangeDisabled) end
+        end
+    end
+    if moRangeBtns then
+        for _, btn in pairs(moRangeBtns) do
+            if btn.SetDisabled then btn:SetDisabled(mouseoverRangeDisabled) end
         end
     end
 

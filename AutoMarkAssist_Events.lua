@@ -250,7 +250,7 @@ frame:SetScript("OnUpdate", function(self, elapsed)
         if UnitExists(token) and UnitCanAttack("player", token) then
             local isDead = UnitIsDead and UnitIsDead(token)
             if not isDead then
-                AMA.AssignMark(token)
+                AMA.AssignMark(token, false, "proximity")
             end
         end
     end
@@ -381,21 +381,14 @@ frame:SetScript("OnEvent", function(self, event, ...)
             AMA.ShowMarkPickerForMouseover()
             return
         end
+        if AutoMarkAssistDB.mouseoverMode == false then
+            return
+        end
         if AMA.IsCombatMarkLockActive and AMA.IsCombatMarkLockActive() then
             return
         end
-        -- Mouseover range gate: skip mobs beyond configured distance.
-        -- Only applies to auto-marking modes, not manual picker.
-        if AutoMarkAssistDB.mouseoverRangeEnabled then
-            local mrIdx = AutoMarkAssistDB.mouseoverRange or 4
-            local ok, result = pcall(CheckInteractDistance, "mouseover", mrIdx)
-            if ok and not (result == 1 or result == true) then return end
-        end
-        -- Auto-mark on hover.  AssignMark already skips mobs that are
-        -- already tracked (markedGUIDs), so proximity and mouseover can
-        -- coexist safely without double-assigning.
         if AutoMarkAssistDB.enabled then
-            AMA.AssignMark("mouseover")
+            AMA.AssignMark("mouseover", false, "mouseover")
         end
 
     -- ──────────────────────────────────────────────────────────

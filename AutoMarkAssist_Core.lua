@@ -506,20 +506,52 @@ function AMA.IsCombatMarkLockActive()
 end
 
 -- ============================================================
--- PROXIMITY CHECK
+-- AUTO-MARK RANGE CHECKS
 -- Classic uses CheckInteractDistance as the only reliable range
 -- check for arbitrary unit tokens.
 -- ============================================================
+
+local function IsUnitWithinInteractRange(unitToken, rangeIdx)
+    local ok, result = pcall(CheckInteractDistance, unitToken, rangeIdx or 4)
+    if not ok then return false end
+    return result == 1 or result == true
+end
 
 local function IsUnitInProximity(unitToken)
     if not AutoMarkAssistDB or not AutoMarkAssistDB.proximityMode then
         return true
     end
-    -- Keep fallback aligned with DB/UI default (~28 yd follow range).
-    local rangeIdx = AutoMarkAssistDB.proximityRange or 4
-    local ok, result = pcall(CheckInteractDistance, unitToken, rangeIdx)
-    if not ok then return false end
-    return result == 1 or result == true
+    return IsUnitWithinInteractRange(unitToken, AutoMarkAssistDB.proximityRange or 4)
+end
+
+local function IsUnitInMouseoverRange(unitToken)
+    if not AutoMarkAssistDB then
+        return true
+    end
+    if AutoMarkAssistDB.mouseoverMode == false then
+        return false
+    end
+    if not AutoMarkAssistDB.mouseoverRangeEnabled then
+        return true
+    end
+    return IsUnitWithinInteractRange(unitToken, AutoMarkAssistDB.mouseoverRange or 4)
+end
+
+local function IsUnitInAutoMarkRange(unitToken, source)
+    if source == "mouseover" then
+        if AutoMarkAssistDB and AutoMarkAssistDB.mouseoverMode == false then
+            return false, "mouseover disabled"
+        end
+        if IsUnitInMouseoverRange(unitToken) then
+            return true
+        end
+        return false, "out of mouseover range"
+    end
+
+    if IsUnitInProximity(unitToken) then
+        return true
+    end
+    return false, "out of proximity range"
 end
 
 -- ============================================================
@@ -712,7 +744,7 @@ local function AllocateMark(priority, options)
     -- Allowed set: union of all configured pools.  Marks the user has removed
     -- from every pool are never assigned automatically.  An empty tier pool
     -- (e.g. CC={} in "Kill Only") does NOT suppress the mob entirely -- the
-    -- mob can still receive a mark via the Skull/Cross guarantee or the
+    -- mob can still receive a mark via the Skull/Cross fallback or the
     -- allowed-filtered spill pool.  The constraint is on which *marks* may be
     -- used, not which *mobs* may be marked.
     local allowed = (options and options.allowedMarks) or GetAllowedMarks()
@@ -728,16 +760,16 @@ local function AllocateMark(priority, options)
         end
         return nil
     end
-    -- Skull/Cross guarantee for non-HIGH tiers: every pull leads with skull/cross.
-    -- Only offered when the mark is still present in at least one configured pool;
-    -- if the user removed it from all pools they do not want it used.
-    if allowPrimary and not ReservePrimaryMarksForZone(priority) then
-        if allowed[MARK_SKULL] and not AMA.markOwners[MARK_SKULL] then return MARK_SKULL end
-        if allowed[MARK_CROSS] and not AMA.markOwners[MARK_CROSS] then return MARK_CROSS end
-    end
     if idealPool then
         local mark = NextFreeAllowedMarkInPool(idealPool, allowed)
         if mark then return mark end
+    end
+    -- Skull/Cross fallback for non-HIGH tiers.  Tier-specific pools remain
+    -- authoritative; these primary kill-order icons are only used when the
+    -- configured tier pool cannot satisfy the assignment.
+    if allowPrimary and not ReservePrimaryMarksForZone(priority) then
+        if allowed[MARK_SKULL] and not AMA.markOwners[MARK_SKULL] then return MARK_SKULL end
+        if allowed[MARK_CROSS] and not AMA.markOwners[MARK_CROSS] then return MARK_CROSS end
     end
     if allowSpill then
         return NextFreeAllowedMarkInPool(SPILL_POOL, allowed)
@@ -754,7 +786,7 @@ end
 local function AllocateMarkDynamic(priority, subPriority, options)
     -- Allowed set: union of all configured pools.  See AllocateMark for the
     -- full rationale.  Empty tier pool does not suppress the mob -- it just
-    -- means no dedicated marks for that tier; Skull/Cross guarantee and the
+    -- means no dedicated marks for that tier; Skull/Cross fallback and the
     -- allowed-filtered spill pool still apply.
     local allowed = (options and options.allowedMarks) or GetAllowedMarks()
     local idealPool = (options and options.idealPool) or AMA.GetConfiguredPool(priority)
@@ -780,9 +812,16 @@ local function AllocateMarkDynamic(priority, subPriority, options)
         return nil, nil
     end
 
-    -- 1. Skull/Cross guarantee for non-HIGH tiers (including BOSS).
-    --    BOSS (rank 0) always displaces any trash mob from Skull/Cross.
-    --    Only offered when the mark is in at least one configured pool.
+    -- 1. Ideal pool for this tier (all marks in the tier are allowed by
+    --    definition, so no filtering needed).
+    if idealPool then
+        local m, eg = BestFromPool(idealPool)
+        if m then return m, eg end
+    end
+
+    -- 2. Skull/Cross fallback for non-HIGH tiers (including BOSS).
+    --    BOSS (rank 0) can still displace any trash mob from Skull/Cross, but
+    --    only after the tier's configured pool was considered first.
     if allowPrimary and priority ~= PRIORITY_HIGH and not ReservePrimaryMarksForZone(priority) then
         for _, markIdx in ipairs({MARK_SKULL, MARK_CROSS}) do
             if allowed[markIdx] then
@@ -796,13 +835,6 @@ local function AllocateMarkDynamic(priority, subPriority, options)
                 end
             end
         end
-    end
-
-    -- 2. Ideal pool for this tier (all marks in the tier are allowed by
-    --    definition, so no filtering needed).
-    if idealPool then
-        local m, eg = BestFromPool(idealPool)
-        if m then return m, eg end
     end
 
     -- 3. Spill pool fallback -- filtered to allowed marks only.
@@ -1117,7 +1149,7 @@ end
 -- chat every 0.5 s when the proximity scanner fires.
 local BLOCK_WARN_INTERVAL = 20   -- seconds between repeated warnings
 
-function AMA.AssignMark(unitToken, skipSync)
+function AMA.AssignMark(unitToken, skipSync, source)
     local canMark, blockReason = AMA.CanMarkReason()
     if not canMark then
         local now = GetTime()
@@ -1132,8 +1164,11 @@ function AMA.AssignMark(unitToken, skipSync)
     if not UnitCanAttack("player", unitToken) then return end
     local isDead = UnitIsDead and UnitIsDead(unitToken)
     if isDead then return end
-    if not IsUnitInProximity(unitToken) then
-        AMA.VPrint("Skipped (out of range): " .. (UnitName(unitToken) or unitToken))
+    local rangeSource = source or "proximity"
+    local isInRange, rangeReason = IsUnitInAutoMarkRange(unitToken, rangeSource)
+    if not isInRange then
+        AMA.VPrint("Skipped (" .. tostring(rangeReason or "out of range") .. "): "
+            .. (UnitName(unitToken) or unitToken))
         return
     end
 
@@ -1453,8 +1488,8 @@ function AMA.RebalanceMarks()
     end
 
     -- Try to assign any currently-visible mob that was previously skipped.
-    AMA.AssignMark("target", true)
-    AMA.AssignMark("mouseover", true)
+    AMA.AssignMark("target", true, "proximity")
+    AMA.AssignMark("mouseover", true, "proximity")
 end
 
 -- ============================================================
@@ -1579,6 +1614,6 @@ function AMA.CascadeMarksAfterDeath()
 
     -- Fill any remaining free slots from currently visible unmarked mobs.
     for _, token in ipairs(AMA.SCAN_UNIT_TOKENS) do
-        AMA.AssignMark(token, true)
+        AMA.AssignMark(token, true, "proximity")
     end
 end
