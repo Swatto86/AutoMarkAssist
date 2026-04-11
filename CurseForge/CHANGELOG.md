@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 2.7.10 (2026-04-11)
+
+### Changed
+
+- Automatic marking now defaults to proximity as the single active scan mode, and enabling mouseover auto-marking turns proximity off automatically.
+
+### Bug fixes
+
+- Fixed dynamic bump-marking so displaced mobs are re-evaluated with the correct source-specific range rules instead of falling back to generic proximity behavior.
+- Fixed rebalance and death-cascade fill passes so mouseover-only setups no longer backfill extra marks through proximity-style scans when proximity mode is disabled.
+- Fixed automatic range enforcement so proximity and mouseover marking each respect the player-selected interact-distance option for that specific mode.
+
 ## 2.7.9 (2026-04-11)
 
 ### Changed

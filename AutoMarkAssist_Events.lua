@@ -290,14 +290,13 @@ frame:SetScript("OnEvent", function(self, event, ...)
         end
 
         AMA.NormalizeSavedSettings()
-        local needsAutomationDefaultsMigration =
-            AutoMarkAssistDB.automationDefaultsMigrationVersion
-                ~= AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION
+        local didApplyAutomationDefaultsMigration = false
         if AMA.ApplyAutomationDefaultsMigration then
-            AMA.ApplyAutomationDefaultsMigration()
+            didApplyAutomationDefaultsMigration =
+                AMA.ApplyAutomationDefaultsMigration()
         end
         showAutomationDefaultsMigrationNoticeOnWorldEnter =
-            hadExistingSavedSettings and needsAutomationDefaultsMigration
+            hadExistingSavedSettings and didApplyAutomationDefaultsMigration
         showWhatsNewOnWorldEnter = AutoMarkAssistDB.lastSeenWhatsNew ~= AMA.VERSION
 
         -- Register gameplay events now that the DB is present.
@@ -333,7 +332,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
         AMA.RefreshDungeonCCAnnouncementQueue(1.5)
         if showAutomationDefaultsMigrationNoticeOnWorldEnter then
             showAutomationDefaultsMigrationNoticeOnWorldEnter = false
-            AMA.Print("Applied the latest settings migration for this profile. Current automated defaults include proximity marking and Smart Dungeon CC.")
+            AMA.Print("Applied the latest settings migration for this profile. Automatic marking now keeps proximity as the single default scan mode instead of enabling proximity and mouseover together.")
         end
         if showWhatsNewOnWorldEnter then
             showWhatsNewOnWorldEnter = false

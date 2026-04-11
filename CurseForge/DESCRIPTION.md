@@ -8,7 +8,7 @@ The addon only works when your character is actually allowed to place raid icons
 
 - Automatically assigns raid icons from a built-in per-zone mob database covering supported dungeons and raids through MoP Classic.
 - Works in both parties and raids, and respects visible icons already placed by other players instead of wiping or stealing them.
-- Supports both mouseover marking and proximity-based marking, with proximity scanning enabled by default for new profiles.
+- Supports proximity-based or mouseover-based auto-marking, with proximity scanning as the single default automatic mode for new profiles.
 - Lets you switch to manual mouseover marking whenever you want full control.
 - Saves manual choices back into the zone database so later auto-marking follows the marks you taught it.
 - Keeps marks stable between pulls instead of clearing everything when combat ends.

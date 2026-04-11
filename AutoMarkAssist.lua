@@ -15,15 +15,14 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.9"
+AMA.VERSION    = "2.7.10"
 AMA.AUTHOR     = "Swatto"
-AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.6.0-defaults"
+AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Mouseover auto-marking now has its own on/off toggle and no longer depends on the proximity scanner being enabled.",
-    "Automatic mark assignment now respects your configured HIGH, CC, MEDIUM, and LOW pools before falling back to Skull or Cross.",
-    "Slash commands, the minimap popup, and the config window now stay in sync when you toggle addon features during a run.",
-    "The config window now remembers its position, and manual scroll-order drag-and-drop stays accurate when the options UI is scaled down.",
+    "Automatic scan mode now defaults to proximity only, and enabling mouseover auto-marking turns proximity off automatically.",
+    "Proximity and mouseover range checks now stay source-specific during bump-marking, rebalance, and death-cascade fill passes.",
+    "Mouseover-only setups no longer leak proximity-style background marks after dynamic reallocations.",
 }
 
 -- ============================================================
@@ -156,7 +155,7 @@ AMA.DB_DEFAULTS = {
     autoAnnounceDungeonCC = true,
     proximityMode    = true,
     proximityRange   = 4,
-    mouseoverMode    = true,
+    mouseoverMode    = false,
     mouseoverRangeEnabled = true,
     mouseoverRange   = 4,
     manualMode       = false,
@@ -309,6 +308,57 @@ function AMA.GetManualScrollOrder()
     return normalized
 end
 
+function AMA.NormalizeAutoMarkModes(db, preferredMode)
+    if type(db) ~= "table" then
+        return false
+    end
+
+    local proximityOn = db.proximityMode == true
+    local mouseoverOn = db.mouseoverMode == true
+
+    if proximityOn and mouseoverOn then
+        if preferredMode == "mouseover" then
+            db.proximityMode = false
+        else
+            db.mouseoverMode = false
+        end
+        return true
+    end
+
+    return false
+end
+
+function AMA.SetAutoMarkMode(mode, enabled)
+    if not AutoMarkAssistDB then
+        return false
+    end
+
+    enabled = enabled and true or false
+    local changed = false
+
+    if mode == "proximity" then
+        if AutoMarkAssistDB.proximityMode ~= enabled then
+            AutoMarkAssistDB.proximityMode = enabled
+            changed = true
+        end
+        if enabled and AutoMarkAssistDB.mouseoverMode then
+            AutoMarkAssistDB.mouseoverMode = false
+            changed = true
+        end
+    elseif mode == "mouseover" then
+        if AutoMarkAssistDB.mouseoverMode ~= enabled then
+            AutoMarkAssistDB.mouseoverMode = enabled
+            changed = true
+        end
+        if enabled and AutoMarkAssistDB.proximityMode then
+            AutoMarkAssistDB.proximityMode = false
+            changed = true
+        end
+    end
+
+    return changed
+end
+
 function AMA.NormalizeSavedSettings()
     if not AutoMarkAssistDB then return end
     AutoMarkAssistDB.markPools = AMA.NormalizeMarkPools(AutoMarkAssistDB.markPools)
@@ -316,6 +366,7 @@ function AMA.NormalizeSavedSettings()
         AutoMarkAssistDB.manualScrollOrder)
     AutoMarkAssistDB.announcePrefixText =
         NormalizeAnnouncementPrefixText(AutoMarkAssistDB.announcePrefixText)
+    AMA.NormalizeAutoMarkModes(AutoMarkAssistDB, "proximity")
     AutoMarkAssistDB.squareMinimap = nil
 end
 
@@ -371,13 +422,8 @@ function AMA.ApplyAutomationDefaultsMigration()
 
     local changed = false
 
-    if AutoMarkAssistDB.proximityMode ~= true then
-        AutoMarkAssistDB.proximityMode = true
-        changed = true
-    end
-
-    if AutoMarkAssistDB.smartDungeonCC ~= true then
-        AutoMarkAssistDB.smartDungeonCC = true
+    if AMA.NormalizeAutoMarkModes
+            and AMA.NormalizeAutoMarkModes(AutoMarkAssistDB, "proximity") then
         changed = true
     end
 

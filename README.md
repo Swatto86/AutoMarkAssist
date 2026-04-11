@@ -4,7 +4,7 @@
 [![Package Release](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml/badge.svg)](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml)
 [![CurseForge](https://img.shields.io/badge/CurseForge-AutoMarkAssist-f16436?logo=curseforge&logoColor=white)](https://www.curseforge.com/wow/addons/automarkassist)
 
-AutoMarkAssist is a WoW Classic addon for repeatable raid-target assignment across dungeons and raids. It combines a built-in mob-priority database, configurable mark pools, proximity and mouseover scanning, manual teaching, and live rebalance logic so groups can keep a consistent kill order without re-marking every pull by hand.
+AutoMarkAssist is a WoW Classic addon for repeatable raid-target assignment across dungeons and raids. It combines a built-in mob-priority database, configurable mark pools, proximity or mouseover scanning, manual teaching, and live rebalance logic so groups can keep a consistent kill order without re-marking every pull by hand.
 
 Downloads:
 
@@ -25,6 +25,7 @@ AutoMarkAssist helps tanks and pull leaders keep group assignments readable and 
 
 - Built-in zone-aware mob database covering supported Classic, TBC, Wrath, Cataclysm, and Mists content.
 - Configurable HIGH, CC, MEDIUM, and LOW mark pools.
+- A single active automatic scan mode at a time, with proximity as the default for new profiles and optional mouseover-only marking when preferred.
 - Smart Dungeon CC that adapts CC marks to party composition and creature type in 5-player dungeons.
 - Manual-only or automatic dungeon CC reminders, with `/ama ccannounce` available for on-demand reposts.
 - Announcement output that can be posted line-by-line or as a single line, with a customizable or removable prefix.

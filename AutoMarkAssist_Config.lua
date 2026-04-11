@@ -1153,7 +1153,13 @@ E.Sep(t1, ROW);  ROW = ROW - 12
 
 E.Header(t1, "Proximity Marking", 8, ROW);  ROW = ROW - 22
 
-cbProx = E.Chk(t1, "Mark enemies within proximity range", 8, ROW, "proximityMode")
+cbProx = E.Chk(t1, "Mark enemies within proximity range", 8, ROW, "proximityMode",
+    function()
+        if AutoMarkAssistDB and AutoMarkAssistDB.proximityMode
+        and AMA.SetAutoMarkMode then
+            AMA.SetAutoMarkMode("proximity", true)
+        end
+    end)
 ROW = ROW - 24
 
 proxBtns = {}
@@ -1183,7 +1189,13 @@ E.Sep(t1, ROW);  ROW = ROW - 12
 
 E.Header(t1, "Mouseover Marking", 8, ROW);  ROW = ROW - 22
 
-cbMouseover = E.Chk(t1, "Mark enemies on mouseover", 8, ROW, "mouseoverMode")
+cbMouseover = E.Chk(t1, "Mark enemies on mouseover", 8, ROW, "mouseoverMode",
+    function()
+        if AutoMarkAssistDB and AutoMarkAssistDB.mouseoverMode
+        and AMA.SetAutoMarkMode then
+            AMA.SetAutoMarkMode("mouseover", true)
+        end
+    end)
 ROW = ROW - 24
 
 cbMoRange = E.Chk(t1, "Limit mouseover marking to a maximum range", 8, ROW, "mouseoverRangeEnabled")

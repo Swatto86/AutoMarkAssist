@@ -518,8 +518,11 @@ local function IsUnitWithinInteractRange(unitToken, rangeIdx)
 end
 
 local function IsUnitInProximity(unitToken)
-    if not AutoMarkAssistDB or not AutoMarkAssistDB.proximityMode then
+    if not AutoMarkAssistDB then
         return true
+    end
+    if not AutoMarkAssistDB.proximityMode then
+        return false
     end
     return IsUnitWithinInteractRange(unitToken, AutoMarkAssistDB.proximityRange or 4)
 end
@@ -546,6 +549,10 @@ local function IsUnitInAutoMarkRange(unitToken, source)
             return true
         end
         return false, "out of mouseover range"
+    end
+
+    if AutoMarkAssistDB and not AutoMarkAssistDB.proximityMode then
+        return false, "proximity disabled"
     end
 
     if IsUnitInProximity(unitToken) then
@@ -1331,7 +1338,7 @@ function AMA.AssignMark(unitToken, skipSync, source)
     -- Immediately re-assign the displaced mob so no mob is left temporarily
     -- unmarked.  AssignMark is re-entrant-safe: it checks markedGUIDs first.
     if evictedToken then
-        AMA.AssignMark(evictedToken)
+        AMA.AssignMark(evictedToken, false, rangeSource)
     end
 end
 
@@ -1488,8 +1495,10 @@ function AMA.RebalanceMarks()
     end
 
     -- Try to assign any currently-visible mob that was previously skipped.
-    AMA.AssignMark("target", true, "proximity")
-    AMA.AssignMark("mouseover", true, "proximity")
+    if AutoMarkAssistDB and AutoMarkAssistDB.proximityMode then
+        AMA.AssignMark("target", true, "proximity")
+        AMA.AssignMark("mouseover", true, "proximity")
+    end
 end
 
 -- ============================================================
@@ -1613,7 +1622,9 @@ function AMA.CascadeMarksAfterDeath()
     end
 
     -- Fill any remaining free slots from currently visible unmarked mobs.
-    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS) do
-        AMA.AssignMark(token, true, "proximity")
+    if AutoMarkAssistDB and AutoMarkAssistDB.proximityMode then
+        for _, token in ipairs(AMA.SCAN_UNIT_TOKENS) do
+            AMA.AssignMark(token, true, "proximity")
+        end
     end
 end
