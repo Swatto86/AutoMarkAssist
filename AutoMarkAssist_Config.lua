@@ -690,6 +690,10 @@ ApplyResponsiveConfigLayout = function()
     end
 
     local centerX, centerY = cfgFrame:GetCenter()
+    if (not centerX or not centerY) and AutoMarkAssistDB and AutoMarkAssistDB.configFramePos then
+        centerX = tonumber(AutoMarkAssistDB.configFramePos.x)
+        centerY = tonumber(AutoMarkAssistDB.configFramePos.y)
+    end
     cfgFrame:SetScale(scale)
 
     local topGap = math.floor(math.min(CONFIG_TOP_OFFSET, math.max(8, uiH * 0.08)))
@@ -740,6 +744,15 @@ cfgFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
 cfgFrame:SetScript("OnDragStop",  function(self)
     self:StopMovingOrSizing()
     if ApplyResponsiveConfigLayout then ApplyResponsiveConfigLayout() end
+    if AutoMarkAssistDB then
+        local centerX, centerY = self:GetCenter()
+        if centerX and centerY then
+            AutoMarkAssistDB.configFramePos = {
+                x = centerX,
+                y = centerY,
+            }
+        end
+    end
 end)
 cfgFrame:SetClampedToScreen(true)
 cfgFrame:Hide()
@@ -1014,7 +1027,11 @@ local ROW = -8
 E.Header(t1, "Core Settings", 8, ROW);  ROW = ROW - 22
 
 local cbEnabled      = E.Chk(t1, "Enable auto-marking",                                  8, ROW, "enabled",
-    function() AMA.UpdateMinimapState() end)
+    function()
+        if AMA.RefreshDungeonCCAnnouncementQueue then
+            AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        end
+    end)
 ROW = ROW - 22
 local cbAutoReset    = E.Chk(t1, "Refresh marks between pulls (preserve visible icons)", 8, ROW, "autoReset")
 ROW = ROW - 22
@@ -1068,7 +1085,17 @@ for ci, cdata in ipairs({ {0,"No Limit"}, {1,"1"}, {2,"2"}, {3,"3"} }) do
 end
 ROW = ROW - 26
 
-cbSmartDungeonCC = E.Chk(t1, "In dungeons, adapt CC marks to group composition and mob type", 8, ROW, "smartDungeonCC")
+cbSmartDungeonCC = E.Chk(
+    t1,
+    "In dungeons, adapt CC marks to group composition and mob type",
+    8,
+    ROW,
+    "smartDungeonCC",
+    function()
+        if AMA.RefreshDungeonCCAnnouncementQueue then
+            AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        end
+    end)
 ROW = ROW - 24
 
 cbAutoDungeonCC = E.Chk(
@@ -1190,7 +1217,11 @@ E.Sep(t1, ROW);  ROW = ROW - 12
 E.Header(t1, "Manual Mode", 8, ROW);  ROW = ROW - 22
 
 local cbManual = E.Chk(t1, "Manual mode (scroll wheel to assign marks)", 8, ROW, "manualMode",
-    function() AMA.UpdateMinimapState() end)
+    function()
+        if AMA.RefreshDungeonCCAnnouncementQueue then
+            AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        end
+    end)
 ROW = ROW - 24
 
 local manualSaveNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -1315,10 +1346,14 @@ do  -- Scroll Order reorder widget scope
             dragGhost:SetScript("OnUpdate", nil)
             self._icon:SetAlpha(1.0)
             -- Determine drop slot from cursor x relative to the cell row.
-            local rowLeft = t1:GetLeft()
+            local firstCell = scrollOrderCells and scrollOrderCells[1]
+            local rowLeft = firstCell and firstCell:GetLeft()
+            local rowScale = (firstCell and firstCell:GetEffectiveScale())
+                or UIParent:GetEffectiveScale()
             if rowLeft and AutoMarkAssistDB then
-                local cx    = GetCursorPosition() / UIParent:GetEffectiveScale()
-                local relX  = cx - (rowLeft + SO_PAD)
+                local cx = GetCursorPosition()
+                cx = cx / rowScale
+                local relX  = cx - rowLeft
                 local dstSlot = math.floor(relX / (SO_CELL + SO_GAP)) + 1
                 dstSlot = math.max(1, math.min(8, dstSlot))
                 if dstSlot ~= dragSrcSlot then
@@ -2916,6 +2951,7 @@ function AMA.RefreshConfigFrame()
     local proximityRangeDisabled = manualOn or not db.proximityMode
     local mouseoverDisabled = manualOn or db.mouseoverMode == false
     local mouseoverRangeDisabled = mouseoverDisabled or not db.mouseoverRangeEnabled
+    local repeatDungeonCCDisabled = manualOn or not db.enabled or not db.smartDungeonCC
     if cbDynamic  then cbDynamic:SetDisabled(manualOn)  end
     if cbCombatLock then cbCombatLock:SetDisabled(manualOn) end
     if cbRebal    then cbRebal:SetDisabled(manualOn)    end
@@ -2926,7 +2962,7 @@ function AMA.RefreshConfigFrame()
     if cbMoRange then cbMoRange:SetDisabled(mouseoverDisabled) end
     if cbSmartDungeonCC then cbSmartDungeonCC:SetDisabled(manualOn) end
     if cbAutoDungeonCC then cbAutoDungeonCC:SetDisabled(manualOn) end
-    if repeatDungeonCCBtn then repeatDungeonCCBtn:SetDisabled(manualOn) end
+    if repeatDungeonCCBtn then repeatDungeonCCBtn:SetDisabled(repeatDungeonCCDisabled) end
     if ccLimitBtns then
         for _, btn in pairs(ccLimitBtns) do
             if btn.SetDisabled then btn:SetDisabled(manualOn) end
@@ -2967,9 +3003,6 @@ function AMA.OpenConfigFrame(tabIndex)
     if ApplyResponsiveConfigLayout then ApplyResponsiveConfigLayout() end
     cfgFrame:Show()
     ShowTab(tabIndex or currentTab)
-    -- Re-sync after ShowTab ensures checkboxes on the now-visible tab
-    -- have their textures rendered with the correct show/hide state.
-    SyncAllCheckboxes()
     if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
 end
 

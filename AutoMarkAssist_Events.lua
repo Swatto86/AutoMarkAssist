@@ -457,16 +457,22 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "enable" then
         AutoMarkAssistDB.enabled = true
         AMA.UpdateMinimapState()
+        AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Auto-marking |cFF00FF00ENABLED|r.")
 
     elseif cmd == "disable" then
         AutoMarkAssistDB.enabled = false
         AMA.UpdateMinimapState()
+        AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Auto-marking |cFFFF0000DISABLED|r.")
 
     elseif cmd == "toggle" then
         AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
         AMA.UpdateMinimapState()
+        AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Auto-marking " .. (AutoMarkAssistDB.enabled
             and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
 
@@ -506,6 +512,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "manual" then
         AutoMarkAssistDB.manualMode = not AutoMarkAssistDB.manualMode
         AMA.UpdateMinimapState()
+        AMA.RefreshDungeonCCAnnouncementQueue(0.5)
         if AutoMarkAssistDB.manualMode then
             AMA.Print("Manual mode |cFFFFD700ON|r - hover a mob and scroll to assign marks.")
         else
@@ -515,6 +522,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
 
     elseif cmd == "verbose" then
         AutoMarkAssistDB.verbose = not AutoMarkAssistDB.verbose
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Verbose output: " .. (AutoMarkAssistDB.verbose
             and "|cFFFFD700ON|r" or "|cFF888888OFF|r"))
 
@@ -613,11 +621,14 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "show" then
         AutoMarkAssistDB.minimapHide = false
         AMA.minimapButton:Show()
+        AMA.UpdateMinimapPosition()
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Minimap button shown.")
 
     elseif cmd == "hide" then
         AutoMarkAssistDB.minimapHide = true
         AMA.minimapButton:Hide()
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.Print("Minimap button hidden.  Use |cFFAAAAAA/ama show|r to restore.")
 
     elseif cmd == "db" then

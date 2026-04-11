@@ -908,6 +908,10 @@ local function BuildPopup()
           func = function()
               AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
               AMA.UpdateMinimapState()
+              if AMA.RefreshDungeonCCAnnouncementQueue then
+                  AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+              end
+              if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
               AMA.Print("Auto-marking " .. (AutoMarkAssistDB.enabled
                   and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
           end },
@@ -916,6 +920,9 @@ local function BuildPopup()
           func = function()
               AutoMarkAssistDB.manualMode = not AutoMarkAssistDB.manualMode
               AMA.UpdateMinimapState()
+              if AMA.RefreshDungeonCCAnnouncementQueue then
+                  AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+              end
               if AutoMarkAssistDB.manualMode then
                   AMA.Print("Manual mode |cFFFFD700ON|r - hover a mob and scroll to assign marks.")
               else
@@ -949,6 +956,7 @@ local function BuildPopup()
               ClosePopup()
               AutoMarkAssistDB.minimapHide = true
               AMA.minimapButton:Hide()
+              if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
               AMA.Print("Minimap button hidden. Use |cFFAAAAAA/ama show|r to restore.")
           end },
         { sep = true },
