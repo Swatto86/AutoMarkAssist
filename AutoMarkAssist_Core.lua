@@ -427,7 +427,7 @@ local function HasRaidTargetPermission()
         return isLeader or isAssistant
     end
     if IsInGroup and IsInGroup() then
-        return isLeader
+        return true
     end
     return true
 end
