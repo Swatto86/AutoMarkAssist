@@ -73,11 +73,21 @@ local function BuildDungeonCCAnnouncementKey()
         poolParts[#poolParts + 1] = tostring(markIdx)
     end
 
+    local roleParts = {}
+    local roleMarks = (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
+    for _, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
+        roleParts[#roleParts + 1] = string.format(
+            "%s:%s",
+            roleDef.classTag or "?",
+            tostring(roleMarks[roleDef.classTag] or ""))
+    end
+
     return string.format(
-        "%s|%d|%s|%s",
+        "%s|%d|%s|%s|%s",
         zoneName,
         AutoMarkAssistDB.ccLimit or 0,
         table.concat(poolParts, ","),
+        table.concat(roleParts, ";"),
         table.concat(members, ";"))
 end
 

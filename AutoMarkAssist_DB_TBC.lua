@@ -89,6 +89,7 @@ db["The Steamvault"] = {
     ["Coilfang Warrior"]            = "MEDIUM",
     ["Coilfang Myrmidon"]           = "CC",
     ["Naga Shaleskin"]              = "LOW",
+    ["Spore Bat"]                   = "HIGH",   -- Steamvault opener should use kill-order, not CC marks
     ["Steam Surger"]                = "HIGH",   -- ranged lightning; kill before Thespia
     ["Tidal Surger"]                = "HIGH",   -- kill before Thespia
     ["Hydromancer Thespia"]         = "LOW",    -- BOSS: kill Steam/Tidal Surgers first

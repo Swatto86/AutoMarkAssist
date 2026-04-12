@@ -1,5 +1,18 @@
 # AutoMarkAssist Changelog
 
+## 2.7.13 (2026-04-12)
+
+### Changed
+
+- Added Legend-tab Smart Dungeon CC role-mark preferences so groups can choose which icon each CC type prefers, such as moon for sheep or diamond for sap.
+
+### Bug fixes
+
+- Made the party permission gate explicit so AutoMarkAssist never treats 5-player groups as leader-gated and only applies raid leader or assistant checks inside raids.
+- Fixed automatic dungeon CC announcement refresh so changing Smart Dungeon CC role-mark preferences invalidates the cached party-assignment state immediately.
+- Fixed Steamvault Spore Bats so they use kill-order marks instead of falling through to the generic bat crowd-control heuristic.
+- Corrected release-facing permission messaging so the addon no longer claims party leadership is required where the live client allows party-wide marking.
+
 ## 2.7.12 (2026-04-12)
 
 ### Changed

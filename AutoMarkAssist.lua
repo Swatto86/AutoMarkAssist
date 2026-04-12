@@ -114,6 +114,15 @@ AMA.CC_KEYWORDS = {
     "beast", "animal", "hound", "wolf", "serpent", "hawk", "bat", "whelp",
 }
 
+AMA.DUNGEON_SMART_CC_ROLE_DEFS = {
+    { classTag = "MAGE", label = "Polymorph" },
+    { classTag = "ROGUE", label = "Sap" },
+    { classTag = "HUNTER", label = "Trap" },
+    { classTag = "PRIEST", label = "Shackle" },
+    { classTag = "WARLOCK", label = "Banish" },
+    { classTag = "DRUID", label = "Hibernate" },
+}
+
 -- ============================================================
 -- SAVED VARIABLE DEFAULTS
 -- Applied in ADDON_LOADED (AutoMarkAssist_Events) where missing keys
@@ -141,6 +150,14 @@ AMA.DB_DEFAULTS = {
         [3] = "Trap / CC",
         [2] = "Kill last",
         [1] = "Lowest priority",
+    },
+    smartCCRoleMarks = {
+        MAGE = 6,
+        ROGUE = 5,
+        HUNTER = 3,
+        PRIEST = 5,
+        WARLOCK = 3,
+        DRUID = 5,
     },
     announceChannel  = "PARTY",
     announcePrefixText = "AutoMarkAssist",
@@ -171,6 +188,11 @@ AMA.DB_DEFAULTS = {
 }
 
 local MARK_POOL_KEYS = { "HIGH", "CC", "MEDIUM", "LOW" }
+local SMART_CC_ROLE_KEYS = {}
+
+for _, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
+    SMART_CC_ROLE_KEYS[#SMART_CC_ROLE_KEYS + 1] = roleDef.classTag
+end
 
 local function DeepCopyValue(value)
     if type(value) ~= "table" then
@@ -269,6 +291,49 @@ function AMA.GetDefaultManualScrollOrder()
         or {8, 7, 3, 4, 5, 6, 2, 1})
 end
 
+function AMA.GetDefaultSmartCCRoleMarks()
+    local defaults = (AMA.DB_DEFAULTS and AMA.DB_DEFAULTS.smartCCRoleMarks) or {}
+    local copy = {}
+
+    for _, classTag in ipairs(SMART_CC_ROLE_KEYS) do
+        copy[classTag] = defaults[classTag]
+    end
+
+    return copy
+end
+
+function AMA.NormalizeSmartCCRoleMarks(roleMarks)
+    local normalized = AMA.GetDefaultSmartCCRoleMarks()
+
+    if type(roleMarks) ~= "table" then
+        return normalized
+    end
+
+    for _, classTag in ipairs(SMART_CC_ROLE_KEYS) do
+        local markIdx = tonumber(roleMarks[classTag])
+        if markIdx then
+            markIdx = math.floor(markIdx)
+        end
+        if markIdx and markIdx >= 1 and markIdx <= 8 then
+            normalized[classTag] = markIdx
+        end
+    end
+
+    return normalized
+end
+
+function AMA.GetSmartCCRoleMarks()
+    local normalized = AMA.NormalizeSmartCCRoleMarks(
+        AutoMarkAssistDB and AutoMarkAssistDB.smartCCRoleMarks)
+
+    if AutoMarkAssistDB then
+        AutoMarkAssistDB.smartCCRoleMarks = normalized
+        return AutoMarkAssistDB.smartCCRoleMarks
+    end
+
+    return normalized
+end
+
 function AMA.NormalizeManualScrollOrder(order)
     local normalized = {}
     local seenMarks = {}
@@ -362,6 +427,8 @@ end
 function AMA.NormalizeSavedSettings()
     if not AutoMarkAssistDB then return end
     AutoMarkAssistDB.markPools = AMA.NormalizeMarkPools(AutoMarkAssistDB.markPools)
+    AutoMarkAssistDB.smartCCRoleMarks = AMA.NormalizeSmartCCRoleMarks(
+        AutoMarkAssistDB.smartCCRoleMarks)
     AutoMarkAssistDB.manualScrollOrder = AMA.NormalizeManualScrollOrder(
         AutoMarkAssistDB.manualScrollOrder)
     AutoMarkAssistDB.announcePrefixText =
