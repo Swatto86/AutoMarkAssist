@@ -1,5 +1,11 @@
 # AutoMarkAssist Changelog
 
+## 2.7.12 (2026-04-12)
+
+### Changed
+
+- Enabled any party member to mark in 5 man groups.
+
 ## 2.7.11 (2026-04-11)
 
 ### Changed
