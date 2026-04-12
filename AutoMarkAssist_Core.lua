@@ -142,9 +142,41 @@ local function BuildDungeonSmartCCAvailableMarks(options)
     return availableMarks
 end
 
+local function BuildDungeonSmartCCMarkOrder(rule, preferredMark, availableMarks)
+    local marks = {}
+    local seen = {}
+
+    local function AddMark(rawMark)
+        local markIdx = tonumber(rawMark)
+        if markIdx then
+            markIdx = math.floor(markIdx)
+        end
+        if markIdx
+        and markIdx >= MARK_STAR
+        and markIdx <= MARK_SKULL
+        and not seen[markIdx] then
+            seen[markIdx] = true
+            marks[#marks + 1] = markIdx
+        end
+    end
+
+    AddMark(preferredMark)
+
+    for _, markIdx in ipairs((rule and rule.marks) or {}) do
+        AddMark(markIdx)
+    end
+
+    for _, markIdx in ipairs(availableMarks or {}) do
+        AddMark(markIdx)
+    end
+
+    return marks
+end
+
 local function BuildDungeonSmartCCCandidates(creatureType, availableMarks)
     local candidates = {}
     local allowedMarks = BuildAllowedMarkSet(availableMarks)
+    local roleMarks = (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
 
     for _, groupToken in ipairs(DUNGEON_SMART_CC_GROUP_TOKENS) do
         if UnitExists(groupToken) then
@@ -155,8 +187,12 @@ local function BuildDungeonSmartCCCandidates(creatureType, availableMarks)
             if name and name ~= "" and rule and (not creatureType or rule.creatureTypes[creatureType]) then
                 local markRanks = {}
                 local compatibleMarkCount = 0
+                local markOrder = BuildDungeonSmartCCMarkOrder(
+                    rule,
+                    roleMarks[classTag],
+                    availableMarks)
 
-                for preferenceRank, preferredMark in ipairs(rule.marks or {}) do
+                for preferenceRank, preferredMark in ipairs(markOrder) do
                     if allowedMarks[preferredMark] then
                         markRanks[preferredMark] = preferenceRank
                         compatibleMarkCount = compatibleMarkCount + 1
@@ -404,6 +440,10 @@ local ENCOUNTER_SUB_PRIORITY_RULES = {
 -- ============================================================
 
 local function HasRaidTargetPermission()
+    if not (IsInRaid and IsInRaid()) then
+        return true
+    end
+
     local isLeader = false
     if UnitIsGroupLeader then
         isLeader = UnitIsGroupLeader("player") and true or false
@@ -423,13 +463,7 @@ local function HasRaidTargetPermission()
         isAssistant = IsRaidOfficer() and true or false
     end
 
-    if IsInRaid and IsInRaid() then
-        return isLeader or isAssistant
-    end
-    if IsInGroup and IsInGroup() then
-        return true
-    end
-    return true
+    return isLeader or isAssistant
 end
 
 AMA.HasRaidTargetPermission = HasRaidTargetPermission
@@ -443,7 +477,7 @@ function AMA.CanMarkReason(options)
         return false, "disabled - use /ama enable or left-click the minimap icon"
     end
     if not HasRaidTargetPermission() then
-        return false, "raid target icons require party leader in parties, or raid leader/assistant in raids"
+        return false, "raid target icons require raid leader or assistant permissions in raids"
     end
     return true, "ok"
 end

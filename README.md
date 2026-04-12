@@ -27,6 +27,7 @@ AutoMarkAssist helps tanks and pull leaders keep group assignments readable and 
 - Configurable HIGH, CC, MEDIUM, and LOW mark pools.
 - A single active automatic scan mode at a time, with proximity as the default for new profiles and optional mouseover-only marking when preferred.
 - Smart Dungeon CC that adapts CC marks to party composition and creature type in 5-player dungeons.
+- Configurable Smart Dungeon CC role-mark preferences so sheep, sap, trap, and other CC jobs can use your group's preferred icons.
 - Manual-only or automatic dungeon CC reminders, with `/ama ccannounce` available for on-demand reposts.
 - Announcement output that can be posted line-by-line or as a single line, with a customizable or removable prefix.
 - Announcement and marking suppression when Blizzard does not allow the player to place raid markers in the current group.

@@ -2,7 +2,7 @@
 
 AutoMarkAssist is a Classic-only World of Warcraft addon for fast, repeatable raid-target assignment. It can auto-mark or manual-mark enemies in parties and raids, using a built-in zone-aware mob database, your configured mark pools, and live pull state to keep kill order clear. The built-in database now covers all supported dungeons and raids through MoP Classic when those expansion modules are loaded. It was built around TBC Classic Anniversary first, then expanded into a multi-TOC addon that also supports Classic Era, Wrath Classic, Cata Classic, and MoP Classic from the same folder.
 
-The addon only works when your character is actually allowed to place raid icons. In practice that means normal party leadership rules still apply, and in raids you need leader or assistant permissions. AutoMarkAssist will not bypass Blizzard restrictions.
+The addon only works when your character is actually allowed to place raid icons. In practice that means party marking follows the live client rules for 5-player groups, and raids still require leader or assistant permissions. AutoMarkAssist will not bypass Blizzard restrictions.
 
 ## What it does
 
@@ -22,6 +22,7 @@ The addon only works when your character is actually allowed to place raid icons
 - Optional death rebalance and cascade logic to keep kill order tidy as pulls change.
 - CC limit controls so only the number of crowd-control marks you want are assigned.
 - Smart Dungeon CC is enabled by default for new profiles and only uses CC icons your current 5-player group can realistically support for that target's creature type, then falls back to kill-order marks when no compatible CC is available.
+- Smart Dungeon CC role-mark preferences let you decide which icon each CC type should try first, so sheep, sap, trap, shackle, banish, and hibernate can match your group's conventions.
 - Fallback keyword heuristics for unknown mobs when no exact zone database match exists.
 - Between-pull refresh that preserves visible icons instead of clearing the next pack when combat ends.
 

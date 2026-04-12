@@ -347,6 +347,7 @@ local proxBtns, moRangeBtns, modBtns, announceChannelBtns, announceFormatBtns, r
 local repeatDungeonCCBtn, announcePrefixEdit
 local poolBtnsMap
 local legendBoxes
+local smartCCRoleMarkBtns
 
 -- DB tab upvalues (outlive the construction do-block)
 local dbTabMobScroll
@@ -894,6 +895,7 @@ local function ShowSmartCCHelp()
         "How Smart Dungeon CC Works",
         "When enabled, dungeon auto-marking looks at your current 5-player group and only hands out CC marks that match the party's available control classes.\n\n"
             .. "It also checks the target's creature type before using a CC icon. Example: undead prefer Priest-style CC, demons and elementals prefer Warlock-style CC, and beasts can use Hunter, Druid, or Mage-style CC.\n\n"
+            .. "You can change which icon each CC type prefers from the Legend tab, so assignments like moon for sheep or diamond for sap can match your group's conventions.\n\n"
             .. "If the party cannot reliably crowd-control that target type, or all compatible CC marks are already taken, the mob falls back to kill-order marks instead of receiving a misleading CC icon.\n\n"
             .. "On dungeon entry, automated mode also posts the current party CC responsibilities to party chat so everyone can see which player owns each CC mark.\n\n"
             .. "If the group needs a reminder later, use the Repeat Party CC button or /ama ccannounce to post the assignments again.")
@@ -1647,7 +1649,7 @@ end)
 
 resetBtn:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:SetText("Reset the saved addon settings, mark pools, legends, manual scroll order, and Database-tab customizations back to the shipped defaults.")
+    GameTooltip:SetText("Reset the saved addon settings, mark pools, legends, Smart Dungeon CC role marks, manual scroll order, and Database-tab customizations back to the shipped defaults.")
     GameTooltip:Show()
 end)
 resetBtn:HookScript("OnLeave", function()
@@ -1658,7 +1660,7 @@ local resetNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 resetNote:SetPoint("TOPLEFT", resetBtn, "BOTTOMLEFT", 20, -8)
 resetNote:SetWidth(486)
 resetNote:SetJustifyH("LEFT")
-resetNote:SetText("Restores shipped defaults for addon settings, pools, legends, manual scroll order, and Database-tab overrides.")
+resetNote:SetText("Restores shipped defaults for addon settings, pools, legends, Smart Dungeon CC role marks, manual scroll order, and Database-tab overrides.")
 resetNote:SetTextColor(0.70, 0.70, 0.70, 1)
 ROW = ROW - 22 - 8 - math.max(24,
     math.ceil((resetNote.GetStringHeight and resetNote:GetStringHeight()) or 0)) - 28
@@ -1823,9 +1825,10 @@ local t3 = tabContents[3]
 legendBoxes = {}
 
 E.Label(t3, "Set the description for each mark icon (shown in pull announcements).", 8, -10)
+E.Label(t3, "These text labels affect previews and announcements only.", 8, -24)
 
 for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
-    local yOff = -30 - (row - 1) * 30
+    local yOff = -44 - (row - 1) * 30
 
     local ic = t3:CreateTexture(nil, "ARTWORK")
     ic:SetSize(22, 22)
@@ -1861,9 +1864,108 @@ end
 
 -- Preview Legend button -- sends the legend via the user's configured announce channel
 local legendPreviewBtn = E.Btn(t3, "Preview Legend in Chat", 190, 22)
-legendPreviewBtn:SetPoint("TOPLEFT", t3, "TOPLEFT", 8, -282)
+legendPreviewBtn:SetPoint("TOPLEFT", t3, "TOPLEFT", 8, -296)
 legendPreviewBtn:SetScript("OnClick", function()
     AutoMarkAssist_Preview()
+end)
+
+E.Sep(t3, -330)
+E.Label(t3, "|cFF1A9EC0Smart Dungeon CC Preferred Marks|r", 8, -342)
+
+local smartCCRoleNote = E.Label(
+    t3,
+    "Choose the preferred icon for each CC type. Smart Dungeon CC will try that icon first when it is part of the active CC pool.",
+    8,
+    -358)
+smartCCRoleNote:SetWidth(500)
+smartCCRoleNote:SetJustifyH("LEFT")
+
+smartCCRoleMarkBtns = {}
+
+for row, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
+    local rowY = -398 - (row - 1) * 28
+
+    local lbl = t3:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    lbl:SetPoint("TOPLEFT", t3, "TOPLEFT", 8, rowY)
+    lbl:SetWidth(78)
+    lbl:SetJustifyH("LEFT")
+    lbl:SetText(roleDef.label)
+
+    smartCCRoleMarkBtns[roleDef.classTag] = {}
+
+    for col, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
+        local cell = CreateFrame("Frame", nil, t3,
+            BackdropTemplateMixin and "BackdropTemplate" or nil)
+        cell:SetSize(26, 26)
+        cell:SetPoint("TOPLEFT", t3, "TOPLEFT", 92 + (col - 1) * 32, rowY + 4)
+        if cell.SetBackdrop then
+            cell:SetBackdrop(FLAT_BD)
+            cell:SetBackdropColor(E.BG2[1], E.BG2[2], E.BG2[3], 1)
+            cell:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
+        end
+
+        local ic = cell:CreateTexture(nil, "ARTWORK")
+        ic:SetSize(20, 20)
+        ic:SetPoint("CENTER", cell, "CENTER")
+        ic:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_" .. mi)
+        ic:SetAlpha(0.30)
+
+        local hl = cell:CreateTexture(nil, "OVERLAY")
+        hl:SetTexture(W8)
+        hl:SetAllPoints()
+        hl:SetVertexColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 0.18)
+        hl:Hide()
+
+        local btn = CreateFrame("Button", nil, t3)
+        btn:SetAllPoints(cell)
+        btn:SetFrameLevel(cell:GetFrameLevel() + 1)
+        btn.classTag = roleDef.classTag
+        btn.markIdx = mi
+        btn.icon = ic
+        btn.highlight = hl
+        btn._cell = cell
+        btn.ccLabel = roleDef.label
+
+        btn:SetScript("OnClick", function(self)
+            if not AutoMarkAssistDB then return end
+            AutoMarkAssistDB.smartCCRoleMarks =
+                (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
+            AutoMarkAssistDB.smartCCRoleMarks[self.classTag] = self.markIdx
+            if AMA.NormalizeSmartCCRoleMarks then
+                AutoMarkAssistDB.smartCCRoleMarks =
+                    AMA.NormalizeSmartCCRoleMarks(AutoMarkAssistDB.smartCCRoleMarks)
+            end
+            if AMA.RefreshDungeonCCAnnouncementQueue then
+                AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+            end
+            if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
+        end)
+        btn:SetScript("OnEnter", function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:SetText(string.format(
+                "%s prefers %s",
+                self.ccLabel or "CC",
+                AMA.MARK_NAMES[self.markIdx] or tostring(self.markIdx)))
+            GameTooltip:Show()
+        end)
+        btn:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+        end)
+
+        smartCCRoleMarkBtns[roleDef.classTag][mi] = btn
+    end
+end
+
+local smartCCRoleResetBtn = E.Btn(t3, "Reset CC Role Marks", 138, 22)
+smartCCRoleResetBtn:SetPoint("TOPLEFT", t3, "TOPLEFT", 8, -572)
+smartCCRoleResetBtn:SetScript("OnClick", function()
+    if not AutoMarkAssistDB then return end
+    AutoMarkAssistDB.smartCCRoleMarks =
+        (AMA.GetDefaultSmartCCRoleMarks and AMA.GetDefaultSmartCCRoleMarks()) or nil
+    if AMA.RefreshDungeonCCAnnouncementQueue then
+        AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+    end
+    if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
 end)
 
 -- ================================================================
@@ -3004,6 +3106,32 @@ function AMA.RefreshConfigFrame()
         local legend = db.markLegend or {}
         for mi = 1, 8 do
             if legendBoxes[mi] then legendBoxes[mi]:SetText(legend[mi] or "") end
+        end
+    end
+
+    if smartCCRoleMarkBtns then
+        local roleMarks = (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks())
+            or (db.smartCCRoleMarks or {})
+        for classTag, buttons in pairs(smartCCRoleMarkBtns) do
+            local selectedMark = roleMarks[classTag]
+            for markIdx, btn in pairs(buttons) do
+                local active = markIdx == selectedMark
+                if btn.highlight then
+                    if active then btn.highlight:Show() else btn.highlight:Hide() end
+                end
+                if btn.icon then
+                    btn.icon:SetAlpha(active and 1.0 or 0.30)
+                end
+                if btn._cell and btn._cell.SetBackdropBorderColor then
+                    if active then
+                        btn._cell:SetBackdropBorderColor(
+                            E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+                    else
+                        btn._cell:SetBackdropBorderColor(
+                            E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
+                    end
+                end
+            end
         end
     end
 
