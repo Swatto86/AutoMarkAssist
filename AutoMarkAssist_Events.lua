@@ -279,7 +279,9 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "PLAYER_REGEN_ENABLED" then
         if not AMA.IsAddonEnabled() then return end
-        if AutoMarkAssistDB and AutoMarkAssistDB.autoReset and AMA.SyncVisibleMarks then
+        if AutoMarkAssistDB and AutoMarkAssistDB.autoReset and AMA.ResetWithMessage then
+            AMA.ResetWithMessage()
+        elseif AMA.SyncVisibleMarks then
             AMA.SyncVisibleMarks()
             AMA.VPrint("Left combat -- synced marks.")
         end
