@@ -392,3 +392,17 @@ function AMA.GetManualScrollOrder()
     end
     return order
 end
+
+function AMA.GetActiveManualScrollOrder()
+    local active = {}
+    for _, markIdx in ipairs(AMA.GetManualScrollOrder()) do
+        if AMA.IsMarkEnabled(markIdx) then
+            active[#active + 1] = markIdx
+        end
+    end
+    -- Fallback strategy if all marks are disabled: just return Skull
+    if #active == 0 then
+        active[1] = 8
+    end
+    return active
+end

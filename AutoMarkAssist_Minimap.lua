@@ -157,7 +157,7 @@ local function ManualCycleMarkOnMouseover(delta)
     if not guid then return end
 
     local name = UnitName("mouseover") or "Target"
-    local scrollOrder = AMA.GetManualScrollOrder()
+    local scrollOrder = AMA.GetActiveManualScrollOrder()
     local currentSelection = GetPendingManualSelection(guid, "mouseover")
 
     -- Find current position in scroll order.
@@ -233,7 +233,7 @@ do
     end
 
     UpdateMarkPickerHUD = function()
-        local scrollOrder = AMA.GetManualScrollOrder()
+        local scrollOrder = AMA.GetActiveManualScrollOrder()
         local guid = manualPendingMark.guid
         local selectedMark = manualPendingMark.selectedMark or 0
 
@@ -272,7 +272,7 @@ do
 
     ApplyResponsiveHUDLayout = function()
         if not markHUD then return end
-        local scrollOrder = AMA.GetManualScrollOrder()
+        local scrollOrder = AMA.GetActiveManualScrollOrder()
         local count = #scrollOrder
         if count == 0 then count = 8 end
 
