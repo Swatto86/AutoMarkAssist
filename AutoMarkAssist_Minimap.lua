@@ -430,15 +430,15 @@ do
         local mode = AMA.GetMarkingMode()
         local enabled = AMA.IsAddonEnabled()
         if mode == "manual" then
-            dot:SetVertexColor(1, 1, 0.4, 0.8)
+            dot:SetVertexColor(1, 1, 0.4, 0.9)
             dot:SetTexCoord(0, 1, 0, 1)
             if AMA._scrollCatcher then AMA._scrollCatcher:Show() end
         elseif enabled then
-            dot:SetVertexColor(0, 1, 0, 0.8)
+            dot:SetVertexColor(0, 1, 0, 0.9)
             dot:SetTexCoord(0, 1, 0, 1)
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         else
-            dot:SetVertexColor(1, 0, 0, 0.8)
+            dot:SetVertexColor(1, 0, 0, 0.9)
             dot:SetTexCoord(0, 1, 0, 1)
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         end
