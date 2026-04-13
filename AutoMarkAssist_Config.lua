@@ -38,6 +38,9 @@ local TIER_DEFS = {
     { key="LOW",    label="Low",    r=0.5, g=0.90, b=0.5  },
 }
 
+local BuildCCPoolSet
+local BuildEffectiveLegendDescriptions
+
 -- ============================================================
 -- ANNOUNCE
 -- /ama announce prints a formatted pull assignment list.
@@ -121,7 +124,7 @@ local function ResolveAnnounceChannel(ch)
 end
 
 -- Build a lookup of mark indices in the CC pool.
-local function BuildCCPoolSet()
+function BuildCCPoolSet()
     local set = {}
     local pool = (AMA.GetActiveCCPool and AMA.GetActiveCCPool())
         or (AMA.GetConfiguredPool and AMA.GetConfiguredPool("CC"))
@@ -186,7 +189,7 @@ local function BuildSmartCCLegendLabels()
     return labelsByMark
 end
 
-local function BuildEffectiveLegendDescriptions()
+function BuildEffectiveLegendDescriptions()
     local legend = AutoMarkAssistDB and AutoMarkAssistDB.markLegend or {}
     local effective = {}
     for markIdx, desc in pairs(legend) do
@@ -318,7 +321,7 @@ local function AnnounceDungeonSmartCCAssignments(options)
     end
     if not (AMA.IsDungeonSmartCCEnabled and AMA.IsDungeonSmartCCEnabled()) then
         if options.showFeedback then
-            AMA.Print("Dungeon Smart CC announcements are only available while Smart Dungeon CC is enabled inside a 5-player dungeon.")
+            AMA.Print("Smart group CC announcements are only available while Smart Group CC is enabled inside a party or raid instance.")
         end
         return false
     end
@@ -326,9 +329,9 @@ local function AnnounceDungeonSmartCCAssignments(options)
     local ch, err = ResolveAnnounceChannel("PARTY")
     if not ch then
         if options.showFeedback then
-            AMA.Print(err or "Cannot announce the dungeon CC assignments right now.")
+            AMA.Print(err or "Cannot announce the smart CC assignments right now.")
         end
-        AMA.VPrint("Skipped automatic dungeon CC announcement: " .. tostring(err))
+        AMA.VPrint("Skipped automatic smart CC announcement: " .. tostring(err))
         return false
     end
 
@@ -355,11 +358,11 @@ local function AnnounceDungeonSmartCCAssignments(options)
     end
 
     if #assignments == 0 then
-        SendFormattedAnnouncement(ch, "Dungeon CC:", {
-            "No dedicated party CC detected, so CC targets will fall back to kill-order marks.",
+        SendFormattedAnnouncement(ch, "Group CC:", {
+            "No dedicated group CC detected, so CC targets will fall back to kill-order marks.",
         })
         if options.showFeedback then
-            AMA.Print("Repeated the dungeon CC fallback announcement to party chat.")
+            AMA.Print("Repeated the smart CC fallback announcement to group chat.")
         end
         return true
     end
@@ -382,9 +385,9 @@ local function AnnounceDungeonSmartCCAssignments(options)
         segments[#segments + 1] = string.format("%s %s - %s", icon, ccLabel, name)
     end
 
-    SendFormattedAnnouncement(ch, "Dungeon CC:", segments)
+    SendFormattedAnnouncement(ch, "Group CC:", segments)
     if options.showFeedback then
-        AMA.Print("Repeated the dungeon CC assignments to party chat.")
+        AMA.Print("Repeated the smart CC assignments to group chat.")
     end
     return true
 end
@@ -964,14 +967,14 @@ end
 local function ShowSmartCCHelp()
     if not ShowConfigHelpPopup then return end
     ShowConfigHelpPopup(
-        "How Smart Dungeon CC Works",
-        "When enabled, dungeon auto-marking looks at your current 5-player group and only hands out CC marks that match the party's available control classes.\n\n"
-            .. "It also checks the target's creature type before using a CC icon. Example: undead prefer Priest-style CC, demons and elementals prefer Warlock-style CC, and beasts can use Hunter, Druid, or Mage-style CC.\n\n"
-            .. "If the whole visible pull fits inside your configured kill-order pool, AutoMarkAssist uses those primary kill marks first. Dedicated CC icons only start once the pull is larger than the available kill-order slots.\n\n"
-            .. "You can change which icon each CC type prefers from the Legend tab, so assignments like moon for sheep or diamond for sap can match your group's conventions.\n\n"
-            .. "If the party cannot reliably crowd-control that target type, or all compatible CC marks are already taken, the mob falls back to kill-order marks instead of receiving a misleading CC icon.\n\n"
-            .. "On dungeon entry, automated mode also posts the current party CC responsibilities to party chat so everyone can see which player owns each CC mark.\n\n"
-            .. "If the group needs a reminder later, use the Repeat Party CC button or /ama ccannounce to post the assignments again.")
+        "How Smart Group CC Works",
+        "When enabled, instance auto-marking looks at your current party or raid and only hands out CC marks that match the group's available control classes.\n\n"
+            .. "Skull and Cross are treated as the first two kill-order marks. After those two kill targets are chosen, the addon fills any remaining dedicated CC slots from the group's available control classes.\n\n"
+            .. "It also checks each visible mob's creature type before picking a CC icon, then solves the pull as a whole so limited CC options are used intelligently. Example: if one mob can only be Polymorphed while another can be Polymorphed or Sapped, the sheep-only mob gets the Polymorph icon and the flexible mob is pushed onto Sap.\n\n"
+            .. "You can change which icon each CC type prefers from the Legend tab, so assignments like moon for sheep or diamond for sap can match your group's conventions. After Skull and Cross are reserved, Smart Group CC tries those preferred icons first whenever they are in the active CC pool.\n\n"
+            .. "If the group cannot reliably crowd-control that target type, or all compatible CC marks are already taken, the mob falls back to kill-order marks instead of receiving a misleading CC icon.\n\n"
+            .. "On instance entry and roster changes, automated mode also posts the current group CC responsibilities to party or raid chat so everyone can see which player owns each CC mark.\n\n"
+            .. "If the group needs a reminder later, use the Repeat Group CC button or /ama ccannounce to post the assignments again.")
 end
 
 local function ShowLatestWhatsNew()
@@ -1162,7 +1165,7 @@ ROW = ROW - 26
 
 cbSmartDungeonCC = E.Chk(
     t1,
-    "In dungeons, adapt CC marks to group composition and mob type",
+    "Adapt CC marks to group composition and mob type in instances",
     8,
     ROW,
     "smartDungeonCC",
@@ -1175,7 +1178,7 @@ ROW = ROW - 24
 
 cbAutoDungeonCC = E.Chk(
     t1,
-    "Auto-announce party CC on dungeon entry and roster updates",
+    "Auto-announce group CC on instance entry and roster updates",
     28,
     ROW,
     "autoAnnounceDungeonCC",
@@ -1186,7 +1189,7 @@ cbAutoDungeonCC = E.Chk(
     end)
 ROW = ROW - 24
 
-repeatDungeonCCBtn = E.Btn(t1, "Repeat Party CC", 104, 18)
+repeatDungeonCCBtn = E.Btn(t1, "Repeat Group CC", 112, 18)
 repeatDungeonCCBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 28, ROW + 2)
 repeatDungeonCCBtn:SetScript("OnClick", function()
     if AMA.AnnounceDungeonSmartCCAssignments then
@@ -1195,7 +1198,7 @@ repeatDungeonCCBtn:SetScript("OnClick", function()
 end)
 repeatDungeonCCBtn:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:SetText("Repeat the current dungeon Smart CC assignments in party chat.")
+    GameTooltip:SetText("Repeat the current smart CC assignments in party or raid chat.")
     GameTooltip:Show()
 end)
 repeatDungeonCCBtn:HookScript("OnLeave", function()
@@ -1207,7 +1210,7 @@ smartCCHelpBtn:SetPoint("LEFT", repeatDungeonCCBtn, "RIGHT", 12, 0)
 smartCCHelpBtn:SetScript("OnClick", ShowSmartCCHelp)
 smartCCHelpBtn:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:SetText("Open a short explanation of the group-aware dungeon CC option.")
+    GameTooltip:SetText("Open a short explanation of the group-aware instance CC option.")
     GameTooltip:Show()
 end)
 smartCCHelpBtn:HookScript("OnLeave", function()
@@ -1219,7 +1222,7 @@ local smartCCNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"
 smartCCNote:SetPoint("TOPLEFT", t1, "TOPLEFT", 28, ROW + 2)
 smartCCNote:SetWidth(470)
 smartCCNote:SetJustifyH("LEFT")
-smartCCNote:SetText("Only applies inside 5-player dungeons. Pulls that fit inside the active kill-order pool use those marks first; larger pulls then start assigning dedicated CC icons. Unsupported or exhausted CC targets fall back to kill-order marks. Turn off the automatic party reminder here if you only want manual /ama ccannounce or Repeat Party CC posts.")
+smartCCNote:SetText("Applies inside party and raid instances. Skull and Cross stay reserved for the first two kill-order targets, then Smart Group CC assigns dedicated CC icons across the visible pull based on creature type, roster capability, and your preferred CC marks. Unsupported or exhausted CC targets fall back to kill-order marks. Turn off the automatic group reminder here if you only want manual /ama ccannounce or Repeat Group CC posts.")
 smartCCNote:SetTextColor(0.70, 0.70, 0.70, 1)
 ROW = ROW - math.max(40,
     math.ceil((smartCCNote.GetStringHeight and smartCCNote:GetStringHeight()) or 0)) - 10
@@ -1722,7 +1725,7 @@ end)
 
 resetBtn:HookScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_BOTTOM")
-    GameTooltip:SetText("Reset the saved addon settings, mark pools, legends, Smart Dungeon CC role marks, manual scroll order, and Database-tab customizations back to the shipped defaults.")
+    GameTooltip:SetText("Reset the saved addon settings, mark pools, legends, Smart Group CC role marks, manual scroll order, and Database-tab customizations back to the shipped defaults.")
     GameTooltip:Show()
 end)
 resetBtn:HookScript("OnLeave", function()
@@ -1733,7 +1736,7 @@ local resetNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
 resetNote:SetPoint("TOPLEFT", resetBtn, "BOTTOMLEFT", 20, -8)
 resetNote:SetWidth(486)
 resetNote:SetJustifyH("LEFT")
-resetNote:SetText("Restores shipped defaults for addon settings, pools, legends, Smart Dungeon CC role marks, manual scroll order, and Database-tab overrides.")
+resetNote:SetText("Restores shipped defaults for addon settings, pools, legends, Smart Group CC role marks, manual scroll order, and Database-tab overrides.")
 resetNote:SetTextColor(0.70, 0.70, 0.70, 1)
 ROW = ROW - 22 - 8 - math.max(24,
     math.ceil((resetNote.GetStringHeight and resetNote:GetStringHeight()) or 0)) - 28
@@ -1898,7 +1901,7 @@ local t3 = tabContents[3]
 legendBoxes = {}
 
 E.Label(t3, "Set the kill-order legend shown in previews and announcements.", 8, -10)
-E.Label(t3, "Active CC marks are driven by the Smart Dungeon CC preferences below and are shown here read-only.", 8, -24)
+E.Label(t3, "Active CC marks are driven by the Smart Group CC preferences below and are shown here read-only.", 8, -24)
 
 for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
     local yOff = -44 - (row - 1) * 30
@@ -1946,11 +1949,11 @@ legendPreviewBtn:SetScript("OnClick", function()
 end)
 
 E.Sep(t3, -330)
-E.Label(t3, "|cFF1A9EC0Smart Dungeon CC Preferred Marks|r", 8, -342)
+E.Label(t3, "|cFF1A9EC0Smart Group CC Preferred Marks|r", 8, -342)
 
 local smartCCRoleNote = E.Label(
     t3,
-    "Choose the preferred icon for each CC type. Smart Dungeon CC will try that icon first when it is part of the active CC pool.",
+    "Choose the preferred icon for each CC type. After Skull and Cross are reserved for kill order, Smart Group CC will try that icon first when it is part of the active CC pool.",
     8,
     -358)
 smartCCRoleNote:SetWidth(500)
@@ -2967,8 +2970,8 @@ AboutCmd("reset local mark tracking",  "/ama reset",     -286)
 AboutCmd("toggle manual mark mode",    "/ama manual",    -300)
 AboutCmd("announce legend to group",   "/ama announce",  -314)
 AboutCmd("preview legend in chat",     "/ama preview",   -328)
-AboutCmd("repeat dungeon CC to party", "/ama ccannounce", -342)
-AboutCmd("toggle auto dungeon CC",     "/ama ccauto",    -356)
+AboutCmd("repeat smart CC to group", "/ama ccannounce", -342)
+AboutCmd("toggle auto smart CC",    "/ama ccauto",    -356)
 AboutCmd("open Database tab",          "/ama db",        -370)
 AboutCmd("show latest update notes",   "/ama whatsnew",  -384)
 

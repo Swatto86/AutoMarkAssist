@@ -53,7 +53,10 @@ local function BuildDungeonCCAnnouncementKey()
     end
 
     local members = {}
-    for _, groupToken in ipairs({ "player", "party1", "party2", "party3", "party4" }) do
+    local groupType = (IsInRaid and IsInRaid()) and "raid" or "party"
+    local groupTokens = (AMA.GetSmartCCGroupTokens and AMA.GetSmartCCGroupTokens())
+        or { "player", "party1", "party2", "party3", "party4" }
+    for _, groupToken in ipairs(groupTokens) do
         if UnitExists(groupToken) then
             local name = UnitName(groupToken)
             local _, classTag = UnitClass(groupToken)
@@ -88,7 +91,7 @@ local function BuildDungeonCCAnnouncementKey()
         AutoMarkAssistDB.ccLimit or 0,
         table.concat(poolParts, ","),
         table.concat(roleParts, ";"),
-        table.concat(members, ";"))
+        groupType .. ":" .. table.concat(members, ";"))
 end
 
 local function ClearDungeonCCAnnouncementState(resetLastKey)
@@ -503,13 +506,13 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         if AutoMarkAssist_AnnounceDungeonSmartCC then
             AutoMarkAssist_AnnounceDungeonSmartCC({ showFeedback = true })
         else
-            AMA.Print("Dungeon CC announce module not loaded.")
+            AMA.Print("Group CC announce module not loaded.")
         end
 
     elseif cmd == "ccauto" or cmd == "autocc" or cmd == "autoccannounce" then
         AutoMarkAssistDB.autoAnnounceDungeonCC =
             not AutoMarkAssistDB.autoAnnounceDungeonCC
-        AMA.Print("Automatic dungeon CC announcements: "
+        AMA.Print("Automatic group CC announcements: "
             .. (AutoMarkAssistDB.autoAnnounceDungeonCC
                 and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"))
         AMA.RefreshDungeonCCAnnouncementQueue(0.5)
@@ -541,7 +544,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
 
     elseif cmd == "smartcc" or cmd == "groupcc" then
         AutoMarkAssistDB.smartDungeonCC = not AutoMarkAssistDB.smartDungeonCC
-        AMA.Print("Smart dungeon CC: " .. (AutoMarkAssistDB.smartDungeonCC
+        AMA.Print("Smart group CC: " .. (AutoMarkAssistDB.smartDungeonCC
             and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"))
         AMA.RefreshDungeonCCAnnouncementQueue(0.5)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
@@ -695,12 +698,12 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
             "/ama manual        - Toggle manual scroll-wheel mode",
             "/ama lock          - Toggle in-combat mark lock",
             "/ama combatlock    - Alias for /ama lock",
-            "/ama smartcc       - Toggle dungeon Smart CC adaptation",
+            "/ama smartcc       - Toggle smart group CC adaptation",
             "/ama groupcc       - Alias for /ama smartcc",
-            "/ama ccannounce    - Repeat dungeon CC assignments to party",
+            "/ama ccannounce    - Repeat smart CC assignments to group",
             "/ama repeatcc      - Alias for /ama ccannounce",
             "/ama ccremind      - Alias for /ama ccannounce",
-            "/ama ccauto        - Toggle automatic dungeon CC announcements",
+            "/ama ccauto        - Toggle automatic smart CC announcements",
             "/ama sub <mob> <n> - Set zone sub-priority tie-break",
             "/ama subclear <mob> - Clear zone sub-priority tie-break",
             "/ama sublist       - List zone sub-priority tie-breaks",

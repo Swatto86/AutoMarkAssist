@@ -83,9 +83,27 @@ local DUNGEON_SMART_CC_RULES = {
     },
 }
 
-local DUNGEON_SMART_CC_GROUP_TOKENS = {
-    "player", "party1", "party2", "party3", "party4",
-}
+local function BuildSmartCCGroupTokens()
+    local tokens = {}
+
+    if IsInRaid and IsInRaid() then
+        for i = 1, 40 do
+            local token = "raid" .. i
+            if UnitExists(token) then
+                tokens[#tokens + 1] = token
+            end
+        end
+        return tokens
+    end
+
+    for _, token in ipairs({ "player", "party1", "party2", "party3", "party4" }) do
+        if UnitExists(token) then
+            tokens[#tokens + 1] = token
+        end
+    end
+
+    return tokens
+end
 
 -- Count how many currently-tracked mobs have CC priority.
 local function CountActiveCC()
@@ -107,7 +125,9 @@ local function IsDungeonSmartCCEnabled()
         return false
     end
     local inInstance, instanceType = IsInInstance()
-    return inInstance and instanceType == "party" and IsInGroup()
+    return inInstance
+        and (instanceType == "party" or instanceType == "raid")
+        and (IsInGroup() or (IsInRaid and IsInRaid()))
 end
 
 local function BuildAllowedMarkSet(pool)
@@ -178,7 +198,7 @@ local function BuildDungeonSmartCCCandidates(creatureType, availableMarks)
     local allowedMarks = BuildAllowedMarkSet(availableMarks)
     local roleMarks = (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
 
-    for _, groupToken in ipairs(DUNGEON_SMART_CC_GROUP_TOKENS) do
+    for _, groupToken in ipairs(BuildSmartCCGroupTokens()) do
         if UnitExists(groupToken) then
             local name = UnitName(groupToken)
             local _, classTag = UnitClass(groupToken)
@@ -374,6 +394,14 @@ end
 
 function AMA.IsDungeonSmartCCEnabled()
     return IsDungeonSmartCCEnabled()
+end
+
+function AMA.GetSmartCCGroupTokens()
+    local tokens = {}
+    for _, token in ipairs(BuildSmartCCGroupTokens()) do
+        tokens[#tokens + 1] = token
+    end
+    return tokens
 end
 
 function AMA.GetDungeonSmartCCAssignments(unitToken, options)
@@ -989,12 +1017,32 @@ local function GetMobPriority(mobName, unitToken)
 end
 
 local function GetPrimaryKillOrderPool()
-    return AMA.GetConfiguredPool(PRIORITY_HIGH) or {}
+    local allowedMarks = GetAllowedMarks()
+    local primaryPool = {}
+
+    for _, markIdx in ipairs({ MARK_SKULL, MARK_CROSS }) do
+        if allowedMarks[markIdx] then
+            primaryPool[#primaryPool + 1] = markIdx
+        end
+    end
+
+    if #primaryPool > 0 then
+        return primaryPool
+    end
+
+    local configuredHigh = AMA.GetConfiguredPool(PRIORITY_HIGH) or {}
+    for _, markIdx in ipairs(configuredHigh) do
+        if allowedMarks[markIdx] then
+            primaryPool[#primaryPool + 1] = markIdx
+        end
+    end
+
+    return primaryPool
 end
 
-local function CountVisibleMarkableEnemies(source)
+local function CollectVisibleAutoMarkMobs(source)
     local seen = {}
-    local count = 0
+    local mobs = {}
 
     for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
         if UnitExists(token)
@@ -1020,13 +1068,26 @@ local function CountVisibleMarkableEnemies(source)
                         end
 
                         if not skip then
-                            local priority = GetMobPriority(mobName, token)
+                            local priority, subPriority = GetMobPriority(mobName, token)
                             if not (priority == "SKIP"
                                 and AutoMarkAssistDB
                                 and AutoMarkAssistDB.skipFillerMobs ~= false) then
+                                if priority == "SKIP" then
+                                    priority = PRIORITY_MEDIUM
+                                    subPriority = GetMobSubPriority(mobName, priority)
+                                end
+
                                 seen[guid] = true
-                                count = count + 1
-                            end
+                                mobs[#mobs + 1] = {
+                                    guid = guid,
+                                    token = token,
+                                    name = mobName,
+                                    priority = priority,
+                                    subPriority = subPriority,
+                                    creatureType = UnitCreatureType and UnitCreatureType(token),
+                                    currentMark = (GetRaidTargetIndex and GetRaidTargetIndex(token))
+                                        or AMA.markedGUIDs[guid],
+                                }
                         end
                     end
                 end
@@ -1034,67 +1095,241 @@ local function CountVisibleMarkableEnemies(source)
         end
     end
 
-    return count
+        return mobs
 end
 
-local function ShouldUsePrimaryKillOrderOnly(source)
-    if not IsDungeonSmartCCEnabled() then
+    local function CompareAutoMarkMobOrder(left, right)
+        local leftRank = GetPriorityRank(left.priority)
+        local rightRank = GetPriorityRank(right.priority)
+        if leftRank ~= rightRank then
+            return leftRank < rightRank
+    end
+
+        local leftSub = GetSubPriorityRank(left.subPriority)
+        local rightSub = GetSubPriorityRank(right.subPriority)
+        if leftSub ~= rightSub then
+            return leftSub < rightSub
+    end
+
+        if left.name ~= right.name then
+            return left.name < right.name
+        end
+
+        return (left.guid or "") < (right.guid or "")
+end
+
+    local function BuildExactMarkAllocationOptions(markIdx)
+        if not markIdx then
+            return nil
+        end
+
+        return {
+            idealPool = { markIdx },
+            allowedMarks = BuildAllowedMarkSet({ markIdx }),
+            skipPrimary = true,
+            skipSpill = true,
+        }
+    end
+
+    local function BuildPrimaryKillAssignments(source)
+    local primaryPool = GetPrimaryKillOrderPool()
+    if #primaryPool == 0 then
+            return {}
+    end
+
+        local candidates = CollectVisibleAutoMarkMobs(source)
+        local assignments = {}
+        local slot = 0
+
+        table.sort(candidates, CompareAutoMarkMobOrder)
+
+        for _, mob in ipairs(candidates) do
+            if not ReservePrimaryMarksForZone(mob.priority) then
+                slot = slot + 1
+                assignments[mob.guid] = primaryPool[slot]
+                if slot >= #primaryPool then
+                    break
+                end
+            end
+        end
+
+        return assignments
+    end
+
+    local function IsBetterVisibleSmartCCState(candidateState, bestState, roleAssignments)
+        if not bestState then
+            return true
+        end
+        if candidateState.count ~= bestState.count then
+            return candidateState.count > bestState.count
+        end
+
+        for markPos = 1, #roleAssignments do
+            local markIdx = roleAssignments[markPos].markIdx
+            local candidateMob = candidateState.slots[markPos]
+            local bestMob = bestState.slots[markPos]
+
+            if candidateMob ~= bestMob then
+                if candidateMob and not bestMob then
+                    return true
+                end
+                if bestMob and not candidateMob then
+                    return false
+                end
+                if candidateMob and bestMob then
+                    if candidateMob.compatibleCount ~= bestMob.compatibleCount then
+                        return candidateMob.compatibleCount < bestMob.compatibleCount
+                    end
+
+                    local candidateKeepsMark = candidateMob.currentMark == markIdx
+                    local bestKeepsMark = bestMob.currentMark == markIdx
+                    if candidateKeepsMark ~= bestKeepsMark then
+                        return candidateKeepsMark
+                    end
+
+                    if CompareAutoMarkMobOrder(candidateMob, bestMob) then
+                        return true
+                    end
+                    if CompareAutoMarkMobOrder(bestMob, candidateMob) then
+                        return false
+                    end
+                end
+            end
+        end
+
         return false
     end
 
-    local primaryPool = GetPrimaryKillOrderPool()
-    if #primaryPool == 0 then
-        return false
-    end
+    local function BuildVisibleSmartCCAssignments(source)
+        if not IsDungeonSmartCCEnabled() then
+            return nil
+        end
 
-    local visibleCount = CountVisibleMarkableEnemies(source)
-    return visibleCount > 0 and visibleCount <= #primaryPool
-end
+        local roleAssignments = BuildDungeonSmartCCAssignments(nil, {
+            respectCCLimit = true,
+        })
+        if not roleAssignments or #roleAssignments == 0 then
+            return {}
+        end
 
-local function BuildPrimaryKillOrderOptions()
-    local primaryPool = GetPrimaryKillOrderPool()
-    if #primaryPool == 0 then
-        return nil
-    end
+        local primaryAssignments = BuildPrimaryKillAssignments(source)
+        local candidates = {}
 
-    return {
-        idealPool = primaryPool,
-        allowedMarks = GetAllowedMarks(),
-    }
+        for _, mob in ipairs(CollectVisibleAutoMarkMobs(source)) do
+            if mob.priority == PRIORITY_CC
+            and not primaryAssignments[mob.guid]
+            and mob.creatureType
+            and mob.creatureType ~= "" then
+                local markRanks = {}
+                local compatibleCount = 0
+
+                for markPos, assignment in ipairs(roleAssignments) do
+                    local rule = assignment.classTag and DUNGEON_SMART_CC_RULES[assignment.classTag]
+                    if rule and rule.creatureTypes[mob.creatureType] then
+                        markRanks[assignment.markIdx] = markPos
+                        compatibleCount = compatibleCount + 1
+                    end
+                end
+
+                if compatibleCount > 0 then
+                    mob.markRanks = markRanks
+                    mob.compatibleCount = compatibleCount
+                    candidates[#candidates + 1] = mob
+                end
+            end
+        end
+
+        if #candidates == 0 then
+            return {}
+        end
+
+        local bestState = nil
+        local currentSlots = {}
+        local usedCandidates = {}
+
+        local function Search(markPos, assignedCount)
+            if bestState
+            and assignedCount + (#roleAssignments - markPos + 1) < bestState.count then
+                return
+            end
+
+            if markPos > #roleAssignments then
+                local candidateState = {
+                    count = assignedCount,
+                    slots = {},
+                }
+                for index = 1, #roleAssignments do
+                    candidateState.slots[index] = currentSlots[index]
+                end
+                if IsBetterVisibleSmartCCState(candidateState, bestState, roleAssignments) then
+                    bestState = candidateState
+                end
+                return
+            end
+
+            currentSlots[markPos] = nil
+            Search(markPos + 1, assignedCount)
+
+            local markIdx = roleAssignments[markPos].markIdx
+            for candidateIndex, candidate in ipairs(candidates) do
+                if not usedCandidates[candidateIndex] and candidate.markRanks[markIdx] then
+                    usedCandidates[candidateIndex] = true
+                    currentSlots[markPos] = candidate
+                    Search(markPos + 1, assignedCount + 1)
+                    currentSlots[markPos] = nil
+                    usedCandidates[candidateIndex] = nil
+                end
+            end
+        end
+
+        Search(1, 0)
+
+        if not bestState or bestState.count == 0 then
+            return {}
+        end
+
+        local assignments = {}
+        for markPos = 1, #roleAssignments do
+            local mob = bestState.slots[markPos]
+            if mob then
+                assignments[mob.guid] = {
+                    markIdx = roleAssignments[markPos].markIdx,
+                    classTag = roleAssignments[markPos].classTag,
+                    ccLabel = roleAssignments[markPos].ccLabel,
+                }
+            end
+        end
+
+        return assignments
 end
 
 local function ResolveAutoMarkStrategy(mobName, unitToken, priority, subPriority, source)
     local effectivePriority = priority
     local effectiveSubPriority = subPriority
-    local allocationOptions = nil
+        local guid = unitToken and UnitGUID and UnitGUID(unitToken)
 
-    if ShouldUsePrimaryKillOrderOnly(source)
-    and effectivePriority ~= PRIORITY_HIGH
-    and effectivePriority ~= PRIORITY_BOSS then
-        return effectivePriority, effectiveSubPriority, BuildPrimaryKillOrderOptions(), "primary-kill-order"
+        local primaryAssignments = guid and BuildPrimaryKillAssignments(source) or nil
+        local primaryMark = primaryAssignments and primaryAssignments[guid]
+        if primaryMark then
+            return effectivePriority,
+                effectiveSubPriority,
+                BuildExactMarkAllocationOptions(primaryMark),
+                "primary-kill-order"
     end
 
     if effectivePriority == PRIORITY_CC and IsDungeonSmartCCEnabled() then
-        local smartCCPool = BuildDungeonSmartCCPool(unitToken)
-        if not smartCCPool or #smartCCPool == 0 then
-            AMA.VPrint("No compatible group CC found, treating as kill-order: " .. mobName)
+            local smartCCAssignments = BuildVisibleSmartCCAssignments(source)
+            local smartCCAssignment = guid and smartCCAssignments and smartCCAssignments[guid]
+
+            if not smartCCAssignment or not smartCCAssignment.markIdx then
+                AMA.VPrint("No compatible smart CC slot selected, treating as kill-order: " .. mobName)
             effectivePriority = PRIORITY_MEDIUM
             effectiveSubPriority = GetMobSubPriority(mobName, effectivePriority)
         else
-            local ccLimit = AutoMarkAssistDB and AutoMarkAssistDB.ccLimit or 0
-            if ccLimit > 0 and CountActiveCC() >= ccLimit then
-                AMA.VPrint("CC limit reached (" .. ccLimit .. "), treating as kill-order: " .. mobName)
-                effectivePriority = PRIORITY_MEDIUM
-                effectiveSubPriority = GetMobSubPriority(mobName, effectivePriority)
-            else
-                allocationOptions = {
-                    idealPool = smartCCPool,
-                    allowedMarks = BuildAllowedMarkSet(smartCCPool),
-                    skipPrimary = true,
-                    skipSpill = true,
-                }
-                return effectivePriority, effectiveSubPriority, allocationOptions, "smart-cc"
-            end
+                return effectivePriority,
+                    effectiveSubPriority,
+                    BuildExactMarkAllocationOptions(smartCCAssignment.markIdx),
+                    "smart-cc"
         end
     end
 

@@ -19,16 +19,16 @@ Downloads:
 
 ## What it does
 
-AutoMarkAssist helps tanks and pull leaders keep group assignments readable and consistent. It can automatically assign raid markers by mob priority, adapt dungeon CC marks to the actual party composition, remember manual preferences for later pulls, and announce the current plan in party or raid chat when marker permissions allow it.
+AutoMarkAssist helps tanks and pull leaders keep group assignments readable and consistent. It can automatically assign raid markers by mob priority, adapt smart CC marks to the actual party or raid composition, remember manual preferences for later pulls, and announce the current plan in party or raid chat when marker permissions allow it.
 
 ## Highlights
 
 - Built-in zone-aware mob database covering supported Classic, TBC, Wrath, Cataclysm, and Mists content.
 - Configurable HIGH, CC, MEDIUM, and LOW mark pools.
 - A single active automatic scan mode at a time, with proximity as the default for new profiles and optional mouseover-only marking when preferred.
-- Smart Dungeon CC that adapts CC marks to party composition and creature type in 5-player dungeons.
-- Configurable Smart Dungeon CC role-mark preferences so sheep, sap, trap, and other CC jobs can use your group's preferred icons.
-- Manual-only or automatic dungeon CC reminders, with `/ama ccannounce` available for on-demand reposts.
+- Smart Group CC that keeps skull and cross as the primary kill-order marks, then adapts CC icons to party or raid composition and creature type inside instances.
+- Pull-wide CC matching so mobs with fewer compatible CC options are assigned intelligently before more flexible targets, while still using your group's preferred sheep, sap, trap, and other CC icons.
+- Manual-only or automatic smart CC reminders, with `/ama ccannounce` available for on-demand reposts.
 - Announcement output that can be posted line-by-line or as a single line, with a customizable or removable prefix.
 - Announcement and marking suppression when Blizzard does not allow the player to place raid markers in the current group.
 - Manual mouseover marking with scroll-wheel selection and persistent teaching back into the zone database.
@@ -39,8 +39,8 @@ AutoMarkAssist helps tanks and pull leaders keep group assignments readable and 
 - `/ama` - open the config window.
 - `/ama announce` - announce the current mark legend.
 - `/ama preview` - preview the current legend locally in chat.
-- `/ama ccannounce` - repeat the current dungeon Smart CC assignments.
-- `/ama ccauto` - toggle automatic dungeon CC reminders.
+- `/ama ccannounce` - repeat the current smart CC assignments to group chat.
+- `/ama ccauto` - toggle automatic smart CC reminders.
 - `/ama manual` - toggle manual scroll-wheel marking mode.
 - `/ama reset` - clear local mark tracking.
 - `/ama whatsnew` - show the latest update notes.

@@ -20,9 +20,9 @@ AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Small 5-player pulls now stay on your configured kill-order marks first, so a two-mob pull uses Skull and Cross before dedicated CC icons are considered.",
-    "Larger 5-player pulls still use Smart Dungeon CC, but now follow your chosen CC-role icon preferences only after the kill-order pool is fully needed.",
-    "Rebalance and death-cascade now reuse the same Smart Dungeon CC strategy, so icon behavior stays consistent after pulls change mid-fight.",
+    "Skull and Cross are now reserved as the first two kill-order marks whenever they are enabled in your active pools.",
+    "Smart Group CC now works in raid instances as well as party instances, using the live group roster to detect available crowd control.",
+    "The pull-wide CC solver still gives limited CC options to the mobs that need them first, while your chosen CC-role icons drive the dedicated CC marks.",
 }
 
 -- ============================================================
