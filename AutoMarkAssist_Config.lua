@@ -734,6 +734,8 @@ do
     dbTabMobScroll:SetPoint("BOTTOMRIGHT", mobListFrame, "BOTTOMRIGHT", -22, 4) 
     dbTabZoneChild = CreateFrame("Frame", nil, dbTabMobScroll)
     dbTabZoneChild:SetWidth(316)
+    dbTabMobScroll:SetScrollChild(dbTabZoneChild)
+    
     local PRIORITY_COLORS = {
         HIGH   = { 1.0, 0.4, 0.0 },
         CC     = { 0.0, 0.9, 0.9 },
@@ -892,11 +894,16 @@ do
 
                 btnY = btnY - 16
             end
+        end
+        zoneChild:SetHeight(math.abs(btnY) + 8)
+    end
+
+    t2:SetScript("OnShow", function()
         RefreshZoneList()
         if dbTabCurrentZone then
             RefreshMobList(dbTabCurrentZone)
         end
-    end
+    end)
 
     -- ================================================================
     -- TAB 3: ABOUT
