@@ -140,6 +140,78 @@ local function BuildConfiguredCCOrder()
     return order
 end
 
+local function BuildSmartCCLegendLabels()
+    local labelsByMark = {}
+
+    if not AutoMarkAssistDB then
+        return labelsByMark
+    end
+
+    local assignments = AMA.GetDungeonSmartCCAssignments
+        and AMA.GetDungeonSmartCCAssignments(nil, { respectCCLimit = true })
+
+    if assignments and #assignments > 0 then
+        local ccOrder = BuildConfiguredCCOrder()
+        table.sort(assignments, function(left, right)
+            local leftOrder = ccOrder[left.markIdx] or 99
+            local rightOrder = ccOrder[right.markIdx] or 99
+            if leftOrder ~= rightOrder then
+                return leftOrder < rightOrder
+            end
+            return (left.markIdx or 0) < (right.markIdx or 0)
+        end)
+
+        for _, assignment in ipairs(assignments) do
+            local markIdx = assignment.markIdx
+            local ccLabel = assignment.ccLabel or "CC"
+            if markIdx and ccLabel ~= "" then
+                labelsByMark[markIdx] = labelsByMark[markIdx] or {}
+                labelsByMark[markIdx][#labelsByMark[markIdx] + 1] = ccLabel
+            end
+        end
+
+        return labelsByMark
+    end
+
+    local roleMarks = (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
+    for _, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
+        local markIdx = roleMarks[roleDef.classTag]
+        local ccLabel = roleDef.label
+        if markIdx and ccLabel and ccLabel ~= "" then
+            labelsByMark[markIdx] = labelsByMark[markIdx] or {}
+            labelsByMark[markIdx][#labelsByMark[markIdx] + 1] = ccLabel
+        end
+    end
+
+    return labelsByMark
+end
+
+local function BuildEffectiveLegendDescriptions()
+    local legend = AutoMarkAssistDB and AutoMarkAssistDB.markLegend or {}
+    local effective = {}
+    for markIdx, desc in pairs(legend) do
+        effective[markIdx] = desc
+    end
+
+    local ccLabelsByMark = BuildSmartCCLegendLabels()
+    if next(ccLabelsByMark) == nil then
+        return effective
+    end
+
+    local activeCCMarks = BuildCCPoolSet()
+
+    for markIdx in pairs(activeCCMarks) do
+        local labels = ccLabelsByMark[markIdx]
+        if labels and #labels > 0 then
+            effective[markIdx] = table.concat(labels, " / ")
+        else
+            effective[markIdx] = nil
+        end
+    end
+
+    return effective
+end
+
 local function IsAddonActionAvailable(showFeedback)
     if not AutoMarkAssistDB then
         if showFeedback then
@@ -173,7 +245,7 @@ local function CanSendAnnouncements(showFeedback)
 end
 
 local function BuildMarkLegendLines(iconMap)
-    local legend = AutoMarkAssistDB and AutoMarkAssistDB.markLegend or {}
+    local legend = BuildEffectiveLegendDescriptions()
     local ccLimit = AutoMarkAssistDB and AutoMarkAssistDB.ccLimit or 0
     local ccPool = (ccLimit > 0) and BuildCCPoolSet() or {}
     local ccSeen = 0
@@ -1825,8 +1897,8 @@ end
 local t3 = tabContents[3]
 legendBoxes = {}
 
-E.Label(t3, "Set the description for each mark icon (shown in pull announcements).", 8, -10)
-E.Label(t3, "These text labels affect previews and announcements only.", 8, -24)
+E.Label(t3, "Set the kill-order legend shown in previews and announcements.", 8, -10)
+E.Label(t3, "Active CC marks are driven by the Smart Dungeon CC preferences below and are shown here read-only.", 8, -24)
 
 for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
     local yOff = -44 - (row - 1) * 30
@@ -1844,6 +1916,9 @@ for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
     eb:SetPoint("TOPLEFT", t3, "TOPLEFT", 96, yOff - 1)
     eb:SetMaxLetters(80); eb.markIdx = mi
     local function PersistLegendText(self)
+        if self._suspendLegendPersist or self._smartCCManaged then
+            return
+        end
         if AutoMarkAssistDB then
             AutoMarkAssistDB.markLegend = AutoMarkAssistDB.markLegend or {}
             AutoMarkAssistDB.markLegend[self.markIdx] = self:GetText() or ""
@@ -3104,9 +3179,47 @@ function AMA.RefreshConfigFrame()
     end
 
     if legendBoxes then
-        local legend = db.markLegend or {}
+        local legend = BuildEffectiveLegendDescriptions()
+        local activeCCMarks = BuildCCPoolSet()
         for mi = 1, 8 do
-            if legendBoxes[mi] then legendBoxes[mi]:SetText(legend[mi] or "") end
+            local box = legendBoxes[mi]
+            if box then
+                local isSmartCCManaged = activeCCMarks[mi] and true or false
+                if not (box.HasFocus and box:HasFocus()) then
+                    box._suspendLegendPersist = true
+                    box:SetText(legend[mi] or "")
+                    box._suspendLegendPersist = false
+                end
+
+                box._smartCCManaged = isSmartCCManaged
+                if isSmartCCManaged and box.ClearFocus then
+                    box:ClearFocus()
+                end
+                if box.EnableMouse then
+                    box:EnableMouse(not isSmartCCManaged)
+                end
+                if box.SetTextColor then
+                    if isSmartCCManaged then
+                        box:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+                    else
+                        box:SetTextColor(1, 1, 1, 1)
+                    end
+                end
+                if box.SetBackdropColor then
+                    if isSmartCCManaged then
+                        box:SetBackdropColor(0.08, 0.18, 0.22, 1)
+                    else
+                        box:SetBackdropColor(0.10, 0.10, 0.10, 1)
+                    end
+                end
+                if box.SetBackdropBorderColor then
+                    if isSmartCCManaged then
+                        box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+                    else
+                        box:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
+                    end
+                end
+            end
         end
     end
 
