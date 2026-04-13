@@ -416,20 +416,11 @@ do
     border:SetSize(54, 54)
     border:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
 
-    -- Status dot background glow/shadow (Optional, for better contrast)
-    -- Using the UI-Minimap-Background as a black disc to sit behind the transparent edge of the status bubbles.
-    local dotBg = btn:CreateTexture(nil, "OVERLAY", nil, 1)
-    dotBg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    dotBg:SetSize(16, 16)
-    dotBg:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 2, -2)
-    dotBg:SetVertexColor(0, 0, 0, 1)
-
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY", nil, 2)
-    -- Texture gets updated dynamically in UpdateMinimapState based on status mode
-    dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Online") 
-    dot:SetSize(18, 18)
-    dot:SetPoint("CENTER", dotBg, "CENTER", 0, 0)
+    dot:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
+    dot:SetSize(12, 12)
+    dot:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -2, 2)
     btn._dot = dot
 
     AMA.minimapButton = btn
@@ -448,18 +439,18 @@ do
         local mode = AMA.GetMarkingMode()
         local enabled = AMA.IsAddonEnabled()
         
-        -- Reset vertex color and tex coords (strip any previous tinting)
-        dot:SetVertexColor(1, 1, 1, 1)
+        -- Default base texture configuration
+        dot:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
         dot:SetTexCoord(0, 1, 0, 1)
 
         if mode == "manual" then
-            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Away")
+            dot:SetVertexColor(1, 0.8, 0, 1) -- Gold/Yellow
             if AMA._scrollCatcher then AMA._scrollCatcher:Show() end
         elseif enabled then
-            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Online")
+            dot:SetVertexColor(0, 1, 0, 1) -- Green
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         else
-            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-DND")
+            dot:SetVertexColor(1, 0, 0, 1) -- Red
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         end
     end
