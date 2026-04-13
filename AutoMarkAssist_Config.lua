@@ -517,8 +517,8 @@ do
     E.Label(t1, "Proximity Range:", 16, y)
     proxRangeBtns = {}
     for prIdx, rangeVal in ipairs({ 2, 3, 4 }) do
-        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 110, 22)
-        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 115, y)
+        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 130, 22)
+        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 135, y)
         rb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.proximityRange = rangeVal end
             AMA.Print("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
