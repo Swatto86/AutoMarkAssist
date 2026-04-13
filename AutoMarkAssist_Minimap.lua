@@ -419,8 +419,8 @@ do
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY", nil, 2)
     dot:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
-    dot:SetSize(12, 12)
-    dot:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -2, 2)
+    dot:SetSize(10, 10)
+    dot:SetPoint("BOTTOMRIGHT", icon, "BOTTOMRIGHT", 0, 0)
     btn._dot = dot
 
     AMA.minimapButton = btn
