@@ -282,6 +282,7 @@ function E.Chk(parent, text, x, y, dbKey, onChange)
     hit:SetFrameLevel(box:GetFrameLevel() + 1)
     hit:RegisterForClicks("AnyUp"); hit:EnableMouse(true)
 
+    -- Disabled visual style update for unchecked boxes.
     local function SetState(val)
         box.checked = val and true or false
         if box.checked then ck:Show() else ck:Hide() end
@@ -290,7 +291,7 @@ function E.Chk(parent, text, x, y, dbKey, onChange)
                 box:SetBackdropColor(0.10, 0.30, 0.36, 1)
                 box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
             else
-                box:SetBackdropColor(E.BG[1], E.BG[2], E.BG[3], E.BG[4])
+                box:SetBackdropColor(0.04, 0.04, 0.04, 0.98)
                 box:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
             end
         end
@@ -594,7 +595,7 @@ do
                         box:SetBackdropColor(0.10, 0.30, 0.36, 1)
                         box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
-                        box:SetBackdropColor(E.BG[1], E.BG[2], E.BG[3], E.BG[4])
+                        box:SetBackdropColor(0.04, 0.04, 0.04, 0.98)
                         box:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
                     end
                 end
