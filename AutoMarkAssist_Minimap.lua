@@ -443,14 +443,14 @@ do
         dot:SetTexture("Interface\\CharacterFrame\\TempPortraitAlphaMask")
         dot:SetTexCoord(0, 1, 0, 1)
 
-        if mode == "manual" then
+        if not enabled then
+            dot:SetVertexColor(1, 0, 0, 1) -- Red
+            if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
+        elseif mode == "manual" then
             dot:SetVertexColor(1, 0.8, 0, 1) -- Gold/Yellow
             if AMA._scrollCatcher then AMA._scrollCatcher:Show() end
-        elseif enabled then
-            dot:SetVertexColor(0, 1, 0, 1) -- Green
-            if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         else
-            dot:SetVertexColor(1, 0, 0, 1) -- Red
+            dot:SetVertexColor(0, 1, 0, 1) -- Green
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         end
     end
@@ -477,18 +477,14 @@ do
     -- Click handlers.
     btn:SetScript("OnClick", function(self, button)
         if button == "LeftButton" then
-            if AMA.GetMarkingMode() == "manual" then
-                AMA.SetMarkingMode("proximity")
-            elseif not AutoMarkAssistDB.enabled then
-                AutoMarkAssistDB.enabled = true
-            else
+            if AutoMarkAssistDB then
                 AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
             end
             AMA.UpdateMinimapState()
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
             AMA.Print(AutoMarkAssistDB.enabled
-                and "Auto-marking |cFF00FF00ENABLED|r."
-                or "Auto-marking |cFFFF0000DISABLED|r.")
+                and "Marking |cFF00FF00ENABLED|r."
+                or "Marking |cFFFF0000DISABLED|r.")
         elseif button == "RightButton" then
             AMA.OpenConfigFrame()
         end
