@@ -21,7 +21,7 @@ The addon only works when your character is actually allowed to place raid icons
 - Optional combat mark lock so auto-marks stay stable while you are in combat.
 - Optional death rebalance and cascade logic to keep kill order tidy as pulls change.
 - CC limit controls so only the number of crowd-control marks you want are assigned.
-- Smart Group CC is enabled by default for new profiles, keeps skull and cross as the primary kill-order marks, then only uses CC icons your current party or raid can realistically support for each target's creature type.
+- Smart Group CC is enabled by default for new profiles, locks skull and cross as the primary kill-order marks, then only uses the remaining CC icons your current party or raid can realistically support for each target's creature type.
 - Pull-wide Smart Group CC matching now gives limited CC options to the mobs that actually need them first, while Smart Group CC role-mark preferences still let sheep, sap, trap, shackle, banish, and hibernate use your group's preferred icons.
 - Fallback keyword heuristics for unknown mobs when no exact zone database match exists.
 - Between-pull refresh that preserves visible icons instead of clearing the next pack when combat ends.

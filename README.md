@@ -26,7 +26,7 @@ AutoMarkAssist helps tanks and pull leaders keep group assignments readable and 
 - Built-in zone-aware mob database covering supported Classic, TBC, Wrath, Cataclysm, and Mists content.
 - Configurable HIGH, CC, MEDIUM, and LOW mark pools.
 - A single active automatic scan mode at a time, with proximity as the default for new profiles and optional mouseover-only marking when preferred.
-- Smart Group CC that keeps skull and cross as the primary kill-order marks, then adapts CC icons to party or raid composition and creature type inside instances.
+- Smart Group CC that locks skull and cross as the primary kill-order marks, then adapts the remaining CC icons to party or raid composition and creature type inside instances.
 - Pull-wide CC matching so mobs with fewer compatible CC options are assigned intelligently before more flexible targets, while still using your group's preferred sheep, sap, trap, and other CC icons.
 - Manual-only or automatic smart CC reminders, with `/ama ccannounce` available for on-demand reposts.
 - Announcement output that can be posted line-by-line or as a single line, with a customizable or removable prefix.

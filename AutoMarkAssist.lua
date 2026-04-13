@@ -20,7 +20,7 @@ AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Skull and Cross are now reserved as the first two kill-order marks whenever they are enabled in your active pools.",
+    "Skull and Cross are now fixed as the primary kill-order marks and are no longer reusable for Smart Group CC or other pool tiers.",
     "Smart Group CC now works in raid instances as well as party instances, using the live group roster to detect available crowd control.",
     "The pull-wide CC solver still gives limited CC options to the mobs that need them first, while your chosen CC-role icons drive the dedicated CC marks.",
 }
@@ -233,6 +233,10 @@ local function NormalizeAnnouncementPrefixText(prefixText)
     return prefixText
 end
 
+local function IsReservedKillOrderMark(markIdx)
+    return markIdx == AMA.MARK_SKULL or markIdx == AMA.MARK_CROSS
+end
+
 function AMA.BackfillMissingDBDefaults(db)
     if type(db) ~= "table" then return end
 
@@ -257,12 +261,19 @@ function AMA.NormalizeMarkPools(pools)
         return AMA.GetDefaultMarkPools()
     end
 
-    local normalized = {}
-    local seenMarks = {}
+    local normalized = {
+        HIGH = { AMA.MARK_SKULL, AMA.MARK_CROSS },
+        CC = {},
+        MEDIUM = {},
+        LOW = {},
+    }
+    local seenMarks = {
+        [AMA.MARK_SKULL] = true,
+        [AMA.MARK_CROSS] = true,
+    }
     local sawBucket = false
 
     for _, key in ipairs(MARK_POOL_KEYS) do
-        normalized[key] = {}
         local bucket = pools[key]
         if type(bucket) == "table" then
             sawBucket = true
@@ -271,7 +282,9 @@ function AMA.NormalizeMarkPools(pools)
                 if markIdx then
                     markIdx = math.floor(markIdx)
                 end
-                if markIdx and markIdx >= 1 and markIdx <= 8 and not seenMarks[markIdx] then
+                if markIdx and markIdx >= 1 and markIdx <= 8
+                and not seenMarks[markIdx]
+                and (key == "HIGH" or not IsReservedKillOrderMark(markIdx)) then
                     normalized[key][#normalized[key] + 1] = markIdx
                     seenMarks[markIdx] = true
                 end
@@ -314,7 +327,8 @@ function AMA.NormalizeSmartCCRoleMarks(roleMarks)
         if markIdx then
             markIdx = math.floor(markIdx)
         end
-        if markIdx and markIdx >= 1 and markIdx <= 8 then
+        if markIdx and markIdx >= 1 and markIdx <= 8
+        and not IsReservedKillOrderMark(markIdx) then
             normalized[classTag] = markIdx
         end
     end

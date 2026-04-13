@@ -196,6 +196,9 @@ function BuildEffectiveLegendDescriptions()
         effective[markIdx] = desc
     end
 
+    effective[MARK_SKULL] = "Kill first"
+    effective[MARK_CROSS] = "Kill second"
+
     local ccLabelsByMark = BuildSmartCCLegendLabels()
     if next(ccLabelsByMark) == nil then
         return effective
@@ -1751,8 +1754,8 @@ t1:SetHeight(-ROW + 68)
 local t2 = tabContents[2]
 poolBtnsMap = {}
 
-E.Label(t2, "Click a mark icon to assign it to a priority tier.", 8, -10)
-E.Label(t2, "Each mark can belong to one tier at most. Click again to remove.", 8, -24)
+E.Label(t2, "Skull and Cross are fixed as the primary HIGH kill-order marks.", 8, -10)
+E.Label(t2, "Assign the remaining marks to tiers below. Each other mark can belong to one tier at most.", 8, -24)
 
 local function GetDefaultPools()
     if AMA.GetDefaultMarkPools then
@@ -1817,9 +1820,11 @@ for ti, tdef in ipairs(TIER_DEFS) do
         btn:SetAllPoints(cell); btn:SetFrameLevel(cell:GetFrameLevel() + 1)
         btn.markIdx   = mi;  btn.priority = tdef.key
         btn.icon      = ic;  btn.highlight = hl; btn._cell = cell
+        btn._reservedPrimaryKill = mi == MARK_SKULL or mi == MARK_CROSS
 
         btn:SetScript("OnClick", function(self)
             if not AutoMarkAssistDB then return end
+            if self._reservedPrimaryKill then return end
             local pools = AutoMarkAssistDB.markPools or GetDefaultPools()
             -- Check if mark belongs to another tier
             local owner = FindMarkTier(self.markIdx)
@@ -1837,14 +1842,16 @@ for ti, tdef in ipairs(TIER_DEFS) do
                 table.sort(pool, function(a, b) return a > b end)
             end
             pools[self.priority]       = pool
-            AutoMarkAssistDB.markPools = pools
+            AutoMarkAssistDB.markPools = (AMA.NormalizeMarkPools and AMA.NormalizeMarkPools(pools)) or pools
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         btn:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
             local name = AMA.MARK_NAMES[self.markIdx] or "?"
             local owner, ownerLabel = FindMarkTier(self.markIdx)
-            if owner and owner ~= self.priority then
+            if self._reservedPrimaryKill then
+                GameTooltip:SetText(name .. "  |cFFAAAAAA(fixed as primary kill order)|r")
+            elseif owner and owner ~= self.priority then
                 GameTooltip:SetText(name .. "  |cFFAAAAAA(assigned to " .. ownerLabel .. ")|r")
             else
                 GameTooltip:SetText(name)
@@ -1862,7 +1869,14 @@ for ti, tdef in ipairs(TIER_DEFS) do
     clearBtn:SetScript("OnClick", function()
         if not AutoMarkAssistDB then return end
         AutoMarkAssistDB.markPools       = AutoMarkAssistDB.markPools or GetDefaultPools()
-        AutoMarkAssistDB.markPools[tkey] = {}
+        if tkey == "HIGH" then
+            AutoMarkAssistDB.markPools[tkey] = { MARK_SKULL, MARK_CROSS }
+        else
+            AutoMarkAssistDB.markPools[tkey] = {}
+        end
+        if AMA.NormalizeMarkPools then
+            AutoMarkAssistDB.markPools = AMA.NormalizeMarkPools(AutoMarkAssistDB.markPools)
+        end
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
     end)
 end
@@ -1900,7 +1914,7 @@ end
 local t3 = tabContents[3]
 legendBoxes = {}
 
-E.Label(t3, "Set the kill-order legend shown in previews and announcements.", 8, -10)
+E.Label(t3, "Skull and Cross are fixed as Kill first and Kill second in previews and announcements.", 8, -10)
 E.Label(t3, "Active CC marks are driven by the Smart Group CC preferences below and are shown here read-only.", 8, -24)
 
 for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
@@ -1919,7 +1933,7 @@ for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
     eb:SetPoint("TOPLEFT", t3, "TOPLEFT", 96, yOff - 1)
     eb:SetMaxLetters(80); eb.markIdx = mi
     local function PersistLegendText(self)
-        if self._suspendLegendPersist or self._smartCCManaged then
+        if self._suspendLegendPersist or self._legendLocked then
             return
         end
         if AutoMarkAssistDB then
@@ -1953,7 +1967,7 @@ E.Label(t3, "|cFF1A9EC0Smart Group CC Preferred Marks|r", 8, -342)
 
 local smartCCRoleNote = E.Label(
     t3,
-    "Choose the preferred icon for each CC type. After Skull and Cross are reserved for kill order, Smart Group CC will try that icon first when it is part of the active CC pool.",
+    "Choose the preferred icon for each CC type. Skull and Cross are reserved for kill order and cannot be used here. Smart Group CC will try the chosen CC icon first when it is part of the active CC pool.",
     8,
     -358)
 smartCCRoleNote:SetWidth(500)
@@ -2004,9 +2018,11 @@ for row, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
         btn.highlight = hl
         btn._cell = cell
         btn.ccLabel = roleDef.label
+        btn._reservedPrimaryKill = mi == MARK_SKULL or mi == MARK_CROSS
 
         btn:SetScript("OnClick", function(self)
             if not AutoMarkAssistDB then return end
+            if self._reservedPrimaryKill then return end
             AutoMarkAssistDB.smartCCRoleMarks =
                 (AMA.GetSmartCCRoleMarks and AMA.GetSmartCCRoleMarks()) or {}
             AutoMarkAssistDB.smartCCRoleMarks[self.classTag] = self.markIdx
@@ -2021,10 +2037,16 @@ for row, roleDef in ipairs(AMA.DUNGEON_SMART_CC_ROLE_DEFS or {}) do
         end)
         btn:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:SetText(string.format(
-                "%s prefers %s",
-                self.ccLabel or "CC",
-                AMA.MARK_NAMES[self.markIdx] or tostring(self.markIdx)))
+            if self._reservedPrimaryKill then
+                GameTooltip:SetText(string.format(
+                    "%s is reserved for kill order and cannot be used as a preferred CC icon",
+                    AMA.MARK_NAMES[self.markIdx] or tostring(self.markIdx)))
+            else
+                GameTooltip:SetText(string.format(
+                    "%s prefers %s",
+                    self.ccLabel or "CC",
+                    AMA.MARK_NAMES[self.markIdx] or tostring(self.markIdx)))
+            end
             GameTooltip:Show()
         end)
         btn:SetScript("OnLeave", function()
@@ -3187,7 +3209,9 @@ function AMA.RefreshConfigFrame()
         for mi = 1, 8 do
             local box = legendBoxes[mi]
             if box then
+                local isFixedKillOrder = mi == MARK_SKULL or mi == MARK_CROSS
                 local isSmartCCManaged = activeCCMarks[mi] and true or false
+                local isLockedLegend = isFixedKillOrder or isSmartCCManaged
                 if not (box.HasFocus and box:HasFocus()) then
                     box._suspendLegendPersist = true
                     box:SetText(legend[mi] or "")
@@ -3195,28 +3219,35 @@ function AMA.RefreshConfigFrame()
                 end
 
                 box._smartCCManaged = isSmartCCManaged
-                if isSmartCCManaged and box.ClearFocus then
+                box._legendLocked = isLockedLegend
+                if isLockedLegend and box.ClearFocus then
                     box:ClearFocus()
                 end
                 if box.EnableMouse then
-                    box:EnableMouse(not isSmartCCManaged)
+                    box:EnableMouse(not isLockedLegend)
                 end
                 if box.SetTextColor then
-                    if isSmartCCManaged then
+                    if isFixedKillOrder then
+                        box:SetTextColor(1.0, 0.82, 0.20, 1)
+                    elseif isSmartCCManaged then
                         box:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
                         box:SetTextColor(1, 1, 1, 1)
                     end
                 end
                 if box.SetBackdropColor then
-                    if isSmartCCManaged then
+                    if isFixedKillOrder then
+                        box:SetBackdropColor(0.22, 0.16, 0.04, 1)
+                    elseif isSmartCCManaged then
                         box:SetBackdropColor(0.08, 0.18, 0.22, 1)
                     else
                         box:SetBackdropColor(0.10, 0.10, 0.10, 1)
                     end
                 end
                 if box.SetBackdropBorderColor then
-                    if isSmartCCManaged then
+                    if isFixedKillOrder then
+                        box:SetBackdropBorderColor(1.0, 0.75, 0.10, 1)
+                    elseif isSmartCCManaged then
                         box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
                         box:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 1)
@@ -3232,15 +3263,22 @@ function AMA.RefreshConfigFrame()
         for classTag, buttons in pairs(smartCCRoleMarkBtns) do
             local selectedMark = roleMarks[classTag]
             for markIdx, btn in pairs(buttons) do
+                local reserved = btn._reservedPrimaryKill and true or false
                 local active = markIdx == selectedMark
                 if btn.highlight then
-                    if active then btn.highlight:Show() else btn.highlight:Hide() end
+                    if active and not reserved then btn.highlight:Show() else btn.highlight:Hide() end
                 end
                 if btn.icon then
-                    btn.icon:SetAlpha(active and 1.0 or 0.30)
+                    if reserved then
+                        btn.icon:SetAlpha(0.12)
+                    else
+                        btn.icon:SetAlpha(active and 1.0 or 0.30)
+                    end
                 end
                 if btn._cell and btn._cell.SetBackdropBorderColor then
-                    if active then
+                    if reserved then
+                        btn._cell:SetBackdropBorderColor(1.0, 0.75, 0.10, 0.60)
+                    elseif active then
                         btn._cell:SetBackdropBorderColor(
                             E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
