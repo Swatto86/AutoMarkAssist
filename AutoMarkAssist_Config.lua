@@ -482,9 +482,11 @@ do
     local y = -10
 
     -- ── Enabled ──
-    E.Chk(t1, "Enable Marking", 12, y, "enabled", function()
+    local cbEnable = E.Chk(t1, "Enable Marking", 0, y, "enabled", function()
         AMA.UpdateMinimapState()
     end)
+    cbEnable:ClearAllPoints()
+    cbEnable:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 24
 
     E.Sep(t1, y)
@@ -502,7 +504,7 @@ do
     modeBtns = {}
     for i, def in ipairs(MODE_DEFS) do
         local mb = E.Btn(t1, def.label, 90, 22)
-        mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 12 + (i - 1) * 108, y)
+        mb:SetPoint("TOP", t1, "TOP", -108 + (i - 1) * 108, y)
         mb:SetScript("OnClick", function()
             AMA.SetMarkingMode(def.key)
             AMA.UpdateMinimapState()
@@ -515,11 +517,15 @@ do
     y = y - 28
 
     -- Proximity range.
-    E.Label(t1, "Proximity Range:", 16, y)
+    local prLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    prLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
+    prLbl:SetText("Proximity Range:")
+    prLbl:SetWidth(120)
+    prLbl:SetJustifyH("RIGHT")
     proxRangeBtns = {}
     for prIdx, rangeVal in ipairs({ 2, 3, 4 }) do
-        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 130, 22)
-        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 135, y)
+        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 105, 22)
+        rb:SetPoint("TOPLEFT", t1, "TOP", -40 + (prIdx - 1) * 110, y)
         rb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.proximityRange = rangeVal end
             AMA.Print("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
@@ -531,11 +537,16 @@ do
     y = y - 24
 
     -- Manual modifier key.
-    E.Label(t1, "Manual Modifier:", 16, y)
+    local modLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    modLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
+    modLbl:SetText("Manual Modifier:")
+    modLbl:SetWidth(120)
+    modLbl:SetJustifyH("RIGHT")
+
     modBtns = {}
     for mi, mod in ipairs({ "ALT", "SHIFT", "CTRL" }) do
         local mb = E.Btn(t1, mod, 60, 22)
-        mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (mi - 1) * 65, y)
+        mb:SetPoint("TOPLEFT", t1, "TOP", -40 + (mi - 1) * 65, y)
         mb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.manualModifier = mod end
             AMA.Print("Manual modifier: " .. mod)
@@ -560,8 +571,8 @@ do
         local isKill = (markIdx == MARK_SKULL or markIdx == MARK_CROSS)
 
         local row = CreateFrame("Frame", nil, t1)
-        row:SetSize(CONFIG_W - 24, 20)
-        row:SetPoint("TOPLEFT", t1, "TOPLEFT", 12, y)
+        row:SetSize(300, 20)
+        row:SetPoint("TOP", t1, "TOP", 0, y)
 
         -- Mark icon.
         local icon = row:CreateTexture(nil, "ARTWORK")
@@ -628,17 +639,23 @@ do
     E.Header(t1, "Behaviour", 8, y)
     y = y - 22
 
-    cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 12, y, "dynamicMarking")
+cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynamicMarking")
+    cbDynamic:ClearAllPoints(); cbDynamic:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 20
-    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat")
+    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 0, y, "lockMarksInCombat")
+    cbCombatLock:ClearAllPoints(); cbCombatLock:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 20
-    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 12, y, "rebalanceOnDeath")
+    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 0, y, "rebalanceOnDeath")  
+    cbRebal:ClearAllPoints(); cbRebal:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 20
-    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 12, y, "autoReset")
+    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 0, y, "autoReset")      
+    cbAutoReset:ClearAllPoints(); cbAutoReset:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 20
-    cbCritters = E.Chk(t1, "Skip Critters", 12, y, "skipCritters")
+    cbCritters = E.Chk(t1, "Skip Critters", 0, y, "skipCritters")
+    cbCritters:ClearAllPoints(); cbCritters:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 20
-    E.Chk(t1, "Verbose Mode", 12, y, "verbose")
+    local cbVerbose = E.Chk(t1, "Verbose Mode", 0, y, "verbose")
+    cbVerbose:ClearAllPoints(); cbVerbose:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 24
 
     E.Sep(t1, y)
@@ -648,14 +665,20 @@ do
     E.Header(t1, "Announcements", 8, y)
     y = y - 22
 
-    cbAnnounce = E.Chk(t1, "Announce Mark Plan on Dungeon Entry", 12, y, "announceOnEntry")
+    cbAnnounce = E.Chk(t1, "Announce Mark Plan on Dungeon Entry", 0, y, "announceOnEntry")
+    cbAnnounce:ClearAllPoints(); cbAnnounce:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 24
 
-    E.Label(t1, "Channel:", 16, y)
+    local chanLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    chanLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
+    chanLbl:SetText("Channel:")
+    chanLbl:SetWidth(120)
+    chanLbl:SetJustifyH("RIGHT")
+
     announceChannelBtns = {}
     for ci, ch in ipairs({ "SAY", "PARTY", "RAID" }) do
         local cb = E.Btn(t1, ch, 60, 22)
-        cb:SetPoint("TOPLEFT", t1, "TOPLEFT", 80 + (ci - 1) * 68, y)
+        cb:SetPoint("TOPLEFT", t1, "TOP", -40 + (ci - 1) * 65, y)
         cb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.announceChannel = ch end
             AMA.Print("Announce channel: " .. ch)
@@ -666,9 +689,14 @@ do
     end
     y = y - 24
 
-    E.Label(t1, "Prefix:", 16, y)
-    announcePrefixEdit = E.EditBox(t1, 200, 20)
-    announcePrefixEdit:SetPoint("TOPLEFT", t1, "TOPLEFT", 80, y)
+    local prefLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    prefLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
+    prefLbl:SetText("Prefix:")
+    prefLbl:SetWidth(120)
+    prefLbl:SetJustifyH("RIGHT")
+
+    announcePrefixEdit = E.EditBox(t1, 190, 20)
+    announcePrefixEdit:SetPoint("TOPLEFT", t1, "TOP", -40, y)
     announcePrefixEdit:SetScript("OnEnterPressed", function(self)
         if AutoMarkAssistDB then
             AutoMarkAssistDB.announcePrefixText = self:GetText()
@@ -679,11 +707,11 @@ do
 
     -- Announce/Preview buttons.
     local announceBtn = E.Btn(t1, "Announce Now", 100, 24)
-    announceBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 24, y)
+    announceBtn:SetPoint("TOPRIGHT", t1, "TOP", -5, y)
     announceBtn:SetScript("OnClick", function() AMA.AnnounceMarkPlan() end)
 
-    local previewBtn = E.Btn(t1, "Preview", 80, 24)
-    previewBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 140, y)
+    local previewBtn = E.Btn(t1, "Preview", 100, 24)
+    previewBtn:SetPoint("TOPLEFT", t1, "TOP", 5, y)
     previewBtn:SetScript("OnClick", function() AMA.PreviewMarkPlan() end)
 
     -- ================================================================
@@ -695,14 +723,19 @@ do
     -- Zone list on the left.
     local zoneListFrame = CreateFrame("Frame", nil, t2,
         BackdropTemplateMixin and "BackdropTemplate" or nil)
-    zoneListFrame:SetPoint("TOPLEFT", t2, "TOPLEFT", 4, -4)
-    zoneListFrame:SetPoint("BOTTOMLEFT", t2, "BOTTOMLEFT", 4, 4)
+    zoneListFrame:SetPoint("TOPLEFT", t2, "TOPLEFT", 12, -28)
+    zoneListFrame:SetPoint("BOTTOMLEFT", t2, "BOTTOMLEFT", 12, 12)
     zoneListFrame:SetWidth(160)
     E.Skin(zoneListFrame)
 
+    local zHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    zHeader:SetPoint("BOTTOMLEFT", zoneListFrame, "TOPLEFT", 2, 4)
+    zHeader:SetText("Zones:")
+    zHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+
     local zoneScroll = CreateFrame("ScrollFrame", "AMA_ZoneScrollFrame", zoneListFrame, "UIPanelScrollFrameTemplate")
     zoneScroll:SetPoint("TOPLEFT", zoneListFrame, "TOPLEFT", 4, -4)
-    zoneScroll:SetPoint("BOTTOMRIGHT", zoneListFrame, "BOTTOMRIGHT", -22, 4)
+    zoneScroll:SetPoint("BOTTOMRIGHT", zoneListFrame, "BOTTOMRIGHT", -22, 4)    
     local zoneChild = CreateFrame("Frame", nil, zoneScroll)
     zoneChild:SetWidth(130)
     zoneScroll:SetScrollChild(zoneChild)
@@ -710,18 +743,25 @@ do
     -- Mob list on the right.
     local mobListFrame = CreateFrame("Frame", nil, t2,
         BackdropTemplateMixin and "BackdropTemplate" or nil)
-    mobListFrame:SetPoint("TOPLEFT", zoneListFrame, "TOPRIGHT", 4, 0)
-    mobListFrame:SetPoint("BOTTOMRIGHT", t2, "BOTTOMRIGHT", -4, 4)
+    mobListFrame:SetPoint("TOPLEFT", zoneListFrame, "TOPRIGHT", 8, 0)
+    mobListFrame:SetPoint("BOTTOMRIGHT", t2, "BOTTOMRIGHT", -12, 12)
     E.Skin(mobListFrame)
+
+    local mHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    mHeader:SetPoint("BOTTOMLEFT", mobListFrame, "TOPLEFT", 2, 4)
+    mHeader:SetText("Mob Name (Right-Click to reset)")
+    mHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+
+    local pHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    pHeader:SetPoint("BOTTOMRIGHT", mobListFrame, "TOPRIGHT", -26, 4)
+    pHeader:SetText("Priority")
+    pHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
 
     dbTabMobScroll = CreateFrame("ScrollFrame", "AMA_MobScrollFrame", mobListFrame, "UIPanelScrollFrameTemplate")
     dbTabMobScroll:SetPoint("TOPLEFT", mobListFrame, "TOPLEFT", 4, -4)
-    dbTabMobScroll:SetPoint("BOTTOMRIGHT", mobListFrame, "BOTTOMRIGHT", -22, 4)
+    dbTabMobScroll:SetPoint("BOTTOMRIGHT", mobListFrame, "BOTTOMRIGHT", -22, 4) 
     dbTabZoneChild = CreateFrame("Frame", nil, dbTabMobScroll)
-    dbTabZoneChild:SetWidth(260)
-    dbTabMobScroll:SetScrollChild(dbTabZoneChild)
-
-    local PRIORITY_CYCLE = { "HIGH", "CC", "MEDIUM", "LOW", "SKIP" }
+    dbTabZoneChild:SetWidth(316)
     local PRIORITY_COLORS = {
         HIGH   = { 1.0, 0.4, 0.0 },
         CC     = { 0.0, 0.9, 0.9 },
@@ -757,14 +797,14 @@ do
         for _, mobName in ipairs(sorted) do
             local pri = mobs[mobName]
             local row = CreateFrame("Button", nil, dbTabZoneChild)
-            row:SetSize(250, 18)
+            row:SetSize(306, 18)
             row:SetPoint("TOPLEFT", dbTabZoneChild, "TOPLEFT", 4, rowY)
             row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
 
             local nameFS = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
             nameFS:SetPoint("LEFT", row, "LEFT", 2, 0)
             nameFS:SetText(mobName)
-            nameFS:SetWidth(170)
+            nameFS:SetWidth(400)
             nameFS:SetJustifyH("LEFT")
 
             local priFS = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
@@ -877,17 +917,21 @@ do
     -- ================================================================
 
     local t3 = tabContents[3]
-    local ay = -12
+    local ay = -24
 
-    E.Header(t3, "AutoMarkAssist", 8, ay)
-    ay = ay - 20
-    E.Label(t3, "|cFFFFFFFFVersion:|r " .. AMA.VERSION, 16, ay)
-    ay = ay - 16
-    E.Label(t3, "|cFFFFFFFFAuthor:|r " .. AMA.AUTHOR, 16, ay)
-    ay = ay - 24
+    local function CenterLabel(text, yOff)
+        local lbl = t3:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        lbl:SetPoint("TOP", t3, "TOP", 0, yOff)
+        lbl:SetText(text)
+        lbl:SetJustifyH("CENTER")
+        return lbl
+    end
 
-    E.Header(t3, "Mark Assignments", 8, ay)
-    ay = ay - 20
+    CenterLabel("|cFF1A9EC0AutoMarkAssist|r", ay); ay = ay - 20
+    CenterLabel("|cFFFFFFFFVersion:|r " .. AMA.VERSION, ay); ay = ay - 16
+    CenterLabel("|cFFFFFFFFAuthor:|r " .. AMA.AUTHOR, ay); ay = ay - 32
+
+    CenterLabel("|cFF1A9EC0Mark Assignments|r", ay); ay = ay - 24
 
     local markInfo = {
         { 8, "First Kill" }, { 7, "Second Kill" },
@@ -897,16 +941,13 @@ do
     }
     for _, info in ipairs(markInfo) do
         local markIdx, desc = info[1], info[2]
-        local row = t3:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        row:SetPoint("TOPLEFT", t3, "TOPLEFT", 16, ay)
-        row:SetText((AMA.MARK_ICON_COORDS[markIdx] or "") .. "  " ..
-            (AMA.MARK_NAMES[markIdx] or "?") .. " = " .. desc)
+        CenterLabel((AMA.MARK_ICON_COORDS[markIdx] or "") .. "  " ..
+            (AMA.MARK_NAMES[markIdx] or "?") .. " = " .. desc, ay)
         ay = ay - 16
     end
-    ay = ay - 8
+    ay = ay - 16
 
-    E.Header(t3, "Commands", 8, ay)
-    ay = ay - 20
+    CenterLabel("|cFF1A9EC0Commands|r", ay); ay = ay - 24
 
     local commands = {
         "/ama - Open options",
@@ -918,9 +959,7 @@ do
         "/ama verbose - Toggle debug output",
     }
     for _, cmd in ipairs(commands) do
-        local cmdFS = t3:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        cmdFS:SetPoint("TOPLEFT", t3, "TOPLEFT", 16, ay)
-        cmdFS:SetText("|cFFAAAAAA" .. cmd .. "|r")
+        CenterLabel("|cFFAAAAAA" .. cmd .. "|r", ay)
         ay = ay - 14
     end
 
