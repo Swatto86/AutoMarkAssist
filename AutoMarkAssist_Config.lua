@@ -482,7 +482,7 @@ do
     local y = -10
 
     -- ── Enabled ──
-    E.Chk(t1, "Enable Auto-Marking", 12, y, "enabled", function()
+    E.Chk(t1, "Enable Marking", 12, y, "enabled", function()
         AMA.UpdateMinimapState()
     end)
     y = y - 24

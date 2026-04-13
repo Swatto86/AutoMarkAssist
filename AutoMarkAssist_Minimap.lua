@@ -416,17 +416,19 @@ do
     border:SetSize(54, 54)
     border:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
 
-    -- Status dot background.
+    -- Status dot background glow/shadow (Optional, for better contrast)
+    -- Using the UI-Minimap-Background as a black disc to sit behind the transparent edge of the status bubbles.
     local dotBg = btn:CreateTexture(nil, "OVERLAY", nil, 1)
     dotBg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    dotBg:SetSize(14, 14)
-    dotBg:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -2, 2)
+    dotBg:SetSize(16, 16)
+    dotBg:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 2, -2)
     dotBg:SetVertexColor(0, 0, 0, 1)
 
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY", nil, 2)
-    dot:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
-    dot:SetSize(10, 10)
+    -- Texture gets updated dynamically in UpdateMinimapState based on status mode
+    dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Online") 
+    dot:SetSize(18, 18)
     dot:SetPoint("CENTER", dotBg, "CENTER", 0, 0)
     btn._dot = dot
 
@@ -445,17 +447,19 @@ do
     function AMA.UpdateMinimapState()
         local mode = AMA.GetMarkingMode()
         local enabled = AMA.IsAddonEnabled()
+        
+        -- Reset vertex color and tex coords (strip any previous tinting)
+        dot:SetVertexColor(1, 1, 1, 1)
+        dot:SetTexCoord(0, 1, 0, 1)
+
         if mode == "manual" then
-            dot:SetVertexColor(1, 1, 0.4, 0.9)
-            dot:SetTexCoord(0, 1, 0, 1)
+            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Away")
             if AMA._scrollCatcher then AMA._scrollCatcher:Show() end
         elseif enabled then
-            dot:SetVertexColor(0, 1, 0, 0.9)
-            dot:SetTexCoord(0, 1, 0, 1)
+            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-Online")
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         else
-            dot:SetVertexColor(1, 0, 0, 0.9)
-            dot:SetTexCoord(0, 1, 0, 1)
+            dot:SetTexture("Interface\\FriendsFrame\\StatusIcon-DND")
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         end
     end
