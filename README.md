@@ -4,6 +4,124 @@
 [![Package Release](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml/badge.svg)](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml)
 [![CurseForge](https://img.shields.io/badge/CurseForge-AutoMarkAssist-f16436?logo=curseforge&logoColor=white)](https://www.curseforge.com/wow/addons/automarkassist)
 
+AutoMarkAssist is a WoW Classic addon that automatically marks mobs in dungeons and raids based on kill priority and crowd control. It detects your group composition and intelligently assigns CC marks to the right targets, announcing the plan on entry so everyone knows what each mark means.
+
+Downloads:
+
+- [GitHub Releases](https://github.com/Swatto86/AutoMarkAssist/releases)
+- [CurseForge Project](https://www.curseforge.com/wow/addons/automarkassist)
+
+## Install
+
+1. Download the latest release zip from GitHub Releases or CurseForge.
+2. Extract the `AutoMarkAssist` folder into `World of Warcraft/_classic_/Interface/AddOns`.
+3. Restart the game or reload the UI.
+
+## Mark Assignments
+
+| Mark | Icon | Role |
+|------|------|------|
+| Skull | 💀 | First Kill |
+| Cross | ❌ | Second Kill |
+| Moon | 🌙 | Polymorph (Mage) |
+| Diamond | 💎 | Sap (Rogue) |
+| Triangle | 🔺 | Banish (Warlock) |
+| Star | ⭐ | Shackle (Priest) |
+| Circle | 🟠 | Hibernate (Druid) |
+| Square | 🟦 | Trap (Hunter) - disabled by default |
+
+Skull and Cross are always kill targets. The remaining marks are assigned to CC based on which classes are actually in your group. If a CC class isn't present, their mark becomes an additional kill target instead.
+
+## Marking Modes
+
+AutoMarkAssist has three mutually exclusive marking modes:
+
+- **Proximity** (default) — Automatically marks hostile mobs within range every 0.5 seconds.
+- **Mouseover** — Marks a mob when you hover over it.
+- **Manual** — Hold a modifier key (ALT/SHIFT/CTRL) and scroll the mouse wheel to pick a mark for the mob under your cursor.
+
+Only one mode is active at a time.
+
+## Smart CC Detection
+
+The addon reads your party or raid roster and determines which CC abilities are available:
+
+- **Mage** → Polymorph (Humanoid, Beast)
+- **Rogue** → Sap (Humanoid)
+- **Warlock** → Banish (Demon, Elemental)
+- **Priest** → Shackle Undead (Undead)
+- **Druid** → Hibernate (Beast, Dragonkin)
+- **Hunter** → Trap (Beast)
+
+When entering a dungeon or raid, the addon announces which marks mean what based on who is actually in the group. Only CC marks for classes present are announced — no confusion about marks nobody can use.
+
+## Features
+
+- Built-in mob database covering Classic, TBC, Wrath, Cataclysm, and Mists of Pandaria dungeons and raids.
+- Automatic CC mark assignment based on creature type and group composition.
+- Dynamic bump-marking: higher-priority mobs can claim better marks.
+- Death cascade: marks rebalance when marked mobs die.
+- Combat mark lock to prevent reassignment during combat.
+- Respects existing marks placed by other players.
+- Per-mark enable/disable toggles in the options panel.
+- In-game database editor for per-zone mob priority overrides.
+- Configurable announcement channel (SAY/PARTY/RAID) with custom prefix.
+- Reset-marks keybind for instant mark clearing.
+- Minimap button with status indicator (green = auto, gold = manual, red = disabled).
+- Verbose debug mode for troubleshooting.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `/ama` | Open options panel |
+| `/ama enable` | Enable auto-marking |
+| `/ama disable` | Disable auto-marking |
+| `/ama toggle` | Toggle auto-marking |
+| `/ama reset` | Clear all marks |
+| `/ama announce` | Send mark plan to chat |
+| `/ama preview` | Preview mark plan locally |
+| `/ama mode <proximity\|mouseover\|manual>` | Switch marking mode |
+| `/ama manual` | Toggle manual mode |
+| `/ama cc` | Show available CC in group |
+| `/ama marks` | Show currently marked mobs |
+| `/ama zone` | Show current zone info |
+| `/ama verbose` | Toggle debug output |
+| `/ama lock` | Toggle combat mark lock |
+| `/ama show` / `/ama hide` | Toggle minimap button |
+| `/ama defaults` | Reset all settings |
+| `/ama help` | Show command list |
+
+## Supported Game Versions
+
+| TOC File | Client | Expansion Coverage |
+|----------|--------|--------------------|
+| `AutoMarkAssist_Vanilla.toc` | Classic Era | Classic |
+| `AutoMarkAssist.toc` | TBC Anniversary | Classic + TBC |
+| `AutoMarkAssist_Wrath.toc` | Wrath Classic | Classic + TBC + WotLK |
+| `AutoMarkAssist_Cata.toc` | Cata Classic | Classic + TBC + WotLK + Cata |
+| `AutoMarkAssist_MoP.toc` | MoP Classic | Classic + TBC + WotLK + Cata + MoP |
+
+## Source Layout
+
+| File | Purpose |
+|------|---------|
+| `AutoMarkAssist.lua` | Namespace, constants, CC mapping, saved-variable defaults, utilities |
+| `AutoMarkAssist_Core.lua` | Mark allocation, priority detection, CC matching, sync, rebalance |
+| `AutoMarkAssist_Minimap.lua` | Minimap button, manual mode HUD, scroll-wheel mark picker |
+| `AutoMarkAssist_Config.lua` | Announce system, ElvUI-themed options panel (General, Database, About) |
+| `AutoMarkAssist_Events.lua` | Event handling, proximity scanner, zone tracking, slash commands |
+| `AutoMarkAssist_DB_*.lua` | Zone mob databases per expansion |
+
+## License
+
+All Rights Reserved. © Swatto
+# AutoMarkAssist
+
+[![GitHub release](https://img.shields.io/github/v/release/Swatto86/AutoMarkAssist?display_name=tag&sort=semver)](https://github.com/Swatto86/AutoMarkAssist/releases)
+[![Package Release](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml/badge.svg)](https://github.com/Swatto86/AutoMarkAssist/actions/workflows/release.yml)
+[![CurseForge](https://img.shields.io/badge/CurseForge-AutoMarkAssist-f16436?logo=curseforge&logoColor=white)](https://www.curseforge.com/wow/addons/automarkassist)
+
 AutoMarkAssist is a WoW Classic addon for repeatable raid-target assignment across dungeons and raids. It combines a built-in mob-priority database, configurable mark pools, proximity or mouseover scanning, manual teaching, and live rebalance logic so groups can keep a consistent kill order without re-marking every pull by hand.
 
 Downloads:

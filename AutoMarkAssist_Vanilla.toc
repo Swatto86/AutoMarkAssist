@@ -1,8 +1,8 @@
 ## Interface: 11508
 ## Title: |cFF00CCFFAutoMark|r|cFFFFFFFFAssist|r
-## Notes: Intelligent kill-priority marking for Classic dungeons and raids. Automatically assigns icons to mobs on proximity, with dynamic bump-marking and cascade rebalancing.
+## Notes: Automatic dungeon and raid marking with intelligent CC assignment based on group composition. Supports proximity, mouseover, and manual marking modes.
 ## Author: Swatto
-## Version: 2.7.17
+## Version: 3.0.0
 ## X-Website: https://www.curseforge.com/wow/addons/automarkassist
 ## X-Curse-Project-ID: 1479940
 ## X-WoWI-ID: 0

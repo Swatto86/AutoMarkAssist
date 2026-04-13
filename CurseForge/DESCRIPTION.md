@@ -1,5 +1,70 @@
 # AutoMarkAssist
 
+AutoMarkAssist is a WoW Classic addon that automatically marks mobs in dungeons and raids based on kill priority and crowd control. It detects your group composition and intelligently assigns CC marks to the right targets, announcing the plan on entry so everyone knows what each mark means.
+
+## Mark Assignments
+
+- **Skull** = First Kill
+- **Cross** = Second Kill
+- **Moon** = Polymorph (Mage)
+- **Diamond** = Sap (Rogue)
+- **Triangle** = Banish (Warlock)
+- **Star** = Shackle (Priest)
+- **Circle** = Hibernate (Druid)
+- **Square** = Trap (Hunter) — disabled by default
+
+Skull and Cross are always kill targets. CC marks are only used when the matching class is in your group. Unused CC marks become additional kill targets.
+
+## Three Marking Modes
+
+- **Proximity** (default) — Auto-marks hostile mobs within range.
+- **Mouseover** — Marks when you hover over a mob.
+- **Manual** — Hold a modifier key and scroll to pick marks.
+
+Only one mode is active at a time.
+
+## Smart CC Detection
+
+The addon reads your group roster and determines available CC:
+
+- Mage → Polymorph (Humanoid, Beast)
+- Rogue → Sap (Humanoid)
+- Warlock → Banish (Demon, Elemental)
+- Priest → Shackle Undead
+- Druid → Hibernate (Beast, Dragonkin)
+- Hunter → Trap (Beast)
+
+On dungeon/raid entry, the addon announces which marks mean what based on who is actually present. Only relevant CC marks are announced.
+
+## Key Features
+
+- Built-in mob database covering Classic through MoP dungeons and raids.
+- Automatic CC assignment based on creature type and group composition.
+- Dynamic bump-marking and death cascade rebalancing.
+- Combat mark lock to prevent mid-fight reassignment.
+- Per-mark enable/disable toggles.
+- In-game database editor for mob priority overrides.
+- Configurable announce channel and prefix.
+- Manual scroll-wheel mark picker with floating HUD.
+- Minimap button with status indicator.
+- Respects existing marks from other players.
+
+## Commands
+
+- `/ama` — Open options
+- `/ama announce` — Send mark plan to chat
+- `/ama preview` — Preview mark plan locally
+- `/ama mode <proximity|mouseover|manual>` — Switch mode
+- `/ama manual` — Toggle manual mode
+- `/ama cc` — Show group CC abilities
+- `/ama reset` — Clear all marks
+- `/ama help` — Full command list
+
+## Supported Versions
+
+Classic Era, TBC Anniversary, Wrath Classic, Cata Classic, and MoP Classic.
+# AutoMarkAssist
+
 AutoMarkAssist is a Classic-only World of Warcraft addon for fast, repeatable raid-target assignment. It can auto-mark or manual-mark enemies in parties and raids, using a built-in zone-aware mob database, your configured mark pools, and live pull state to keep kill order clear. The built-in database now covers all supported dungeons and raids through MoP Classic when those expansion modules are loaded. It was built around TBC Classic Anniversary first, then expanded into a multi-TOC addon that also supports Classic Era, Wrath Classic, Cata Classic, and MoP Classic from the same folder.
 
 The addon only works when your character is actually allowed to place raid icons. In practice that means party marking follows the live client rules for 5-player groups, and raids still require leader or assistant permissions. AutoMarkAssist will not bypass Blizzard restrictions.

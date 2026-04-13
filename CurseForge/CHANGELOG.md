@@ -1,5 +1,48 @@
 # AutoMarkAssist Changelog
 
+## 3.0.0
+
+### Major Rewrite
+
+Complete simplification of the addon architecture. Reduced codebase from ~5000 lines to ~2500 lines.
+
+### Changed
+
+- **Fixed mark assignments**: Skull=First Kill, Cross=Second Kill, Diamond=Sap, Triangle=Banish, Moon=Polymorph, Star=Shackle, Circle=Hibernate. No more configurable pools.
+- **Three mutually exclusive modes**: Proximity (default), Mouseover, and Manual. Stored as a single `markingMode` setting instead of separate boolean flags.
+- **Simplified CC detection**: The addon reads the group roster and assigns CC marks only for classes actually present. Unused CC marks become kill targets.
+- **Announce on entry**: When entering a dungeon or raid, the addon announces the mark plan showing kills and only CC marks for classes in the group.
+- **Simplified mark allocation**: Removed the pool system (HIGH/CC/MEDIUM/LOW pools), sub-priorities, encounter-specific rules, CC limits, and spill pool logic. Marks are now allocated in a fixed order: kill marks first, then CC marks for matching creature types.
+- **Simplified config UI**: Removed pool editor. General tab now has a clean mode selector, per-mark enable/disable toggles, and behaviour settings. Database and About tabs remain.
+- **Per-mark toggles**: Simple enable/disable for each mark. Square (Trap) is disabled by default.
+- **Migration**: Existing saved variables are automatically migrated. Old pool/mode settings are converted to the new format and obsolete keys are cleaned up.
+
+### Removed
+
+- Pool system (markPools, pool editor, pool allocation tiers)
+- Configurable CC role marks (smartCCRoleMarks)
+- CC limit setting
+- Sub-priority system (mobSubPriorities)
+- Encounter-specific priority rules
+- Manual mark preferences per zone (manualMarkPrefs)
+- What's New popup
+- Separate mode booleans (proximityMode, mouseoverMode, manualMode)
+- skipFillerMobs setting (simplified to skipCritters)
+- Single-line announce format (always line-by-line)
+
+## 2.7.17
+
+### Changed
+
+- Removed the Legend tab and fixed Smart Group CC to a single shipped icon layout.
+
+### Bug fixes
+
+- Fixed the Options panel crash caused by the retired Legend-tab helper path.
+- Fixed config navigation and related help text after collapsing to four tabs.
+- Fixed mark-plan announce and preview so they only show CC labels for classes actually present.
+# AutoMarkAssist Changelog
+
 ## 2.7.17 (2026-04-13)
 
 ### Changed
