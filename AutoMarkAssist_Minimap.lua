@@ -409,7 +409,7 @@ do
 
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY")
-    dot:SetTexture("Interface\\Minimap\\Ping\\ping2")
+    dot:SetTexture("Interface\\Minimap\\Ping\\ping1")
     dot:SetSize(18, 18)
     dot:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 2, 2)
 
