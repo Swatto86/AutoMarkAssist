@@ -170,7 +170,6 @@ frame:SetScript("OnUpdate", function(self, elapsed)
     if not AutoMarkAssistDB.enabled then return end
     if AMA.GetMarkingMode() ~= "proximity" then return end
     if AMA.IsCombatMarkLockActive and AMA.IsCombatMarkLockActive() then return end
-    if not (IsInGroup() or (IsInRaid and IsInRaid())) then return end
 
     local canMark = AMA.CanMarkReason()
     if not canMark then return end

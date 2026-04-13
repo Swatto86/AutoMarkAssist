@@ -99,9 +99,9 @@ function AMA.TrySetRaidTarget(unitToken, markIdx)
         if markIdx == MARK_NONE then return true, nil end
         return false, "unit disappeared"
     end
-    local applied = GetRaidTargetIndex and GetRaidTargetIndex(unitToken) or MARK_NONE
-    if (applied or MARK_NONE) == markIdx then return true, nil end
-    return false, string.format("requested %s, got %s", tostring(markIdx), tostring(applied or MARK_NONE))
+    -- Skip checking GetRaidTargetIndex immediately, as the server API 
+    -- often takes a tick to sync the target back to the client.
+    return true, nil
 end
 
 function AMA.IsLocalMark(guid)
