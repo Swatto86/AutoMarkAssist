@@ -1,5 +1,18 @@
 # AutoMarkAssist Changelog
 
+## 2.7.15 (2026-04-13)
+
+### Changed
+
+- Extended Smart Group CC so the same roster-aware crowd-control solver now works in raid instances as well as 5-player dungeons.
+- Locked Skull and Cross as fixed kill-order marks, removed them from Smart Group CC role preferences, and tightened the Legend tab so only active non-CC marks remain editable.
+
+### Bug fixes
+
+- Fixed auto marking so remembered manual icon preferences only apply when they still fit the mob's current tier and the player's active pools.
+- Fixed mark preview and announce output so they only list marks that are active in the current pools, which keeps presets like Kill Only aligned with live marking behavior.
+- Fixed pool editor updates so Smart Group CC reminders refresh immediately after pool changes instead of waiting for the next group or zone event.
+
 ## 2.7.14 (2026-04-13)
 
 ### Bug fixes

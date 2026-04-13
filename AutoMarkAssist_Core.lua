@@ -810,6 +810,20 @@ local function NextFreeAllowedMarkInPool(pool, allowed)
     return nil
 end
 
+local function PoolContainsMark(pool, markIdx)
+    if type(pool) ~= "table" or not markIdx then
+        return false
+    end
+
+    for _, candidateMark in ipairs(pool) do
+        if candidateMark == markIdx then
+            return true
+        end
+    end
+
+    return false
+end
+
 local function AllocateMark(priority, options)
     -- Allowed set: union of all configured pools.  Marks the user has removed
     -- from every pool are never assigned automatically.  An empty tier pool
@@ -1625,8 +1639,18 @@ function AMA.AssignMark(unitToken, skipSync, source)
 
     local prefMark = GetManualPref(mobName)
     local markIdx, evictGUID
+    local allowManualPref = false
 
-    if prefMark and not AMA.markOwners[prefMark] then
+    if prefMark and not allocationStrategy then
+        local allowedMarks = GetAllowedMarks()
+        local idealPool = (allocationOptions and allocationOptions.idealPool)
+            or AMA.GetConfiguredPool(priority)
+        allowManualPref = allowedMarks[prefMark]
+            and PoolContainsMark(idealPool, prefMark)
+            and not AMA.markOwners[prefMark]
+    end
+
+    if allowManualPref then
         markIdx = prefMark
         AMA.VPrint("Using manual pref for " .. mobName .. ": " ..
             (AMA.MARK_NAMES[prefMark] or prefMark))

@@ -15,14 +15,14 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.14"
+AMA.VERSION    = "2.7.15"
 AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Skull and Cross are now fixed as the primary kill-order marks and are no longer reusable for Smart Group CC or other pool tiers.",
     "Smart Group CC now works in raid instances as well as party instances, using the live group roster to detect available crowd control.",
-    "The pull-wide CC solver still gives limited CC options to the mobs that need them first, while your chosen CC-role icons drive the dedicated CC marks.",
+    "Skull and Cross are now fixed as the primary kill-order marks and are no longer reusable for Smart Group CC or other pool tiers.",
+    "Auto mode, remembered manual marks, and preview or announce output now honor the active pools cleanly, so presets like Kill Only only use Skull and Cross.",
 }
 
 -- ============================================================
