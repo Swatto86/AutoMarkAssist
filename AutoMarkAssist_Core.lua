@@ -393,7 +393,7 @@ local function AllocateMarkDynamic(priority, unitToken)
         return nil, nil
     end
 
-    -- Try to displace a lower-priority mob.
+    -- Try to displace a lower-priority mob, or a distant/stale mob of the same priority.
     local myRank = PRIORITY_RANK[priority] or 3
     local bestMark, bestGUID, bestRank = nil, nil, -1
 
@@ -403,10 +403,20 @@ local function AllocateMarkDynamic(priority, unitToken)
             if ownerGUID and AMA.guidMarkSource[ownerGUID] == MARK_SOURCE_LOCAL then
                 local ownerPri = AMA.guidPriority[ownerGUID] or PRIORITY_MEDIUM
                 local ownerRank = PRIORITY_RANK[ownerPri] or 3
-                if myRank < ownerRank and ownerRank > bestRank then
+                
+                local token = AMA.markTokens[m]
+                -- Evaluate physical closeness, subtracting defensive rank from out-of-range or stale mobs
+                local isClose = token and UnitExists(token) and IsUnitInRange(token, AutoMarkAssistDB and AutoMarkAssistDB.proximityRange or 4)
+                
+                local effectiveRank = ownerRank
+                if not isClose then
+                    effectiveRank = ownerRank + 0.5
+                end
+
+                if myRank < effectiveRank and effectiveRank > bestRank then
                     bestMark = m
                     bestGUID = ownerGUID
-                    bestRank = ownerRank
+                    bestRank = effectiveRank
                 end
             end
         end
