@@ -482,11 +482,9 @@ do
     local y = -10
 
     -- ── Enabled ──
-    local cbEnable = E.Chk(t1, "Enable Marking", 0, y, "enabled", function()
+    E.Chk(t1, "Enable Marking", 12, y, "enabled", function()
         AMA.UpdateMinimapState()
     end)
-    cbEnable:ClearAllPoints()
-    cbEnable:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
     y = y - 24
 
     E.Sep(t1, y)
@@ -504,7 +502,7 @@ do
     modeBtns = {}
     for i, def in ipairs(MODE_DEFS) do
         local mb = E.Btn(t1, def.label, 90, 22)
-        mb:SetPoint("TOP", t1, "TOP", -108 + (i - 1) * 108, y)
+        mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 12 + (i - 1) * 108, y)
         mb:SetScript("OnClick", function()
             AMA.SetMarkingMode(def.key)
             AMA.UpdateMinimapState()
@@ -517,15 +515,11 @@ do
     y = y - 28
 
     -- Proximity range.
-    local prLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    prLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
-    prLbl:SetText("Proximity Range:")
-    prLbl:SetWidth(120)
-    prLbl:SetJustifyH("RIGHT")
+    E.Label(t1, "Proximity Range:", 16, y)
     proxRangeBtns = {}
     for prIdx, rangeVal in ipairs({ 2, 3, 4 }) do
-        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 105, 22)
-        rb:SetPoint("TOPLEFT", t1, "TOP", -40 + (prIdx - 1) * 110, y)
+        local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 130, 22)
+        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 135, y)
         rb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.proximityRange = rangeVal end
             AMA.Print("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
@@ -537,16 +531,11 @@ do
     y = y - 24
 
     -- Manual modifier key.
-    local modLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    modLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
-    modLbl:SetText("Manual Modifier:")
-    modLbl:SetWidth(120)
-    modLbl:SetJustifyH("RIGHT")
-
+    E.Label(t1, "Manual Modifier:", 16, y)
     modBtns = {}
     for mi, mod in ipairs({ "ALT", "SHIFT", "CTRL" }) do
         local mb = E.Btn(t1, mod, 60, 22)
-        mb:SetPoint("TOPLEFT", t1, "TOP", -40 + (mi - 1) * 65, y)
+        mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (mi - 1) * 65, y)
         mb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.manualModifier = mod end
             AMA.Print("Manual modifier: " .. mod)
@@ -571,8 +560,8 @@ do
         local isKill = (markIdx == MARK_SKULL or markIdx == MARK_CROSS)
 
         local row = CreateFrame("Frame", nil, t1)
-        row:SetSize(300, 20)
-        row:SetPoint("TOP", t1, "TOP", 0, y)
+        row:SetSize(CONFIG_W - 24, 20)
+        row:SetPoint("TOPLEFT", t1, "TOPLEFT", 12, y)
 
         -- Mark icon.
         local icon = row:CreateTexture(nil, "ARTWORK")
@@ -639,23 +628,17 @@ do
     E.Header(t1, "Behaviour", 8, y)
     y = y - 22
 
-cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynamicMarking")
-    cbDynamic:ClearAllPoints(); cbDynamic:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 12, y, "dynamicMarking")
     y = y - 20
-    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 0, y, "lockMarksInCombat")
-    cbCombatLock:ClearAllPoints(); cbCombatLock:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat")
     y = y - 20
-    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 0, y, "rebalanceOnDeath")  
-    cbRebal:ClearAllPoints(); cbRebal:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 12, y, "rebalanceOnDeath")
     y = y - 20
-    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 0, y, "autoReset")      
-    cbAutoReset:ClearAllPoints(); cbAutoReset:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 12, y, "autoReset")
     y = y - 20
-    cbCritters = E.Chk(t1, "Skip Critters", 0, y, "skipCritters")
-    cbCritters:ClearAllPoints(); cbCritters:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbCritters = E.Chk(t1, "Skip Critters", 12, y, "skipCritters")
     y = y - 20
-    local cbVerbose = E.Chk(t1, "Verbose Mode", 0, y, "verbose")
-    cbVerbose:ClearAllPoints(); cbVerbose:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    E.Chk(t1, "Verbose Mode", 12, y, "verbose")
     y = y - 24
 
     E.Sep(t1, y)
@@ -665,20 +648,14 @@ cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynam
     E.Header(t1, "Announcements", 8, y)
     y = y - 22
 
-    cbAnnounce = E.Chk(t1, "Announce Mark Plan on Dungeon Entry", 0, y, "announceOnEntry")
-    cbAnnounce:ClearAllPoints(); cbAnnounce:SetPoint("TOPLEFT", t1, "TOP", -100, y - 1)
+    cbAnnounce = E.Chk(t1, "Announce Mark Plan on Dungeon Entry", 12, y, "announceOnEntry")
     y = y - 24
 
-    local chanLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    chanLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
-    chanLbl:SetText("Channel:")
-    chanLbl:SetWidth(120)
-    chanLbl:SetJustifyH("RIGHT")
-
+    E.Label(t1, "Channel:", 16, y)
     announceChannelBtns = {}
     for ci, ch in ipairs({ "SAY", "PARTY", "RAID" }) do
         local cb = E.Btn(t1, ch, 60, 22)
-        cb:SetPoint("TOPLEFT", t1, "TOP", -40 + (ci - 1) * 65, y)
+        cb:SetPoint("TOPLEFT", t1, "TOPLEFT", 80 + (ci - 1) * 68, y)
         cb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.announceChannel = ch end
             AMA.Print("Announce channel: " .. ch)
@@ -689,14 +666,9 @@ cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynam
     end
     y = y - 24
 
-    local prefLbl = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    prefLbl:SetPoint("TOPLEFT", t1, "TOP", -180, y - 4)
-    prefLbl:SetText("Prefix:")
-    prefLbl:SetWidth(120)
-    prefLbl:SetJustifyH("RIGHT")
-
-    announcePrefixEdit = E.EditBox(t1, 190, 20)
-    announcePrefixEdit:SetPoint("TOPLEFT", t1, "TOP", -40, y)
+    E.Label(t1, "Prefix:", 16, y)
+    announcePrefixEdit = E.EditBox(t1, 200, 20)
+    announcePrefixEdit:SetPoint("TOPLEFT", t1, "TOPLEFT", 80, y)
     announcePrefixEdit:SetScript("OnEnterPressed", function(self)
         if AutoMarkAssistDB then
             AutoMarkAssistDB.announcePrefixText = self:GetText()
@@ -707,11 +679,11 @@ cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynam
 
     -- Announce/Preview buttons.
     local announceBtn = E.Btn(t1, "Announce Now", 100, 24)
-    announceBtn:SetPoint("TOPRIGHT", t1, "TOP", -5, y)
+    announceBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 24, y)
     announceBtn:SetScript("OnClick", function() AMA.AnnounceMarkPlan() end)
 
-    local previewBtn = E.Btn(t1, "Preview", 100, 24)
-    previewBtn:SetPoint("TOPLEFT", t1, "TOP", 5, y)
+    local previewBtn = E.Btn(t1, "Preview", 80, 24)
+    previewBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 140, y)
     previewBtn:SetScript("OnClick", function() AMA.PreviewMarkPlan() end)
 
     -- ================================================================
@@ -735,7 +707,7 @@ cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynam
 
     local zoneScroll = CreateFrame("ScrollFrame", "AMA_ZoneScrollFrame", zoneListFrame, "UIPanelScrollFrameTemplate")
     zoneScroll:SetPoint("TOPLEFT", zoneListFrame, "TOPLEFT", 4, -4)
-    zoneScroll:SetPoint("BOTTOMRIGHT", zoneListFrame, "BOTTOMRIGHT", -22, 4)    
+    zoneScroll:SetPoint("BOTTOMRIGHT", zoneListFrame, "BOTTOMRIGHT", -22, 4)
     local zoneChild = CreateFrame("Frame", nil, zoneScroll)
     zoneChild:SetWidth(130)
     zoneScroll:SetScrollChild(zoneChild)
@@ -851,61 +823,75 @@ cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 0, y, "dynam
             child:Hide(); child:SetParent(nil)
         end
 
-        local zones = {}
-        -- Collect from ExpansionOrder.
+        local elements = {}
+        local zoneSet = {}
+
         if AutoMarkAssist_ExpansionOrder then
             for _, group in ipairs(AutoMarkAssist_ExpansionOrder) do
-                if type(group) == "table" then
-                    for i = 2, #group do
-                        local z = group[i]
-                        if z and z ~= "" then zones[#zones + 1] = z end
+                if type(group) == "table" and group.name then
+                    elements[#elements + 1] = { isHeader = true, text = group.name }
+                    for _, z in ipairs(group.zones or {}) do
+                        if z and z ~= "" and not zoneSet[z] then
+                            elements[#elements + 1] = { isHeader = false, text = z }
+                            zoneSet[z] = true
+                        end
                     end
                 end
             end
         end
-        -- Also collect from MobDB directly.
+
         if AutoMarkAssist_MobDB then
-            local zoneSet = {}
-            for _, z in ipairs(zones) do zoneSet[z] = true end
+            local missing = {}
             for z in pairs(AutoMarkAssist_MobDB) do
-                if not zoneSet[z] then zones[#zones + 1] = z end
+                if not zoneSet[z] then missing[#missing + 1] = z end
+            end
+            if #missing > 0 then
+                table.sort(missing)
+                elements[#elements + 1] = { isHeader = true, text = "Other" }
+                for _, z in ipairs(missing) do
+                    elements[#elements + 1] = { isHeader = false, text = z }
+                end
             end
         end
 
         local btnY = -4
-        for _, zoneName in ipairs(zones) do
-            local zBtn = CreateFrame("Button", nil, zoneChild)
-            zBtn:SetSize(126, 16)
-            zBtn:SetPoint("TOPLEFT", zoneChild, "TOPLEFT", 2, btnY)
-            zBtn:RegisterForClicks("LeftButtonUp")
+        for _, el in ipairs(elements) do
+            if el.isHeader then
+                btnY = btnY - 4
+                local hFS = zoneChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                hFS:SetPoint("TOPLEFT", zoneChild, "TOPLEFT", 4, btnY)
+                hFS:SetText("|cFF1A9EC0" .. el.text .. "|r")
+                btnY = btnY - 18
+            else
+                local zoneName = el.text
+                local zBtn = CreateFrame("Button", nil, zoneChild)
+                zBtn:SetSize(118, 16)
+                zBtn:SetPoint("TOPLEFT", zoneChild, "TOPLEFT", 12, btnY)
+                zBtn:RegisterForClicks("LeftButtonUp")
 
-            local zFS = zBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            zFS:SetPoint("LEFT", zBtn, "LEFT", 2, 0)
-            zFS:SetText(zoneName)
-            zFS:SetWidth(122); zFS:SetJustifyH("LEFT")
-            zFS:SetTextColor(0.8, 0.8, 0.8, 1)
+                local zFS = zBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+                zFS:SetPoint("LEFT", zBtn, "LEFT", 0, 0)
+                zFS:SetText(zoneName)
+                zFS:SetWidth(116); zFS:SetJustifyH("LEFT")
+                zFS:SetTextColor(0.8, 0.8, 0.8, 1)
 
-            zBtn:SetScript("OnClick", function()
-                dbTabCurrentZone = zoneName
-                RefreshMobList(zoneName)
-            end)
-            zBtn:SetScript("OnEnter", function()
-                zFS:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-            end)
-            zBtn:SetScript("OnLeave", function()
-                if dbTabCurrentZone == zoneName then
-                    zFS:SetTextColor(1, 1, 1, 1)
-                else
-                    zFS:SetTextColor(0.8, 0.8, 0.8, 1)
-                end
-            end)
+                zBtn:SetScript("OnClick", function()
+                    dbTabCurrentZone = zoneName
+                    RefreshMobList(zoneName)
+                end)
+                zBtn:SetScript("OnEnter", function()
+                    zFS:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
+                end)
+                zBtn:SetScript("OnLeave", function()
+                    if dbTabCurrentZone == zoneName then
+                        zFS:SetTextColor(1, 1, 1, 1)
+                    else
+                        zFS:SetTextColor(0.8, 0.8, 0.8, 1)
+                    end
+                end)
 
-            btnY = btnY - 16
-        end
-        zoneChild:SetHeight(math.abs(btnY) + 8)
-    end
-
-    RefreshDBTab = function()
+                btnY = btnY - 16
+            end
         RefreshZoneList()
         if dbTabCurrentZone then
             RefreshMobList(dbTabCurrentZone)
