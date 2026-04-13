@@ -15,14 +15,14 @@ local AMA      = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "2.7.11"
+AMA.VERSION    = "2.7.14"
 AMA.AUTHOR     = "Swatto"
 AMA.AUTOMATION_DEFAULTS_MIGRATION_VERSION = "2.7.10-automation-modes"
 
 AMA.LATEST_WHATS_NEW = {
-    "Manual Mode now works even when auto-marking is turned off, so scroll-wheel marking remains available as its own operating mode.",
-    "The mouseover HUD, scroll catcher, and manual permission checks now stay aligned instead of leaving Manual Mode enabled but inert.",
-    "The General tab now explains that proximity and mouseover are mutually exclusive automatic scan modes while Manual Mode only pauses automatic scanning.",
+    "Small 5-player pulls now stay on your configured kill-order marks first, so a two-mob pull uses Skull and Cross before dedicated CC icons are considered.",
+    "Larger 5-player pulls still use Smart Dungeon CC, but now follow your chosen CC-role icon preferences only after the kill-order pool is fully needed.",
+    "Rebalance and death-cascade now reuse the same Smart Dungeon CC strategy, so icon behavior stays consistent after pulls change mid-fight.",
 }
 
 -- ============================================================

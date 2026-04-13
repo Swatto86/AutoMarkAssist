@@ -895,6 +895,7 @@ local function ShowSmartCCHelp()
         "How Smart Dungeon CC Works",
         "When enabled, dungeon auto-marking looks at your current 5-player group and only hands out CC marks that match the party's available control classes.\n\n"
             .. "It also checks the target's creature type before using a CC icon. Example: undead prefer Priest-style CC, demons and elementals prefer Warlock-style CC, and beasts can use Hunter, Druid, or Mage-style CC.\n\n"
+            .. "If the whole visible pull fits inside your configured kill-order pool, AutoMarkAssist uses those primary kill marks first. Dedicated CC icons only start once the pull is larger than the available kill-order slots.\n\n"
             .. "You can change which icon each CC type prefers from the Legend tab, so assignments like moon for sheep or diamond for sap can match your group's conventions.\n\n"
             .. "If the party cannot reliably crowd-control that target type, or all compatible CC marks are already taken, the mob falls back to kill-order marks instead of receiving a misleading CC icon.\n\n"
             .. "On dungeon entry, automated mode also posts the current party CC responsibilities to party chat so everyone can see which player owns each CC mark.\n\n"
@@ -1146,7 +1147,7 @@ local smartCCNote = t1:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall"
 smartCCNote:SetPoint("TOPLEFT", t1, "TOPLEFT", 28, ROW + 2)
 smartCCNote:SetWidth(470)
 smartCCNote:SetJustifyH("LEFT")
-smartCCNote:SetText("Only applies inside 5-player dungeons. Unsupported or exhausted CC targets fall back to kill-order marks. Turn off the automatic party reminder here if you only want manual /ama ccannounce or Repeat Party CC posts.")
+smartCCNote:SetText("Only applies inside 5-player dungeons. Pulls that fit inside the active kill-order pool use those marks first; larger pulls then start assigning dedicated CC icons. Unsupported or exhausted CC targets fall back to kill-order marks. Turn off the automatic party reminder here if you only want manual /ama ccannounce or Repeat Party CC posts.")
 smartCCNote:SetTextColor(0.70, 0.70, 0.70, 1)
 ROW = ROW - math.max(40,
     math.ceil((smartCCNote.GetStringHeight and smartCCNote:GetStringHeight()) or 0)) - 10
