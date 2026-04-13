@@ -2,37 +2,25 @@
 
 ## 3.0.0
 
-### Major Rewrite
+### Major Rewrite & Simplification
+The entire architecture of AutoMarkAssist has been vastly simplified, dramatically reducing the codebase size to provide a leaner, more performant, and smarter marking experience.
 
-Complete simplification of the addon architecture. Reduced codebase from ~5000 lines to ~2500 lines.
+### New Features & Improvements
+- **Smart Group CC Recognition**: CC assignments are now intelligently detected based on your *active group composition*. If you enter a dungeon and do not have a Mage, Moon (Polymorph) will not be assigned as a CC, and instead dynamically rolls over to serve as an extra Kill target.
+- **Three Distinct Modes**: Marking modes have been streamlined into `Proximity` (default), `Mouseover`, and `Manual` targeting. These function mutually exclusively to prevent confusing overlapping behaviors.
+- **Filter-Aware Manual Scrolling**: The Manual marking mode now precisely respects your disabled marks (for instance, skipping Square if you have it disabled in options) when using the scroll-wheel bindings.
+- **Refined Priority System**: Removed the overly-complex configurable pool systems. Marks are now allocated in a fixed, logical order: Kill marks prioritize highest, followed directly by CC marks matching the specific `CreatureType` to your group's present classes.
+- **Revamped Configuration UI**: The config panel has been thoroughly rebuilt.
+  - **General Tab**: A spacious, organized interface for mode selection, proximity range, announcement settings, and per-mark toggles.
+  - **Database Tab**: Browse the internal zone registry—now neatly grouped by Expansion categories—and assign priority overwrites directly. The list dynamically scales to fit longer target names.
+  - **About Tab**: Quick reference for commands and the fixed CC mark mapping layout.
+- **Auto-Announce on Entry**: The addon will automatically post a well-formatted kill and CC plan to your party chat upon zoning into an instance based on exactly who is in your group.
 
-### Changed
-
-- **Fixed mark assignments**: Skull=First Kill, Cross=Second Kill, Diamond=Sap, Triangle=Banish, Moon=Polymorph, Star=Shackle, Circle=Hibernate. No more configurable pools.
-- **Three mutually exclusive modes**: Proximity (default), Mouseover, and Manual. Stored as a single `markingMode` setting instead of separate boolean flags.
-- **Simplified CC detection**: The addon reads the group roster and assigns CC marks only for classes actually present. Unused CC marks become kill targets.
-- **Announce on entry**: When entering a dungeon or raid, the addon announces the mark plan showing kills and only CC marks for classes in the group.
-- **Simplified mark allocation**: Removed the pool system (HIGH/CC/MEDIUM/LOW pools), sub-priorities, encounter-specific rules, CC limits, and spill pool logic. Marks are now allocated in a fixed order: kill marks first, then CC marks for matching creature types.
-- **Simplified config UI**: Removed pool editor. General tab now has a clean mode selector, per-mark enable/disable toggles, and behaviour settings. Database and About tabs remain.
-- **Per-mark toggles**: Simple enable/disable for each mark. Square (Trap) is disabled by default.
-- **Migration**: Existing saved variables are automatically migrated. Old pool/mode settings are converted to the new format and obsolete keys are cleaned up.
-
-### Removed
-
-- Pool system (markPools, pool editor, pool allocation tiers)
-- Configurable CC role marks (smartCCRoleMarks)
-- CC limit setting
-- Sub-priority system (mobSubPriorities)
-- Encounter-specific priority rules
-- Manual mark preferences per zone (manualMarkPrefs)
-- What's New popup
-- Separate mode booleans (proximityMode, mouseoverMode, manualMode)
-- skipFillerMobs setting (simplified to skipCritters)
-- Single-line announce format (always line-by-line)
-
-## 2.7.17
-
-### Changed
+### Cleaned Up & Removed
+- Removed the confusing multi-tier pool system, pool editors, and encounter-specific rule sets.
+- Stripped out "skip filler mobs" complexity in favor of a straightforward "Skip Critters/Trivia" toggle.
+- Removed legacy sub-priority systems and manual zone-preference bloat.
+- Built-in seamless migration: Your old saved variables will be automatically upgraded, converting relevant options while purging obsolete legacy data.
 
 - Removed the Legend tab and fixed Smart Group CC to a single shipped icon layout.
 
