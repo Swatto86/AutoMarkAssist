@@ -430,12 +430,15 @@ do
         local mode = AMA.GetMarkingMode()
         local enabled = AMA.IsAddonEnabled()
         if mode == "manual" then
+            dot:SetVertexColor(1, 1, 1, 1)
             dot:SetTexCoord(0.0, 0.125, 0.0, 0.25)   -- warrior/etc on blip
             if AMA._scrollCatcher then AMA._scrollCatcher:Show() end
         elseif enabled then
+            dot:SetVertexColor(0, 1, 0, 1)
             dot:SetTexCoord(0.125, 0.25, 0.0, 0.25)   -- proper green on blip
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         else
+            dot:SetVertexColor(1, 0, 0, 1)
             dot:SetTexCoord(0.25, 0.375, 0.0, 0.25)     -- red on blip
             if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
         end
