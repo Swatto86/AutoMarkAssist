@@ -355,6 +355,15 @@ do
 
     function AMA.ShowMarkPickerForMouseover()
         if AMA.GetMarkingMode() ~= "manual" then return end
+        
+        local mod = AutoMarkAssistDB and AutoMarkAssistDB.manualModifier or "ALT"
+        local modDown = false
+        if mod == "ALT" then modDown = IsAltKeyDown and IsAltKeyDown()
+        elseif mod == "SHIFT" then modDown = IsShiftKeyDown and IsShiftKeyDown()
+        elseif mod == "CTRL" then modDown = IsControlKeyDown and IsControlKeyDown()
+        end
+        if not modDown then return end
+
         if not UnitExists("mouseover") then return end
         if not UnitCanAttack("player", "mouseover") then return end
 
