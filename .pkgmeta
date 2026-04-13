@@ -1,0 +1,10 @@
+package-as: AutoMarkAssist
+
+ignore:
+  - .github
+  - .gitignore
+  - .pkgmeta
+  - README.md
+  - CurseForge/CHANGELOG.md
+  - CurseForge/DESCRIPTION.md
+  - .release
