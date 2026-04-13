@@ -18,7 +18,7 @@ local MARK_SQUARE   = 6
 local MARK_CROSS    = 7
 local MARK_SKULL    = 8
 
-local CONFIG_W = 480
+local CONFIG_W = 540
 local CONFIG_H = 700
 local TAB_H    = 24
 local CONFIG_MIN_SCALE   = 0.55

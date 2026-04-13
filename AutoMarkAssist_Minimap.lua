@@ -388,7 +388,7 @@ end
 -- ============================================================
 
 do
-    local BUTTON_SIZE = 28
+    local BUTTON_SIZE = 32
     local btn = CreateFrame("Button", "AMA_MinimapButton", Minimap)
     btn:SetSize(BUTTON_SIZE, BUTTON_SIZE)
     btn:SetFrameStrata("MEDIUM")
@@ -404,23 +404,23 @@ do
     bg:SetPoint("CENTER", btn, "CENTER", 0, 0)
     bg:SetVertexColor(0, 0, 0, 0.7)
 
+    -- Icon.
+    local icon = btn:CreateTexture(nil, "ARTWORK")
+    icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_8")
+    icon:SetSize(20, 20)
+    icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
+
     -- Icon border circle.
     local border = btn:CreateTexture(nil, "BORDER")
     border:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
     border:SetSize(54, 54)
-    border:SetPoint("TOPLEFT", btn, "TOPLEFT", -4, 4)
-
-    -- Icon.
-    local icon = btn:CreateTexture(nil, "ARTWORK")
-    icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_8")
-    icon:SetSize(18, 18)
-    icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
+    border:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
 
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY")
-    dot:SetTexture("Interface\\Minimap\\Ping\\ping1")
-    dot:SetSize(28, 28)
-    dot:SetPoint("CENTER", btn, "CENTER", 0, 0)
+    dot:SetTexture("Interface\\COMMON\\Indicator-White")
+    dot:SetSize(14, 14)
+    dot:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 2, -2)
     btn._dot = dot
 
     AMA.minimapButton = btn
