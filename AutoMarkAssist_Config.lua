@@ -143,6 +143,19 @@ local function BuildConfiguredCCOrder()
     return order
 end
 
+local function BuildConfiguredMarkSet()
+    local set = {}
+
+    for _, tierKey in ipairs({ "HIGH", "CC", "MEDIUM", "LOW" }) do
+        local pool = (AMA.GetConfiguredPool and AMA.GetConfiguredPool(tierKey)) or {}
+        for _, markIdx in ipairs(pool) do
+            set[markIdx] = true
+        end
+    end
+
+    return set
+end
+
 local function BuildSmartCCLegendLabels()
     local labelsByMark = {}
 
@@ -254,10 +267,12 @@ local function BuildMarkLegendLines(iconMap)
     local legend = BuildEffectiveLegendDescriptions()
     local ccLimit = AutoMarkAssistDB and AutoMarkAssistDB.ccLimit or 0
     local ccPool = (ccLimit > 0) and BuildCCPoolSet() or {}
+    local activeMarks = BuildConfiguredMarkSet()
     local ccSeen = 0
     local lines = {}
 
     for _, idx in ipairs(AMA.ALL_MARKS_ORDERED) do
+        if activeMarks[idx] then
         local inCCPool = ccLimit > 0 and ccPool[idx]
         if inCCPool then
             ccSeen = ccSeen + 1
@@ -278,6 +293,7 @@ local function BuildMarkLegendLines(iconMap)
                 end
                 lines[#lines + 1] = line
             end
+        end
         end
     end
 
@@ -953,7 +969,7 @@ local function ShowManualSaveHelp()
         "How Manual Marks Are Saved",
         "Manual marking lets you choose a mark first, then apply it when the picker closes.\n\n"
             .. "After that, the addon saves a per-zone memory for that mob.\n\n"
-            .. "The icon you pick is remembered as a preferred mark. If that icon is free later, auto mode will try to use it again.\n\n"
+            .. "The icon you pick is remembered as a preferred mark. If that icon is still valid for the mob's current tier and current pools later, auto mode will try to use it again. Fixed kill-order marks and Smart Group CC assignments still take priority.\n\n"
             .. "The mob's matching priority tier is also written into the Database tab for that zone. That lets auto marking keep using your chosen setup after you leave manual mode.")
 end
 
@@ -1843,6 +1859,9 @@ for ti, tdef in ipairs(TIER_DEFS) do
             end
             pools[self.priority]       = pool
             AutoMarkAssistDB.markPools = (AMA.NormalizeMarkPools and AMA.NormalizeMarkPools(pools)) or pools
+            if AMA.RefreshDungeonCCAnnouncementQueue then
+                AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+            end
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         btn:SetScript("OnEnter", function(self)
@@ -1877,6 +1896,9 @@ for ti, tdef in ipairs(TIER_DEFS) do
         if AMA.NormalizeMarkPools then
             AutoMarkAssistDB.markPools = AMA.NormalizeMarkPools(AutoMarkAssistDB.markPools)
         end
+        if AMA.RefreshDungeonCCAnnouncementQueue then
+            AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        end
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
     end)
 end
@@ -1889,7 +1911,6 @@ local POOL_PRESETS = {
     { label = "Default",   pools = { HIGH = {8,7}, CC = {6,5,3}, MEDIUM = {4,2}, LOW = {1} } },
     { label = "Kill Only", pools = { HIGH = {8,7}, CC = {},       MEDIUM = {},    LOW = {} } },
     { label = "No CC",     pools = { HIGH = {8,7}, CC = {},       MEDIUM = {4,2}, LOW = {1} } },
-    { label = "Clear All", pools = { HIGH = {},    CC = {},       MEDIUM = {},    LOW = {} } },
 }
 
 for pi, preset in ipairs(POOL_PRESETS) do
@@ -1902,7 +1923,10 @@ for pi, preset in ipairs(POOL_PRESETS) do
             pools[k] = {}
             for i, mi in ipairs(v) do pools[k][i] = mi end
         end
-        AutoMarkAssistDB.markPools = pools
+        AutoMarkAssistDB.markPools = (AMA.NormalizeMarkPools and AMA.NormalizeMarkPools(pools)) or pools
+        if AMA.RefreshDungeonCCAnnouncementQueue then
+            AMA.RefreshDungeonCCAnnouncementQueue(0.5)
+        end
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
     end)
 end
@@ -1915,7 +1939,7 @@ local t3 = tabContents[3]
 legendBoxes = {}
 
 E.Label(t3, "Skull and Cross are fixed as Kill first and Kill second in previews and announcements.", 8, -10)
-E.Label(t3, "Active CC marks are driven by the Smart Group CC preferences below and are shown here read-only.", 8, -24)
+E.Label(t3, "Only active non-CC marks are editable here. Active CC and inactive marks are shown read-only.", 8, -24)
 
 for row, mi in ipairs(AMA.ALL_MARKS_ORDERED) do
     local yOff = -44 - (row - 1) * 30
@@ -3205,13 +3229,15 @@ function AMA.RefreshConfigFrame()
 
     if legendBoxes then
         local legend = BuildEffectiveLegendDescriptions()
+        local activeMarks = BuildConfiguredMarkSet()
         local activeCCMarks = BuildCCPoolSet()
         for mi = 1, 8 do
             local box = legendBoxes[mi]
             if box then
                 local isFixedKillOrder = mi == MARK_SKULL or mi == MARK_CROSS
+                local isInactiveMark = not activeMarks[mi]
                 local isSmartCCManaged = activeCCMarks[mi] and true or false
-                local isLockedLegend = isFixedKillOrder or isSmartCCManaged
+                local isLockedLegend = isFixedKillOrder or isSmartCCManaged or isInactiveMark
                 if not (box.HasFocus and box:HasFocus()) then
                     box._suspendLegendPersist = true
                     box:SetText(legend[mi] or "")
@@ -3229,6 +3255,8 @@ function AMA.RefreshConfigFrame()
                 if box.SetTextColor then
                     if isFixedKillOrder then
                         box:SetTextColor(1.0, 0.82, 0.20, 1)
+                    elseif isInactiveMark then
+                        box:SetTextColor(0.55, 0.55, 0.55, 1)
                     elseif isSmartCCManaged then
                         box:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
@@ -3238,6 +3266,8 @@ function AMA.RefreshConfigFrame()
                 if box.SetBackdropColor then
                     if isFixedKillOrder then
                         box:SetBackdropColor(0.22, 0.16, 0.04, 1)
+                    elseif isInactiveMark then
+                        box:SetBackdropColor(0.06, 0.06, 0.06, 1)
                     elseif isSmartCCManaged then
                         box:SetBackdropColor(0.08, 0.18, 0.22, 1)
                     else
@@ -3247,6 +3277,8 @@ function AMA.RefreshConfigFrame()
                 if box.SetBackdropBorderColor then
                     if isFixedKillOrder then
                         box:SetBackdropBorderColor(1.0, 0.75, 0.10, 1)
+                    elseif isInactiveMark then
+                        box:SetBackdropBorderColor(E.BORDER[1], E.BORDER[2], E.BORDER[3], 0.45)
                     elseif isSmartCCManaged then
                         box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
                     else
