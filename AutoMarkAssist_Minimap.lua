@@ -392,7 +392,7 @@ do
     local bg = btn:CreateTexture(nil, "BACKGROUND")
     bg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
     bg:SetSize(20, 20)
-    bg:SetPoint("CENTER", btn, "CENTER", 0, 1)
+    bg:SetPoint("CENTER", btn, "CENTER", 0, 0)
     bg:SetVertexColor(0, 0, 0, 0.7)
 
     -- Icon border circle.
@@ -405,7 +405,7 @@ do
     local icon = btn:CreateTexture(nil, "ARTWORK")
     icon:SetTexture("Interface\\TargetingFrame\\UI-RaidTargetingIcon_8")
     icon:SetSize(18, 18)
-    icon:SetPoint("CENTER", btn, "CENTER", 0, 1)
+    icon:SetPoint("CENTER", btn, "CENTER", 0, 0)
 
     -- Status dot.
     local dot = btn:CreateTexture(nil, "OVERLAY")
