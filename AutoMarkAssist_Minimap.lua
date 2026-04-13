@@ -416,11 +416,18 @@ do
     border:SetSize(54, 54)
     border:SetPoint("TOPLEFT", btn, "TOPLEFT", 0, 0)
 
+    -- Status dot background.
+    local dotBg = btn:CreateTexture(nil, "OVERLAY", nil, 1)
+    dotBg:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+    dotBg:SetSize(14, 14)
+    dotBg:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -2, 2)
+    dotBg:SetVertexColor(0, 0, 0, 1)
+
     -- Status dot.
-    local dot = btn:CreateTexture(nil, "OVERLAY")
-    dot:SetTexture("Interface\\COMMON\\Indicator-White")
-    dot:SetSize(14, 14)
-    dot:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", 2, -2)
+    local dot = btn:CreateTexture(nil, "OVERLAY", nil, 2)
+    dot:SetTexture("Interface\\Minimap\\UI-Minimap-Background")
+    dot:SetSize(10, 10)
+    dot:SetPoint("CENTER", dotBg, "CENTER", 0, 0)
     btn._dot = dot
 
     AMA.minimapButton = btn
