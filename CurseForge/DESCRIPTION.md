@@ -21,8 +21,8 @@ The addon only works when your character is actually allowed to place raid icons
 - Optional combat mark lock so auto-marks stay stable while you are in combat.
 - Optional death rebalance and cascade logic to keep kill order tidy as pulls change.
 - CC limit controls so only the number of crowd-control marks you want are assigned.
-- Smart Dungeon CC is enabled by default for new profiles and only uses CC icons your current 5-player group can realistically support for that target's creature type, then falls back to kill-order marks when no compatible CC is available.
-- Smart Dungeon CC role-mark preferences let you decide which icon each CC type should try first, so sheep, sap, trap, shackle, banish, and hibernate can match your group's conventions.
+- Smart Group CC is enabled by default for new profiles, keeps skull and cross as the primary kill-order marks, then only uses CC icons your current party or raid can realistically support for each target's creature type.
+- Pull-wide Smart Group CC matching now gives limited CC options to the mobs that actually need them first, while Smart Group CC role-mark preferences still let sheep, sap, trap, shackle, banish, and hibernate use your group's preferred icons.
 - Fallback keyword heuristics for unknown mobs when no exact zone database match exists.
 - Between-pull refresh that preserves visible icons instead of clearing the next pack when combat ends.
 
@@ -45,7 +45,7 @@ The addon only works when your character is actually allowed to place raid icons
 - Mark legend editor plus manual announce and preview output for communicating kill and crowd-control plans.
 - Configurable announcement style with line-by-line or single-line chat output and a customizable prefix that can also be left blank.
 - CC limit controls so the announced plan matches the marks the addon will actually assign.
-- Optional automatic dungeon Smart CC reminders, with manual `/ama ccannounce` repeats whenever you want them instead.
+- Optional automatic smart group CC reminders, with manual `/ama ccannounce` repeats whenever you want them instead.
 - Built-in encounter-aware rules for specific pulls, plus user overrides when you want different behavior.
 
 ## Quality-of-life features
