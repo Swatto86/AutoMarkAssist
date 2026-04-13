@@ -1,5 +1,13 @@
 # AutoMarkAssist Changelog
 
+## 2.7.14 (2026-04-13)
+
+### Bug fixes
+
+- Fixed 5-player Smart Dungeon CC so pulls that fit inside the configured kill-order pool use those primary marks first before any dedicated CC icons are assigned.
+- Fixed rebalance and death-cascade passes so they now follow the same kill-order-first Smart Dungeon CC rules as the initial mark assignment.
+- Updated the Smart Dungeon CC help text so the in-game UI now explains the kill-order-first behavior for small pulls.
+
 ## 2.7.13 (2026-04-12)
 
 ### Changed

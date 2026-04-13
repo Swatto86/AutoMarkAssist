@@ -988,6 +988,119 @@ local function GetMobPriority(mobName, unitToken)
     return priority, GetMobSubPriority(mobName, priority)
 end
 
+local function GetPrimaryKillOrderPool()
+    return AMA.GetConfiguredPool(PRIORITY_HIGH) or {}
+end
+
+local function CountVisibleMarkableEnemies(source)
+    local seen = {}
+    local count = 0
+
+    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+        if UnitExists(token)
+        and UnitCanAttack("player", token)
+        and not (UnitIsDead and UnitIsDead(token)) then
+            local guid = UnitGUID and UnitGUID(token)
+            if guid and not seen[guid] then
+                local inRange = true
+                if source then
+                    inRange = select(1, IsUnitInAutoMarkRange(token, source))
+                end
+
+                if inRange then
+                    local mobName = UnitName(token)
+                    if mobName and mobName ~= "" and mobName ~= "Unknown" then
+                        local skip = false
+
+                        if AutoMarkAssistDB and AutoMarkAssistDB.skipCritters then
+                            local ctype = UnitCreatureType and UnitCreatureType(token)
+                            if ctype == "Critter" then
+                                skip = true
+                            end
+                        end
+
+                        if not skip then
+                            local priority = GetMobPriority(mobName, token)
+                            if not (priority == "SKIP"
+                                and AutoMarkAssistDB
+                                and AutoMarkAssistDB.skipFillerMobs ~= false) then
+                                seen[guid] = true
+                                count = count + 1
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return count
+end
+
+local function ShouldUsePrimaryKillOrderOnly(source)
+    if not IsDungeonSmartCCEnabled() then
+        return false
+    end
+
+    local primaryPool = GetPrimaryKillOrderPool()
+    if #primaryPool == 0 then
+        return false
+    end
+
+    local visibleCount = CountVisibleMarkableEnemies(source)
+    return visibleCount > 0 and visibleCount <= #primaryPool
+end
+
+local function BuildPrimaryKillOrderOptions()
+    local primaryPool = GetPrimaryKillOrderPool()
+    if #primaryPool == 0 then
+        return nil
+    end
+
+    return {
+        idealPool = primaryPool,
+        allowedMarks = GetAllowedMarks(),
+    }
+end
+
+local function ResolveAutoMarkStrategy(mobName, unitToken, priority, subPriority, source)
+    local effectivePriority = priority
+    local effectiveSubPriority = subPriority
+    local allocationOptions = nil
+
+    if ShouldUsePrimaryKillOrderOnly(source)
+    and effectivePriority ~= PRIORITY_HIGH
+    and effectivePriority ~= PRIORITY_BOSS then
+        return effectivePriority, effectiveSubPriority, BuildPrimaryKillOrderOptions(), "primary-kill-order"
+    end
+
+    if effectivePriority == PRIORITY_CC and IsDungeonSmartCCEnabled() then
+        local smartCCPool = BuildDungeonSmartCCPool(unitToken)
+        if not smartCCPool or #smartCCPool == 0 then
+            AMA.VPrint("No compatible group CC found, treating as kill-order: " .. mobName)
+            effectivePriority = PRIORITY_MEDIUM
+            effectiveSubPriority = GetMobSubPriority(mobName, effectivePriority)
+        else
+            local ccLimit = AutoMarkAssistDB and AutoMarkAssistDB.ccLimit or 0
+            if ccLimit > 0 and CountActiveCC() >= ccLimit then
+                AMA.VPrint("CC limit reached (" .. ccLimit .. "), treating as kill-order: " .. mobName)
+                effectivePriority = PRIORITY_MEDIUM
+                effectiveSubPriority = GetMobSubPriority(mobName, effectivePriority)
+            else
+                allocationOptions = {
+                    idealPool = smartCCPool,
+                    allowedMarks = BuildAllowedMarkSet(smartCCPool),
+                    skipPrimary = true,
+                    skipSpill = true,
+                }
+                return effectivePriority, effectiveSubPriority, allocationOptions, "smart-cc"
+            end
+        end
+    end
+
+    return effectivePriority, effectiveSubPriority, nil, nil
+end
+
 local function CollectVisibleMarks()
     local visible = {}
 
@@ -1261,7 +1374,7 @@ function AMA.AssignMark(unitToken, skipSync, source)
     end
 
     local priority, subPriority = GetMobPriority(mobName, unitToken)
-    local smartCCPool = nil
+    local allocationOptions, allocationStrategy = nil, nil
 
     if priority == "SKIP" then
         if AutoMarkAssistDB and AutoMarkAssistDB.skipFillerMobs ~= false then
@@ -1272,37 +1385,11 @@ function AMA.AssignMark(unitToken, skipSync, source)
         subPriority = GetMobSubPriority(mobName, priority)
     end
 
-    if priority == PRIORITY_CC and IsDungeonSmartCCEnabled() then
-        smartCCPool = BuildDungeonSmartCCPool(unitToken)
-        if not smartCCPool or #smartCCPool == 0 then
-            AMA.VPrint("No compatible group CC found, treating as kill-order: " .. mobName)
-            priority = PRIORITY_MEDIUM
-            subPriority = GetMobSubPriority(mobName, priority)
-            smartCCPool = nil
-        end
-    end
-
-    -- CC limit: downgrade to kill-order when the configured cap is reached.
-    if priority == PRIORITY_CC and AutoMarkAssistDB then
-        local ccLimit = AutoMarkAssistDB.ccLimit or 0
-        if ccLimit > 0 and CountActiveCC() >= ccLimit then
-            AMA.VPrint("CC limit reached (" .. ccLimit .. "), treating as kill-order: " .. mobName)
-            priority = PRIORITY_MEDIUM
-            subPriority = GetMobSubPriority(mobName, priority)
-        end
-    end
+    priority, subPriority, allocationOptions, allocationStrategy =
+        ResolveAutoMarkStrategy(mobName, unitToken, priority, subPriority, rangeSource)
 
     local prefMark = GetManualPref(mobName)
     local markIdx, evictGUID
-    local smartCCOptions = nil
-    if priority == PRIORITY_CC and smartCCPool and #smartCCPool > 0 then
-        smartCCOptions = {
-            idealPool = smartCCPool,
-            allowedMarks = BuildAllowedMarkSet(smartCCPool),
-            skipPrimary = true,
-            skipSpill = true,
-        }
-    end
 
     if prefMark and not AMA.markOwners[prefMark] then
         markIdx = prefMark
@@ -1310,12 +1397,12 @@ function AMA.AssignMark(unitToken, skipSync, source)
             (AMA.MARK_NAMES[prefMark] or prefMark))
     elseif AutoMarkAssistDB and AutoMarkAssistDB.dynamicMarking
             and not AutoMarkAssistDB.manualMode then
-        markIdx, evictGUID = AllocateMarkDynamic(priority, subPriority, smartCCOptions)
+        markIdx, evictGUID = AllocateMarkDynamic(priority, subPriority, allocationOptions)
     else
-        markIdx = AllocateMark(priority, smartCCOptions)
+        markIdx = AllocateMark(priority, allocationOptions)
     end
 
-    if priority == PRIORITY_CC and smartCCOptions and not markIdx then
+    if allocationStrategy == "smart-cc" and not markIdx then
         AMA.VPrint("Compatible CC slots exhausted, treating as kill-order: " .. mobName)
         priority = PRIORITY_MEDIUM
         subPriority = GetMobSubPriority(mobName, priority)
@@ -1501,7 +1588,17 @@ function AMA.RebalanceMarks()
     for _, mob in ipairs(liveMobs) do
         if UnitExists(mob.token)
         and not (UnitIsDead and UnitIsDead(mob.token)) then
-            local markIdx = AllocateMark(mob.priority)
+            local effectivePriority, effectiveSubPriority, allocationOptions, allocationStrategy =
+                ResolveAutoMarkStrategy(mob.name, mob.token, mob.priority, mob.subPriority)
+            local markIdx = AllocateMark(effectivePriority, allocationOptions)
+
+            if allocationStrategy == "smart-cc" and not markIdx then
+                AMA.VPrint("Compatible CC slots exhausted, treating as kill-order: " .. mob.name)
+                effectivePriority = PRIORITY_MEDIUM
+                effectiveSubPriority = GetMobSubPriority(mob.name, effectivePriority)
+                markIdx = AllocateMark(effectivePriority)
+            end
+
             if markIdx then
                 local applied, applyReason = AMA.TrySetRaidTarget(mob.token, markIdx)
                 if applied then
@@ -1509,13 +1606,13 @@ function AMA.RebalanceMarks()
                         mob.guid,
                         markIdx,
                         mob.token,
-                        mob.priority,
-                        mob.subPriority,
+                        effectivePriority,
+                        effectiveSubPriority,
                         MARK_SOURCE_LOCAL)
                     AMA.pullMarkCount = AMA.pullMarkCount + 1
                     AMA.VPrint(string.format("Rebalanced: %s -> %s (priority=%s, sub=%s)",
-                        mob.name, AMA.MARK_NAMES[markIdx] or markIdx, mob.priority,
-                        tostring(mob.subPriority or "-")))
+                        mob.name, AMA.MARK_NAMES[markIdx] or markIdx, effectivePriority,
+                        tostring(effectiveSubPriority or "-")))
                 else
                     AMA.VPrint(string.format(
                         "Rebalanced: failed to apply %s to %s (%s)",
@@ -1617,7 +1714,16 @@ function AMA.CascadeMarksAfterDeath()
             AMA.markTokens[mob.markIdx] = nil
             AMA.guidMarkSource[mob.guid] = nil
 
-            local newMark = AllocateMark(mob.priority)
+            local effectivePriority, effectiveSubPriority, allocationOptions, allocationStrategy =
+                ResolveAutoMarkStrategy(mob.name, mob.token, mob.priority, mob.subPriority)
+            local newMark = AllocateMark(effectivePriority, allocationOptions)
+
+            if allocationStrategy == "smart-cc" and not newMark then
+                AMA.VPrint("Compatible CC slots exhausted, treating as kill-order: " .. (mob.name or mob.guid or "mob"))
+                effectivePriority = PRIORITY_MEDIUM
+                effectiveSubPriority = GetMobSubPriority(mob.name, effectivePriority)
+                newMark = AllocateMark(effectivePriority)
+            end
 
             if newMark and newMark ~= mob.markIdx then
                 -- Better slot available: move the in-game icon and record.
@@ -1627,11 +1733,11 @@ function AMA.CascadeMarksAfterDeath()
                         mob.guid,
                         newMark,
                         mob.token,
-                        mob.priority,
-                        mob.subPriority,
+                        effectivePriority,
+                        effectiveSubPriority,
                         MARK_SOURCE_LOCAL)
                     AMA.VPrint(string.format("CascadeAfterDeath: %s (sub=%s) %s -> %s",
-                        mob.priority, tostring(mob.subPriority or "-"),
+                        effectivePriority, tostring(effectiveSubPriority or "-"),
                         AMA.MARK_NAMES[mob.markIdx] or mob.markIdx,
                         AMA.MARK_NAMES[newMark]     or newMark))
                     changed = true
@@ -1650,8 +1756,8 @@ function AMA.CascadeMarksAfterDeath()
                 mob.guid,
                 mob.markIdx,
                 mob.token,
-                mob.priority,
-                mob.subPriority,
+                effectivePriority,
+                effectiveSubPriority,
                 MARK_SOURCE_LOCAL)
         end
     end
