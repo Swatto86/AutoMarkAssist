@@ -19,7 +19,7 @@ local MARK_CROSS    = 7
 local MARK_SKULL    = 8
 
 local CONFIG_W = 540
-local CONFIG_H = 700
+local CONFIG_H = 760
 local TAB_H    = 24
 local CONFIG_MIN_SCALE   = 0.55
 local CONFIG_SCREEN_PAD  = 24
@@ -533,7 +533,7 @@ do
     -- Manual modifier key.
     E.Label(t1, "Manual Modifier:", 16, y)
     modBtns = {}
-    for mi, mod in ipairs({ "ALT", "SHIFT", "CTRL" }) do
+    for mi, mod in ipairs({ "NONE", "ALT", "SHIFT", "CTRL" }) do
         local mb = E.Btn(t1, mod, 60, 22)
         mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (mi - 1) * 65, y)
         mb:SetScript("OnClick", function()

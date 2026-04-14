@@ -142,6 +142,7 @@ HideMarkPickerHUD = function(commitPending, reason)
         CommitPendingManualMark(reason)
     end
     if markHUD then markHUD:Hide() end
+    if AMA._scrollCatcher then AMA._scrollCatcher:Hide() end
 end
 
 -- ============================================================
@@ -325,7 +326,8 @@ do
 
         local mod = AutoMarkAssistDB and AutoMarkAssistDB.manualModifier or "ALT"
         local modDown = false
-        if mod == "ALT" then modDown = IsAltKeyDown and IsAltKeyDown()
+        if mod == "NONE" then modDown = true
+        elseif mod == "ALT" then modDown = IsAltKeyDown and IsAltKeyDown()
         elseif mod == "SHIFT" then modDown = IsShiftKeyDown and IsShiftKeyDown()
         elseif mod == "CTRL" then modDown = IsControlKeyDown and IsControlKeyDown()
         end
@@ -358,7 +360,8 @@ do
         
         local mod = AutoMarkAssistDB and AutoMarkAssistDB.manualModifier or "ALT"
         local modDown = false
-        if mod == "ALT" then modDown = IsAltKeyDown and IsAltKeyDown()
+        if mod == "NONE" then modDown = true
+        elseif mod == "ALT" then modDown = IsAltKeyDown and IsAltKeyDown()
         elseif mod == "SHIFT" then modDown = IsShiftKeyDown and IsShiftKeyDown()
         elseif mod == "CTRL" then modDown = IsControlKeyDown and IsControlKeyDown()
         end

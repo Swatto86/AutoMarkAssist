@@ -212,6 +212,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
         frame:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
         frame:RegisterEvent("PLAYER_REGEN_ENABLED")
         frame:RegisterEvent("RAID_TARGET_UPDATE")
+        frame:RegisterEvent("MODIFIER_STATE_CHANGED")
 
         -- Initialise minimap.
         AMA.UpdateMinimapPosition()
@@ -260,6 +261,12 @@ frame:SetScript("OnEvent", function(self, event, ...)
         if AMA.IsCombatMarkLockActive and AMA.IsCombatMarkLockActive() then return end
         if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
         AMA.AssignMark("mouseover", false, "mouseover")
+
+    elseif event == "MODIFIER_STATE_CHANGED" then
+        if not AutoMarkAssistDB then return end
+        if AMA.GetMarkingMode() == "manual" then
+            AMA.ShowMarkPickerForMouseover()
+        end
 
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if not AMA.IsAddonEnabled() then return end

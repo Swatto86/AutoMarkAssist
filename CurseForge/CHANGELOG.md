@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 3.0.1
+### Bug Fixes
+- **Config UI Elements:** Increased configuration window height to properly fit Announce Now and Preview buttons.
+- **Manual Mode Flickering:** Fixed a bug where releasing the modifier key did not dismiss the underlying scroll listener, causing the mark selector HUD to flicker aggressively.
+- **Manual Mode Key States:** Reworked manual mode to accurately respect the modifier key being pressed while already hovering over an enemy, instantly activating the mark selector.
+- **Preview & Announce Accuracy:** Reverted behavior so Preview and Announce buttons accurately announce only marks enabled *and* that have a suitable class in the current group.
+- **Reset Notification:** The "All marks cleared" chat message now properly respects the Verbose option.
+
+### Quality of Life
+- **No Modifier Option:** Added a "NONE" option for the Manual modifier key, allowing you to cycle marks on hover via scroll wheel without holding any extra keys.
+- **Invert Scroll Options:** Added a toggle to invert the scroll wheel direction in Manual marking mode.
+
 ## 3.0.0
 
 ### Major Rewrite & Simplification
