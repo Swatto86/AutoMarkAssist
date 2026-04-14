@@ -1,5 +1,13 @@
 # AutoMarkAssist Changelog
 
+## 3.0.5
+### Bug Fixes
+- **Orphaned Mark Leaks (Ghost Marks):** Resolved a critical state desync bug where marks owned by despawned or out-of-range mobs were never reclaimed. Skull and Cross could be permanently locked by a "ghost" owner from a previous pack, causing subsequent packs to receive incorrect marks (e.g. Triangle instead of Cross).
+- **Stale State in AllocateMark:** `AllocateMark` and `FindCCMark` previously trusted `markOwners` blindly. These now call a new `IsMarkSlotFree()` helper which validates that the recorded owner GUID is still alive and visible before accepting the slot as taken. Dead or invisible owners are immediately evicted.
+- **SyncVisibleMarks Stale-Owner Sweep:** After scanning all visible tokens, the sync now compares every tracked GUID against what was actually seen alive. Any GUID not found in the world is purged from all tracking tables, eliminating orphaned entries that missed their death events (e.g. mobs dying beyond the 50-yard combat log range).
+- **ResetState Spam Fix:** Rewrote reset to iterate mark *indices* rather than GUIDs, clearing each mark via a visible token first and only bouncing the remainder through the player. This prevents redundant `SetRaidTarget` calls that triggered "too many group actions" throttle messages.
+- **CascadeMarksAfterDeath Token Validation:** Promotion logic now uses a new `ResolveToken()` helper to re-validate cached unit tokens before use. If a cached token points to a different mob or a corpse, it falls back to a full live scan. Stale slots are reclaimed automatically during cascade.
+
 ## 3.0.4
 ### Architecture Changes
 - **First-Come-First-Serve (FCFS) System:** Transitioned from a strict database priority system to a dynamic FCFS marking framework. The obsolete Database tab has been removed from the Configuration UI.
