@@ -199,8 +199,8 @@ do
         markHUD:SetBackdropBorderColor(HUD_BORDER[1], HUD_BORDER[2], HUD_BORDER[3], 1)
     end
 
-    local CELL_SIZE = 30
-    local CELL_PAD = 2
+    local CELL_SIZE = 50
+    local CELL_PAD = 4
     local hudCells = {}
 
     for i = 1, 8 do
@@ -292,9 +292,9 @@ do
         local scale = math.max(HUD_MIN_SCALE, math.min(1, (uiW - HUD_SCREEN_PAD * 2) / totalW))
         markHUD:SetScale(scale)
 
-        -- Position above cursor area.
+        -- Position above cursor area / player head.
         markHUD:ClearAllPoints()
-        markHUD:SetPoint("BOTTOM", UIParent, "CENTER", 0, -50)
+        markHUD:SetPoint("BOTTOM", UIParent, "CENTER", 0, 150)
     end
 
     -- Scroll catcher: invisible fullscreen frame that captures scroll events.
