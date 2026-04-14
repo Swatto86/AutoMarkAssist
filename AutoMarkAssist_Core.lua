@@ -553,7 +553,9 @@ end
 
 function AMA.ResetWithMessage()
     AMA.ResetState()
-    AMA.Print("All marks cleared.")
+    if AutoMarkAssistDB and AutoMarkAssistDB.verbose then
+        AMA.Print("All marks cleared.")
+    end
 end
 
 -- ============================================================
