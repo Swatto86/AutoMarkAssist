@@ -37,13 +37,13 @@ When these classes enter your group, their corresponding marks "activate" and de
 
 ## Usage
 
-Type \/ama\ or \/automarkassist\ to open the configuration panel.
+Type `/ama` or `/automarkassist` to open the configuration panel.
 
 Other commands:
-- \/ama show\
-- \/ama hide\
-- \/ama help\
-- \/ama reset\ - Manually clear marks assigned by the addon.
+- `/ama show`
+- `/ama hide`
+- `/ama help`
+- `/ama reset` - Manually clear marks assigned by the addon.
 
 ## Good fit for
 

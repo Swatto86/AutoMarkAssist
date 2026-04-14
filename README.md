@@ -54,18 +54,18 @@ When these classes enter your group, their corresponding marks "activate" and de
 
 ## Usage
 
-Type \/ama\ or \/automarkassist\ to open the configuration panel.
+Type `/ama` or `/automarkassist` to open the configuration panel.
 
 Other commands:
-- \/ama show\
-- \/ama hide\
-- \/ama help\
-- \/ama reset\ - Manually clear marks assigned by the addon.
+- `/ama show`
+- `/ama hide`
+- `/ama help`
+- `/ama reset` - Manually clear marks assigned by the addon.
 
 ## Source layout
 
-- \AutoMarkAssist.lua\ - shared constants, defaults, utility helpers, and release-facing version metadata.
-- \AutoMarkAssist_Core.lua\ - mark allocation, rebalance, release, FCFS handling, and waterfall mark cascading.
-- \AutoMarkAssist_Events.lua\ - zone updates, slash commands, scanners, and gameplay event flow.
-- \AutoMarkAssist_Config.lua\ - options UI, announcement tools, and About/help content.
-- \AutoMarkAssist_Minimap.lua\ - minimap launcher, HUD, and manual scroll-wheel marking flow.
+- `AutoMarkAssist.lua` - shared constants, defaults, utility helpers, and release-facing version metadata.
+- `AutoMarkAssist_Core.lua` - mark allocation, rebalance, release, FCFS handling, and waterfall mark cascading.
+- `AutoMarkAssist_Events.lua` - zone updates, slash commands, scanners, and gameplay event flow.
+- `AutoMarkAssist_Config.lua` - options UI, announcement tools, and About/help content.
+- `AutoMarkAssist_Minimap.lua` - minimap launcher, HUD, and manual scroll-wheel marking flow.
