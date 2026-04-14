@@ -1,5 +1,13 @@
 # AutoMarkAssist Changelog
 
+## 3.0.3
+### Bug Fixes
+- **Verbose Mode Consistency:** Fully integrated Verbose mode across all remaining slash commands and GUI configuration toggles. The chat frame will only alert you of changes you make via the GUI or chat commands if Verbose mode is properly toggled on!
+
+### Enhancements
+- **Tooltips Added:** Added comprehensive descriptor tooltips to the checkboxes inside the configuration GUI. 
+- **DB Saving:** Added a new checkbox toggle to explicitly save manual marks you assign directly to the addon's memory database!
+
 ## 3.0.2
 ### Bug Fixes
 - **Config UI Elements:** Increased configuration window height to properly fit Announce Now and Preview buttons.
@@ -483,3 +491,4 @@ The entire architecture of AutoMarkAssist has been vastly simplified, dramatical
 - Initial release. Priority-based proximity marking for TBC Anniversary dungeons.
 
 </details>
+

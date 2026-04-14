@@ -259,7 +259,12 @@ end
 -- Checkbox references for RefreshConfigFrame.
 local checkboxRefs = {}
 
-function E.Chk(parent, text, x, y, dbKey, onChange)
+function E.Chk(parent, text, x, y, dbKey, tooltipText, onChange)
+    if type(tooltipText) == "function" then
+        onChange = tooltipText
+        tooltipText = nil
+    end
+
     local box = CreateFrame("Button", nil, parent,
         BackdropTemplateMixin and "BackdropTemplate" or nil)
     box:SetSize(16, 16)
@@ -300,7 +305,7 @@ function E.Chk(parent, text, x, y, dbKey, onChange)
     local function Toggle()
         SetState(not box.checked)
         if AutoMarkAssistDB then AutoMarkAssistDB[dbKey] = box.checked end
-        AMA.Print(text .. ": " .. (box.checked and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"))
+        AMA.VPrint(text .. ": " .. (box.checked and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"))
         if onChange then onChange() end
         if AMA.UpdateMinimapState then AMA.UpdateMinimapState() end
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
@@ -312,9 +317,29 @@ function E.Chk(parent, text, x, y, dbKey, onChange)
         if box.SetBackdropBorderColor then
             box:SetBackdropBorderColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 0.6)
         end
+        if tooltipText then
+            GameTooltip:SetOwner(box, "ANCHOR_RIGHT", 4, 0)
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(text, 1, 1, 1)
+            GameTooltip:AddLine(tooltipText, nil, nil, nil, true)
+            GameTooltip:Show()
+        end
     end)
     box:SetScript("OnLeave", function()
         SetState(box.checked)
+        if tooltipText then GameTooltip:Hide() end
+    end)
+    hit:SetScript("OnEnter", function()
+        if tooltipText then
+            GameTooltip:SetOwner(hit, "ANCHOR_RIGHT", 4, 0)
+            GameTooltip:ClearLines()
+            GameTooltip:AddLine(text, 1, 1, 1)
+            GameTooltip:AddLine(tooltipText, nil, nil, nil, true)
+            GameTooltip:Show()
+        end
+    end)
+    hit:SetScript("OnLeave", function()
+        if tooltipText then GameTooltip:Hide() end
     end)
     box.SetCheckedState = function(_, val) SetState(val) end
     box.SetDisabled = function(_, disabled)
@@ -363,7 +388,7 @@ local modeBtns, proxRangeBtns, modBtns, announceChannelBtns
 local announcePrefixEdit, scrollOrderCells, invertScrollBtn
 local markToggleBoxes = {}
 local dbTabCurrentZone, dbTabZoneChild, RefreshDBTab, dbTabMobScroll
-local cbDynamic, cbCombatLock, cbRebal, cbAutoReset, cbCritters, cbAnnounce
+local cbDynamic, cbCombatLock, cbRebal, cbAutoReset, cbCritters, cbAutoUpdateDB, cbAnnounce
 
 -- ============================================================
 -- RESPONSIVE LAYOUT
@@ -506,7 +531,7 @@ do
         mb:SetScript("OnClick", function()
             AMA.SetMarkingMode(def.key)
             AMA.UpdateMinimapState()
-            AMA.Print("Marking mode: |cFFFFD700" .. def.label .. "|r")
+            AMA.VPrint("Marking mode: " .. def.label)
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         modeBtns[i] = mb
@@ -522,7 +547,7 @@ do
         rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 135, y)
         rb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.proximityRange = rangeVal end
-            AMA.Print("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
+            AMA.VPrint("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         rb._val = rangeVal
@@ -538,7 +563,7 @@ do
         mb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (mi - 1) * 65, y)
         mb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.manualModifier = mod end
-            AMA.Print("Manual modifier: " .. mod)
+            AMA.VPrint("Manual modifier: " .. mod)
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         mb._val = mod
@@ -631,17 +656,19 @@ do
     E.Header(t1, "Behaviour", 8, y)
     y = y - 22
 
-    cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 12, y, "dynamicMarking")
+    cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 12, y, "dynamicMarking", "Allows high priority mobs to steal marks from lower-priority mobs if no free marks are available.")
     y = y - 20
-    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat")
+    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat", "Prevents the addon from changing or moving any marks while you are actively in combat.")
     y = y - 20
-    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 12, y, "rebalanceOnDeath")
+    cbRebal = E.Chk(t1, "Rebalance Marks on Death", 12, y, "rebalanceOnDeath", "Automatically cascades and redistributes marks to alive enemies when a marked enemy dies.")
     y = y - 20
-    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 12, y, "autoReset")
+    cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 12, y, "autoReset", "Automatically clears all AutoMarkAssist marks when your team drops out of combat.")
     y = y - 20
-    cbCritters = E.Chk(t1, "Skip Critters", 12, y, "skipCritters")
+    cbCritters = E.Chk(t1, "Skip Critters", 12, y, "skipCritters", "Prevents neutral or trivial non-combat critters from ever being marked.")
     y = y - 20
-    E.Chk(t1, "Verbose Mode", 12, y, "verbose")
+    cbAutoUpdateDB = E.Chk(t1, "Save Manual Marks to Database", 12, y, "autoUpdateDB", "Automatically saves manually placed Kill (Skull/Cross) or CC marks to your internal database for future encounters.")
+    y = y - 20
+    E.Chk(t1, "Verbose Mode", 12, y, "verbose", "Enables advanced debug output printed into your chat frame.")
     y = y - 24
 
     E.Sep(t1, y)
@@ -661,7 +688,7 @@ do
         cb:SetPoint("TOPLEFT", t1, "TOPLEFT", 80 + (ci - 1) * 68, y)
         cb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.announceChannel = ch end
-            AMA.Print("Announce channel: " .. ch)
+            AMA.VPrint("Announce channel: " .. ch)
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         end)
         cb._val = ch

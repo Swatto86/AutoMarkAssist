@@ -143,6 +143,7 @@ AMA.DB_DEFAULTS = {
     dynamicMarking     = true,
     lockMarksInCombat  = false,
     rebalanceOnDeath   = true,
+    autoUpdateDB       = false,
     skipCritters       = true,
     markingMode        = "proximity",   -- "proximity" | "mouseover" | "manual"
     proximityRange     = 4,

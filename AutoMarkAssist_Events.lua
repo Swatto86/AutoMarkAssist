@@ -319,20 +319,20 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AMA.UpdateMinimapState()
         AMA.RefreshAnnounceQueue(0.5)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
-        AMA.Print("Auto-marking |cFF00FF00ENABLED|r.")
+        AMA.VPrint("Auto-marking |cFF00FF00ENABLED|r.")
 
     elseif cmd == "disable" then
         AutoMarkAssistDB.enabled = false
         AMA.UpdateMinimapState()
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
-        AMA.Print("Auto-marking |cFFFF0000DISABLED|r.")
+        AMA.VPrint("Auto-marking |cFFFF0000DISABLED|r.")
 
     elseif cmd == "toggle" then
         AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
         AMA.UpdateMinimapState()
         AMA.RefreshAnnounceQueue(0.5)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
-        AMA.Print("Auto-marking " .. (AutoMarkAssistDB.enabled
+        AMA.VPrint("Auto-marking " .. (AutoMarkAssistDB.enabled
             and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
 
     elseif cmd == "reset" or cmd == "clear" then
@@ -350,20 +350,20 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
             AMA.SetMarkingMode(mode)
             AMA.UpdateMinimapState()
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
-            AMA.Print("Marking mode: |cFFFFD700" .. mode .. "|r")
+            AMA.VPrint("Marking mode: |cFFFFD700" .. mode .. "|r")
         else
-            AMA.Print("Usage: /ama mode <proximity|mouseover|manual>")
-            AMA.Print("Current mode: |cFFFFD700" .. AMA.GetMarkingMode() .. "|r")
+            AMA.VPrint("Usage: /ama mode <proximity|mouseover|manual>")
+            AMA.VPrint("Current mode: |cFFFFD700" .. AMA.GetMarkingMode() .. "|r")
         end
 
     elseif cmd == "manual" then
         local current = AMA.GetMarkingMode()
         if current == "manual" then
             AMA.SetMarkingMode("proximity")
-            AMA.Print("Manual mode |cFF888888OFF|r - proximity marking resumed.")
+            AMA.VPrint("Manual mode |cFF888888OFF|r - proximity marking resumed.")
         else
             AMA.SetMarkingMode("manual")
-            AMA.Print("Manual mode |cFFFFD700ON|r - hover a mob and scroll to assign marks.")
+            AMA.VPrint("Manual mode |cFFFFD700ON|r - hover a mob and scroll to assign marks.")
         end
         AMA.UpdateMinimapState()
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
@@ -376,19 +376,19 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
 
     elseif cmd == "lock" or cmd == "combatlock" then
         AutoMarkAssistDB.lockMarksInCombat = not AutoMarkAssistDB.lockMarksInCombat
-        AMA.Print("Combat lock: " .. (AutoMarkAssistDB.lockMarksInCombat
+        AMA.VPrint("Combat lock: " .. (AutoMarkAssistDB.lockMarksInCombat
             and "|cFF00FF00ON|r" or "|cFFFF0000OFF|r"))
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
 
     elseif cmd == "show" then
         AutoMarkAssistDB.minimapHide = false
         AMA.minimapButton:Show()
-        AMA.Print("Minimap button shown.")
+        AMA.VPrint("Minimap button shown.")
 
     elseif cmd == "hide" then
         AutoMarkAssistDB.minimapHide = true
         AMA.minimapButton:Hide()
-        AMA.Print("Minimap button hidden. Use /ama show to restore.")
+        AMA.VPrint("Minimap button hidden. Use /ama show to restore.")
 
     elseif cmd == "cc" then
         local abilities = AMA.GetGroupCCAbilities()

@@ -129,6 +129,18 @@ CommitPendingManualMark = function(reason)
     end
 
     AMA.RecordMark(guid, selectedMark, token, AMA.PRIORITY_MEDIUM)
+
+    if AutoMarkAssistDB and AutoMarkAssistDB.autoUpdateDB and AMA.currentZoneName then
+        local cleanName = name:gsub("%s*%-.*", "")
+        if selectedMark == 8 or selectedMark == 7 then
+            local overrides = AMA.GetZoneMobOverrides(AMA.currentZoneName, true)
+            overrides[cleanName] = "HIGH"
+        elseif selectedMark > 0 then
+            local overrides = AMA.GetZoneMobOverrides(AMA.currentZoneName, true)
+            overrides[cleanName] = "CC"
+        end
+    end
+
     AMA.VPrint(string.format("Manual mark: %s -> %s%s",
         name, AMA.MARK_NAMES[selectedMark] or tostring(selectedMark),
         reason and (" (" .. reason .. ")") or ""))

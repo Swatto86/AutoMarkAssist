@@ -19,7 +19,7 @@ Skull and Cross are always kill targets. CC marks are only used when the matchin
 
 - **Proximity** (default) — Auto-marks hostile mobs within range.
 - **Mouseover** — Marks when you hover over a mob.
-- **Manual** — Hold a modifier key and scroll to pick marks.
+- **Manual** — Hold a modifier key (or pick NONE) and scroll over a mob to pick marks. You can now invert scroll assignment direction or auto-save manual markings directly to the addon database!
 
 Only one mode is active at a time.
 
@@ -184,3 +184,4 @@ The addon only works when your character is actually allowed to place raid icons
 - Wrath Classic
 - Cata Classic
 - MoP Classic
+
