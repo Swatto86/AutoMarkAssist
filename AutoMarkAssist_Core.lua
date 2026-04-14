@@ -303,12 +303,39 @@ local function BuildKillOrder()
     return order
 end
 
+-- Check whether a tracked GUID is still alive and visible in the world.
+-- Returns the unit token if found alive, nil otherwise.
+local function ValidateOwner(guid)
+    if not guid then return nil end
+    for _, t in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+        if UnitExists(t) and UnitGUID(t) == guid then
+            if UnitIsDead and UnitIsDead(t) then return nil end
+            return t
+        end
+    end
+    return nil
+end
+
+-- Check if a mark slot is genuinely available.
+-- If the recorded owner is dead or invisible, reclaim the slot.
+local function IsMarkSlotFree(markIdx)
+    local ownerGuid = AMA.markOwners[markIdx]
+    if not ownerGuid then return true end
+    local token = ValidateOwner(ownerGuid)
+    if not token then
+        -- Owner gone or dead — reclaim
+        ForgetTrackedMark(ownerGuid)
+        return true
+    end
+    return false
+end
+
 -- Find the CC mark for a specific creature type given current group.
 local function FindCCMark(creatureType)
     if not creatureType or creatureType == "" then return nil end
     local reserved = AMA.GetReservedCCMarks()
     for markIdx, ability in pairs(reserved) do
-        if ability.creatureTypes[creatureType] and not AMA.markOwners[markIdx] then
+        if ability.creatureTypes[creatureType] and IsMarkSlotFree(markIdx) then
             return markIdx, ability
         end
     end
@@ -318,7 +345,7 @@ end
 local function AllocateMark(unitToken)
     -- 1. Try kill marks first (Skull, Cross).
     for _, m in ipairs(AMA.KILL_MARKS) do
-        if AMA.IsMarkEnabled(m) and not AMA.markOwners[m] then
+        if AMA.IsMarkEnabled(m) and IsMarkSlotFree(m) then
             return m
         end
     end
@@ -331,15 +358,15 @@ local function AllocateMark(unitToken)
     -- 3. For any remaining, use next free non-CC mark.
     local killOrder = BuildKillOrder()
     for _, m in ipairs(killOrder) do
-        if not AMA.markOwners[m] then return m end
+        if IsMarkSlotFree(m) then return m end
     end
-    
+
     -- 4. Try CC marks as overflow if nothing else is available.
     local reserved = AMA.GetReservedCCMarks()
     for markIdx in pairs(reserved) do
-        if not AMA.markOwners[markIdx] then return markIdx end
+        if IsMarkSlotFree(markIdx) then return markIdx end
     end
-    
+
     return nil
 end
 
@@ -349,39 +376,66 @@ end
 -- ============================================================
 
 function AMA.SyncVisibleMarks()
-    -- Build a reverse map of what's currently visible.
+    -- Track which GUIDs we can still see alive in the world.
+    local seenGuids = {}
+
     for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
         if UnitExists(token) and UnitCanAttack("player", token) then
+            local isDead = UnitIsDead and UnitIsDead(token)
             local guid = UnitGUID and UnitGUID(token)
             local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
 
             if guid then
                 local trackedMark = AMA.markedGUIDs[guid]
 
-                if visibleMark and visibleMark > 0 then
-                    if not trackedMark then
-                        -- Observed mark from another player.
-                        AMA.markedGUIDs[guid] = visibleMark
-                        AMA.markOwners[visibleMark] = guid
-                        AMA.markTokens[visibleMark] = token
-                        AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
-                    elseif trackedMark ~= visibleMark then
-                        -- Mark changed externally.
+                if isDead then
+                    -- Actively forget marks on dead units.
+                    if trackedMark then
                         ForgetTrackedMark(guid)
-                        AMA.markedGUIDs[guid] = visibleMark
-                        AMA.markOwners[visibleMark] = guid
-                        AMA.markTokens[visibleMark] = token
-                        AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
-                    else
-                        -- Update token reference.
-                        AMA.markTokens[visibleMark] = token
                     end
-                elseif trackedMark and trackedMark > 0 then
-                    -- Mark was removed externally.
-                    ForgetTrackedMark(guid)
+                else
+                    seenGuids[guid] = true
+
+                    if visibleMark and visibleMark > 0 then
+                        -- If someone else now owns that mark index, evict them.
+                        local prevOwner = AMA.markOwners[visibleMark]
+                        if prevOwner and prevOwner ~= guid then
+                            ForgetTrackedMark(prevOwner)
+                        end
+
+                        if not trackedMark then
+                            AMA.markedGUIDs[guid] = visibleMark
+                            AMA.markOwners[visibleMark] = guid
+                            AMA.markTokens[visibleMark] = token
+                            AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
+                        elseif trackedMark ~= visibleMark then
+                            ForgetTrackedMark(guid)
+                            AMA.markedGUIDs[guid] = visibleMark
+                            AMA.markOwners[visibleMark] = guid
+                            AMA.markTokens[visibleMark] = token
+                            AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
+                        else
+                            AMA.markTokens[visibleMark] = token
+                        end
+                    elseif trackedMark and trackedMark > 0 then
+                        -- Mark was removed externally.
+                        ForgetTrackedMark(guid)
+                    end
                 end
             end
         end
+    end
+
+    -- Stale-owner sweep: any tracked GUID we did NOT see alive is orphaned.
+    -- Collect them first to avoid mutating while iterating.
+    local staleGuids = {}
+    for guid in pairs(AMA.markedGUIDs) do
+        if not seenGuids[guid] then
+            staleGuids[#staleGuids + 1] = guid
+        end
+    end
+    for _, guid in ipairs(staleGuids) do
+        ForgetTrackedMark(guid)
     end
 end
 
@@ -431,28 +485,39 @@ end
 -- ============================================================
 
 function AMA.ResetState()
-    -- Clear marks from known marked units that are currently visible to us.
-    local tokensCleared = {}
+    -- Collect the set of mark indices we need to clear.
+    local marksToClear = {}
+    for markIdx in pairs(AMA.markOwners) do
+        marksToClear[markIdx] = true
+    end
 
-    -- First try the tokens actively visible in our scanner
+    -- Phase 1: Clear marks on visible unit tokens (cheapest API call).
+    local clearedMarks = {}
     for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
         if UnitExists(token) then
-            local guid = UnitGUID and UnitGUID(token)
-            if guid and AMA.markedGUIDs[guid] and AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
+            local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
+            if visibleMark > 0 and marksToClear[visibleMark] and not clearedMarks[visibleMark] then
                 pcall(SetRaidTarget, token, 0)
-                tokensCleared[guid] = true
+                clearedMarks[visibleMark] = true
             end
         end
     end
 
-    -- Then try the originally cached tokens as long as they still point to the same mob
-    for guid, markIdx in pairs(AMA.markedGUIDs) do
-        if not tokensCleared[guid] and AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
-            local token = AMA.markTokens[markIdx]
-            if token and UnitExists(token) and (UnitGUID and UnitGUID(token) == guid) then
-                pcall(SetRaidTarget, token, 0)
-            end
+    -- Phase 2: For any marks we couldn't clear via visible tokens, bounce via player.
+    -- Save the player's current mark so we can restore it.
+    local playerMark = GetRaidTargetIndex and GetRaidTargetIndex("player")
+    local bouncedAny = false
+
+    for markIdx in pairs(marksToClear) do
+        if not clearedMarks[markIdx] then
+            pcall(SetRaidTarget, "player", markIdx)
+            pcall(SetRaidTarget, "player", 0)
+            bouncedAny = true
         end
+    end
+
+    if bouncedAny and playerMark and not marksToClear[playerMark] then
+        pcall(SetRaidTarget, "player", playerMark)
     end
 
     -- Wipe state tables.
@@ -474,51 +539,70 @@ end
 -- REBALANCE AFTER DEATH
 -- ============================================================
 
+-- Helper: find a live, visible token for a GUID, validating the cached token first.
+local function ResolveToken(guid, cachedToken)
+    -- Try the cached token first (fast path)
+    if cachedToken and UnitExists(cachedToken) and UnitGUID(cachedToken) == guid then
+        if not (UnitIsDead and UnitIsDead(cachedToken)) then
+            return cachedToken
+        end
+        return nil
+    end
+    -- Fallback: scan for a live token
+    return ValidateOwner(guid)
+end
+
 function AMA.CascadeMarksAfterDeath()
     if AMA.GetMarkingMode() == "manual" then return end
     if AMA.IsCombatMarkLockActive() then return end
 
     -- 1. Try to promote Cross to Skull if Skull is free
-    if AMA.IsMarkEnabled(MARK_SKULL) and not AMA.markOwners[MARK_SKULL] then
+    if AMA.IsMarkEnabled(MARK_SKULL) and IsMarkSlotFree(MARK_SKULL) then
         if AMA.IsMarkEnabled(MARK_CROSS) and AMA.markOwners[MARK_CROSS] then
             local crossGuid = AMA.markOwners[MARK_CROSS]
-            local crossToken = AMA.markTokens[MARK_CROSS]
-            
-            if crossToken and UnitExists(crossToken) and not UnitIsDead(crossToken) then
+            local crossToken = ResolveToken(crossGuid, AMA.markTokens[MARK_CROSS])
+
+            if crossToken then
                 ForgetTrackedMark(crossGuid)
                 local applied = AMA.TrySetRaidTarget(crossToken, MARK_SKULL)
                 if applied then
                     AMA.RecordMark(crossGuid, MARK_SKULL, crossToken)
                     AMA.VPrint("Promoted Cross to Skull: " .. (UnitName(crossToken) or "?"))
                 end
+            else
+                -- Cross owner is gone, just reclaim
+                ForgetTrackedMark(crossGuid)
             end
         end
     end
 
     -- 2. Try to promote a CC mark to Cross if Cross is now free
-    if AMA.IsMarkEnabled(MARK_CROSS) and not AMA.markOwners[MARK_CROSS] then
-        local bestMarkToPromote = nil
-        
-        -- Default to finding *any* remaining mark to promote to Cross
+    if AMA.IsMarkEnabled(MARK_CROSS) and IsMarkSlotFree(MARK_CROSS) then
+        local bestMark, bestGuid, bestToken = nil, nil, nil
+
         for m = 1, 6 do
-            if AMA.markOwners[m] then
-                bestMarkToPromote = m
-                break
+            local ownerGuid = AMA.markOwners[m]
+            if ownerGuid then
+                local token = ResolveToken(ownerGuid, AMA.markTokens[m])
+                if token then
+                    bestMark = m
+                    bestGuid = ownerGuid
+                    bestToken = token
+                    break
+                else
+                    -- Owner is gone, reclaim this stale slot
+                    ForgetTrackedMark(ownerGuid)
+                end
             end
         end
 
-        if bestMarkToPromote then
-            local promoGuid = AMA.markOwners[bestMarkToPromote]
-            local promoToken = AMA.markTokens[bestMarkToPromote]
-            local oldMarkName = AMA.MARK_NAMES[bestMarkToPromote] or tostring(bestMarkToPromote)
-            
-            if promoToken and UnitExists(promoToken) and not UnitIsDead(promoToken) then
-                ForgetTrackedMark(promoGuid)
-                local applied = AMA.TrySetRaidTarget(promoToken, MARK_CROSS)
-                if applied then
-                    AMA.RecordMark(promoGuid, MARK_CROSS, promoToken)
-                    AMA.VPrint("Promoted " .. oldMarkName .. " to Cross: " .. (UnitName(promoToken) or "?"))
-                end
+        if bestMark and bestToken then
+            local oldMarkName = AMA.MARK_NAMES[bestMark] or tostring(bestMark)
+            ForgetTrackedMark(bestGuid)
+            local applied = AMA.TrySetRaidTarget(bestToken, MARK_CROSS)
+            if applied then
+                AMA.RecordMark(bestGuid, MARK_CROSS, bestToken)
+                AMA.VPrint("Promoted " .. oldMarkName .. " to Cross: " .. (UnitName(bestToken) or "?"))
             end
         end
     end

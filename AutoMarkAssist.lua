@@ -127,6 +127,7 @@ AMA.DB_DEFAULTS = {
     announceChannel    = "PARTY",
     announcePrefixText = "AutoMarkAssist",
     announceOnEntry    = true,
+    silentMode         = false,
     lockMarksInCombat  = false,
     rebalanceOnDeath   = true,
     autoReset          = true,
@@ -186,6 +187,7 @@ function AMA.SetMarkingMode(mode)
 end
 
 function AMA.IsMarkEnabled(markIdx)
+    if markIdx == 8 or markIdx == 7 then return true end
     if not AutoMarkAssistDB or not AutoMarkAssistDB.enabledMarks then
         return true
     end

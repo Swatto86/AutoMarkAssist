@@ -82,7 +82,12 @@ do
         return lines
     end
 
-    function AMA.AnnounceMarkPlan()
+    function AMA.AnnounceMarkPlan(isManual)
+        if not isManual and AutoMarkAssistDB and AutoMarkAssistDB.silentMode then
+            AMA.VPrint("Announcements blocked by Silent Mode.")
+            return false
+        end
+
         local canMark, reason = AMA.CanMarkReason()
         if not canMark then
             AMA.Print("Cannot announce: " .. tostring(reason))
@@ -137,7 +142,7 @@ do
         local canMark = AMA.CanMarkReason()
         if not canMark then return false end
 
-        return AMA.AnnounceMarkPlan()
+        return AMA.AnnounceMarkPlan(false)
     end
 end
 
@@ -673,6 +678,8 @@ do
     y = y - 22
 
     cbAnnounce = E.Chk(t1, "Announce Mark Plan on Dungeon Entry", 12, y, "announceOnEntry")
+    y = y - 20
+    E.Chk(t1, "Silent Mode: Suppress all party/chat announcements entirely", 12, y, "silentMode", "Prevents the addon from ever posting announcements to any party/instance/say channel, overriding everything else.")
     y = y - 24
 
     E.Label(t1, "Channel:", 16, y)
@@ -704,7 +711,7 @@ do
     -- Announce/Preview buttons.
     local announceBtn = E.Btn(t1, "Announce Now", 100, 24)
     announceBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 24, y)
-    announceBtn:SetScript("OnClick", function() AMA.AnnounceMarkPlan() end)
+    announceBtn:SetScript("OnClick", function() AMA.AnnounceMarkPlan(true) end)
 
     local previewBtn = E.Btn(t1, "Preview", 80, 24)
     previewBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 140, y)

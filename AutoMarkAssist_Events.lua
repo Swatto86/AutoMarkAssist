@@ -272,7 +272,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if not AMA.IsAddonEnabled() then return end
         local _, subevent, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
-        if subevent ~= "UNIT_DIED" then return end
+        if subevent ~= "UNIT_DIED" and subevent ~= "UNIT_DESTROYED" and subevent ~= "UNIT_DISSIPATES" then return end
         if not destGUID then return end
         if not AMA.markedGUIDs[destGUID] then return end
 
@@ -340,7 +340,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AMA.ResetWithMessage()
 
     elseif cmd == "announce" then
-        AMA.AnnounceMarkPlan()
+        AMA.AnnounceMarkPlan(true)
 
     elseif cmd == "preview" then
         AMA.PreviewMarkPlan()
