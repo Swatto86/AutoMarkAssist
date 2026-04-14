@@ -546,6 +546,9 @@ do
     end
     y = y - 28
 
+    E.Chk(t1, "Invert Scroll Direction", 12, y, "invertScroll")
+    y = y - 24
+
     E.Sep(t1, y)
     y = y - 8
 
