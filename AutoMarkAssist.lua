@@ -47,16 +47,6 @@ AMA.MARK_ICON_COORDS = {
 AMA.ALL_MARKS_ORDERED = { 8, 7, 5, 3, 4, 1, 2, 6 }
 
 -- ============================================================
--- PRIORITY TIER CONSTANTS
--- ============================================================
-
-AMA.PRIORITY_BOSS   = "BOSS"
-AMA.PRIORITY_HIGH   = "HIGH"
-AMA.PRIORITY_CC     = "CC"
-AMA.PRIORITY_MEDIUM = "MEDIUM"
-AMA.PRIORITY_LOW    = "LOW"
-
--- ============================================================
 -- FIXED CC ASSIGNMENTS
 -- Each CC class has a fixed mark, label, and creature type filter.
 -- The addon detects group composition and only uses CC marks for
@@ -96,9 +86,9 @@ AMA.MARK_DESCRIPTIONS = {
 -- ============================================================
 
 AMA.PROXIMITY_RANGE_LABELS = {
-    [2] = "~11 yd (Trade range)",
-    [3] = "~10 yd (Duel range)",
-    [4] = "~28 yd (Follow range)",
+    [2] = "~11 yd (Broken)", -- Kept for legacy DB mapping
+    [3] = "~10 yd (Short)",
+    [4] = "~28 yd (Long)",
 }
 
 -- ============================================================
@@ -107,10 +97,7 @@ AMA.PROXIMITY_RANGE_LABELS = {
 -- ============================================================
 
 AMA.HIGH_KEYWORDS = {
-    "healer", "priest", "mage", "warlock", "shaman", "sorcerer",
-    "channeler", "scryer", "theurgist", "darkcaster", "physician",
-    "mender", "oracle", "hexer", "cultist", "assassin", "infiltrator",
-    "saboteur", "necromancer", "shadowcaster", "warden",
+    -- Kept for future logic if needed, but priority system removed
 }
 
 AMA.CC_KEYWORDS = {
@@ -140,10 +127,9 @@ AMA.DB_DEFAULTS = {
     announceChannel    = "PARTY",
     announcePrefixText = "AutoMarkAssist",
     announceOnEntry    = true,
-    dynamicMarking     = true,
     lockMarksInCombat  = false,
     rebalanceOnDeath   = true,
-    autoUpdateDB       = false,
+    autoReset          = true,
     skipCritters       = true,
     markingMode        = "proximity",   -- "proximity" | "mouseover" | "manual"
     proximityRange     = 4,
@@ -153,7 +139,7 @@ AMA.DB_DEFAULTS = {
     mobOverrides       = {},
     mobRemovals        = {},
     zoneAdditions      = {},
-    resetMarksKey      = "BUTTON3",
+    resetMarksKey      = "F",
 }
 
 -- ============================================================
@@ -254,7 +240,9 @@ function AMA.GetReservedCCMarks()
     local reserved = {}
     local abilities = AMA.GetGroupCCAbilities()
     for _, ability in ipairs(abilities) do
-        reserved[ability.mark] = ability
+        if AMA.IsMarkEnabled(ability.mark) then
+            reserved[ability.mark] = ability
+        end
     end
     return reserved
 end

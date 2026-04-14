@@ -19,7 +19,7 @@ local MARK_CROSS    = 7
 local MARK_SKULL    = 8
 
 local CONFIG_W = 540
-local CONFIG_H = 760
+local CONFIG_H = 780
 local TAB_H    = 24
 local CONFIG_MIN_SCALE   = 0.55
 local CONFIG_SCREEN_PAD  = 24
@@ -385,10 +385,9 @@ end
 local cfgFrame, currentTab, tabContents, tabBtns, ShowTab
 local ApplyResponsiveConfigLayout
 local modeBtns, proxRangeBtns, modBtns, announceChannelBtns
-local announcePrefixEdit, scrollOrderCells, invertScrollBtn
+local announcePrefixEdit, scrollOrderCells, invertScrollBtn, resetHotkeyBtn
 local markToggleBoxes = {}
-local dbTabCurrentZone, dbTabZoneChild, RefreshDBTab, dbTabMobScroll
-local cbDynamic, cbCombatLock, cbRebal, cbAutoReset, cbCritters, cbAutoUpdateDB, cbAnnounce
+local cbCombatLock, cbRebal, cbAutoReset, cbCritters, cbAnnounce
 
 -- ============================================================
 -- RESPONSIVE LAYOUT
@@ -468,7 +467,7 @@ do
     closeBtn:SetScript("OnClick", function() cfgFrame:Hide() end)
 
     -- ── TAB BAR ──
-    local TAB_NAMES = { "General", "Database", "About" }
+    local TAB_NAMES = { "General", "About" }
     tabContents = {}
     tabBtns = {}
     currentTab = 1
@@ -539,12 +538,11 @@ do
     end
     y = y - 28
 
-    -- Proximity range.
     E.Label(t1, "Proximity Range:", 16, y)
     proxRangeBtns = {}
-    for prIdx, rangeVal in ipairs({ 2, 3, 4 }) do
+    for prIdx, rangeVal in ipairs({ 3, 4 }) do
         local rb = E.Btn(t1, AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal), 130, 22)
-        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 135, y)
+        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (prIdx - 1) * 140, y)
         rb:SetScript("OnClick", function()
             if AutoMarkAssistDB then AutoMarkAssistDB.proximityRange = rangeVal end
             AMA.VPrint("Proximity range: " .. (AMA.PROXIMITY_RANGE_LABELS[rangeVal] or tostring(rangeVal)))
@@ -656,17 +654,13 @@ do
     E.Header(t1, "Behaviour", 8, y)
     y = y - 22
 
-    cbDynamic = E.Chk(t1, "Dynamic Marking (bump lower-priority mobs)", 12, y, "dynamicMarking", "Allows high priority mobs to steal marks from lower-priority mobs if no free marks are available.")
-    y = y - 20
-    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat", "Prevents the addon from changing or moving any marks while you are actively in combat.")
+    cbCombatLock = E.Chk(t1, "Lock Marks in Combat", 12, y, "lockMarksInCombat", "Prevents the addon from changing or moving any marks while you are actively in combat. This also pauses 'Rebalance Marks on Death' promotions until combat finishes.")
     y = y - 20
     cbRebal = E.Chk(t1, "Rebalance Marks on Death", 12, y, "rebalanceOnDeath", "Automatically cascades and redistributes marks to alive enemies when a marked enemy dies.")
     y = y - 20
     cbAutoReset = E.Chk(t1, "Auto-Reset After Combat", 12, y, "autoReset", "Automatically clears all AutoMarkAssist marks when your team drops out of combat.")
     y = y - 20
     cbCritters = E.Chk(t1, "Skip Critters", 12, y, "skipCritters", "Prevents neutral or trivial non-combat critters from ever being marked.")
-    y = y - 20
-    cbAutoUpdateDB = E.Chk(t1, "Save Manual Marks to Database", 12, y, "autoUpdateDB", "Automatically saves manually placed Kill (Skull/Cross) or CC marks to your internal database for future encounters.")
     y = y - 20
     E.Chk(t1, "Verbose Mode", 12, y, "verbose", "Enables advanced debug output printed into your chat frame.")
     y = y - 24
@@ -715,236 +709,46 @@ do
     local previewBtn = E.Btn(t1, "Preview", 80, 24)
     previewBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 140, y)
     previewBtn:SetScript("OnClick", function() AMA.PreviewMarkPlan() end)
+    y = y - 36
 
-    -- ================================================================
-    -- TAB 2: DATABASE
-    -- ================================================================
+    E.Sep(t1, y)
+    y = y - 8
 
-    local t2 = tabContents[2]
+    -- ── Keybindings ──
+    E.Header(t1, "Keybindings", 8, y)
+    y = y - 22
 
-    -- Zone list on the left.
-    local zoneListFrame = CreateFrame("Frame", nil, t2,
-        BackdropTemplateMixin and "BackdropTemplate" or nil)
-    zoneListFrame:SetPoint("TOPLEFT", t2, "TOPLEFT", 12, -28)
-    zoneListFrame:SetPoint("BOTTOMLEFT", t2, "BOTTOMLEFT", 12, 12)
-    zoneListFrame:SetWidth(160)
-    E.Skin(zoneListFrame)
-
-    local zHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    zHeader:SetPoint("BOTTOMLEFT", zoneListFrame, "TOPLEFT", 2, 4)
-    zHeader:SetText("Zones:")
-    zHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-
-    local zoneScroll = CreateFrame("ScrollFrame", "AMA_ZoneScrollFrame", zoneListFrame, "UIPanelScrollFrameTemplate")
-    zoneScroll:SetPoint("TOPLEFT", zoneListFrame, "TOPLEFT", 4, -4)
-    zoneScroll:SetPoint("BOTTOMRIGHT", zoneListFrame, "BOTTOMRIGHT", -22, 4)
-    local zoneChild = CreateFrame("Frame", nil, zoneScroll)
-    zoneChild:SetWidth(130)
-    zoneScroll:SetScrollChild(zoneChild)
-
-    -- Mob list on the right.
-    local mobListFrame = CreateFrame("Frame", nil, t2,
-        BackdropTemplateMixin and "BackdropTemplate" or nil)
-    mobListFrame:SetPoint("TOPLEFT", zoneListFrame, "TOPRIGHT", 8, 0)
-    mobListFrame:SetPoint("BOTTOMRIGHT", t2, "BOTTOMRIGHT", -12, 12)
-    E.Skin(mobListFrame)
-
-    local mHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    mHeader:SetPoint("BOTTOMLEFT", mobListFrame, "TOPLEFT", 2, 4)
-    mHeader:SetText("Mob Name (Right-Click to reset)")
-    mHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-
-    local pHeader = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    pHeader:SetPoint("BOTTOMRIGHT", mobListFrame, "TOPRIGHT", -26, 4)
-    pHeader:SetText("Priority")
-    pHeader:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-
-    dbTabMobScroll = CreateFrame("ScrollFrame", "AMA_MobScrollFrame", mobListFrame, "UIPanelScrollFrameTemplate")
-    dbTabMobScroll:SetPoint("TOPLEFT", mobListFrame, "TOPLEFT", 4, -4)
-    dbTabMobScroll:SetPoint("BOTTOMRIGHT", mobListFrame, "BOTTOMRIGHT", -22, 4) 
-    dbTabZoneChild = CreateFrame("Frame", nil, dbTabMobScroll)
-    dbTabZoneChild:SetWidth(316)
-    dbTabMobScroll:SetScrollChild(dbTabZoneChild)
-    
-    local PRIORITY_COLORS = {
-        HIGH   = { 1.0, 0.4, 0.0 },
-        CC     = { 0.0, 0.9, 0.9 },
-        MEDIUM = { 0.9, 0.9, 0.2 },
-        LOW    = { 0.5, 0.9, 0.5 },
-        SKIP   = { 0.4, 0.4, 0.4 },
-    }
-
-    local function RefreshMobList(zoneName)
-        if not dbTabZoneChild then return end
-        -- Clear existing children.
-        for _, child in ipairs({ dbTabZoneChild:GetChildren() }) do
-            child:Hide(); child:SetParent(nil)
+    E.Label(t1, "Clear All Marks:", 16, y)
+    resetHotkeyBtn = E.Btn(t1, "Click to Bind", 150, 22)
+    resetHotkeyBtn:SetPoint("TOPLEFT", t1, "TOPLEFT", 120, y)
+    resetHotkeyBtn:SetScript("OnClick", function(self)
+        self:SetText("Press a Key...")
+        self:EnableKeyboard(true)
+    end)
+    resetHotkeyBtn:SetScript("OnKeyDown", function(self, key)
+        self:EnableKeyboard(false)
+        if key == "ESCAPE" then
+            AutoMarkAssistDB.resetMarksKey = ""
+        else
+            AutoMarkAssistDB.resetMarksKey = key
         end
-
-        if not zoneName or zoneName == "" then return end
-
-        local mobs = AMA.BuildZoneMobDB(zoneName)
-        if not mobs then
-            local noData = dbTabZoneChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            noData:SetPoint("TOPLEFT", dbTabZoneChild, "TOPLEFT", 8, -8)
-            noData:SetText("|cFF888888No mob data for this zone.|r")
-            dbTabZoneChild:SetHeight(30)
-            return
-        end
-
-        -- Sort mob names.
-        local sorted = {}
-        for name in pairs(mobs) do sorted[#sorted + 1] = name end
-        table.sort(sorted)
-
-        local rowY = -4
-        for _, mobName in ipairs(sorted) do
-            local pri = mobs[mobName]
-            local row = CreateFrame("Button", nil, dbTabZoneChild)
-            row:SetSize(306, 18)
-            row:SetPoint("TOPLEFT", dbTabZoneChild, "TOPLEFT", 4, rowY)
-            row:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-
-            local nameFS = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            nameFS:SetPoint("LEFT", row, "LEFT", 2, 0)
-            nameFS:SetText(mobName)
-            nameFS:SetWidth(400)
-            nameFS:SetJustifyH("LEFT")
-
-            local priFS = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-            priFS:SetPoint("RIGHT", row, "RIGHT", -2, 0)
-            local c = PRIORITY_COLORS[pri] or { 0.7, 0.7, 0.7 }
-            priFS:SetText(pri or "?")
-            priFS:SetTextColor(c[1], c[2], c[3], 1)
-
-            row:SetScript("OnClick", function(self, button)
-                if button == "RightButton" then
-                    -- Reset to default.
-                    local overrides = AMA.GetZoneMobOverrides(zoneName, false)
-                    if overrides then overrides[mobName] = nil end
-                    RefreshMobList(zoneName)
-                    return
-                end
-                -- Cycle priority.
-                local currentIdx = 1
-                for ci, cp in ipairs(PRIORITY_CYCLE) do
-                    if cp == pri then currentIdx = ci; break end
-                end
-                local nextIdx = (currentIdx % #PRIORITY_CYCLE) + 1
-                local newPri = PRIORITY_CYCLE[nextIdx]
-                local overrides = AMA.GetZoneMobOverrides(zoneName, true)
-                overrides[mobName] = newPri
-                RefreshMobList(zoneName)
-            end)
-
-            row:SetScript("OnEnter", function()
-                nameFS:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-            end)
-            row:SetScript("OnLeave", function()
-                nameFS:SetTextColor(1, 1, 1, 1)
-            end)
-
-            rowY = rowY - 18
-        end
-
-        dbTabZoneChild:SetHeight(math.abs(rowY) + 8)
-    end
-
-    local function RefreshZoneList()
-        for _, child in ipairs({ zoneChild:GetChildren() }) do
-            child:Hide(); child:SetParent(nil)
-        end
-
-        local elements = {}
-        local zoneSet = {}
-
-        if AutoMarkAssist_ExpansionOrder then
-            for _, group in ipairs(AutoMarkAssist_ExpansionOrder) do
-                if type(group) == "table" and group.name then
-                    elements[#elements + 1] = { isHeader = true, text = group.name }
-                    for _, z in ipairs(group.zones or {}) do
-                        if z and z ~= "" and not zoneSet[z] then
-                            elements[#elements + 1] = { isHeader = false, text = z }
-                            zoneSet[z] = true
-                        end
-                    end
-                end
-            end
-        end
-
-        if AutoMarkAssist_MobDB then
-            local missing = {}
-            for z in pairs(AutoMarkAssist_MobDB) do
-                if not zoneSet[z] then missing[#missing + 1] = z end
-            end
-            if #missing > 0 then
-                table.sort(missing)
-                elements[#elements + 1] = { isHeader = true, text = "Other" }
-                for _, z in ipairs(missing) do
-                    elements[#elements + 1] = { isHeader = false, text = z }
-                end
-            end
-        end
-
-        local btnY = -4
-        for _, el in ipairs(elements) do
-            if el.isHeader then
-                btnY = btnY - 4
-                local hFS = zoneChild:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-                hFS:SetPoint("TOPLEFT", zoneChild, "TOPLEFT", 4, btnY)
-                hFS:SetText("|cFF1A9EC0" .. el.text .. "|r")
-                btnY = btnY - 18
-            else
-                local zoneName = el.text
-                local zBtn = CreateFrame("Button", nil, zoneChild)
-                zBtn:SetSize(118, 16)
-                zBtn:SetPoint("TOPLEFT", zoneChild, "TOPLEFT", 12, btnY)
-                zBtn:RegisterForClicks("LeftButtonUp")
-
-                local zFS = zBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-                zFS:SetPoint("LEFT", zBtn, "LEFT", 0, 0)
-                zFS:SetText(zoneName)
-                zFS:SetWidth(116); zFS:SetJustifyH("LEFT")
-                zFS:SetTextColor(0.8, 0.8, 0.8, 1)
-
-                zBtn:SetScript("OnClick", function()
-                    dbTabCurrentZone = zoneName
-                    RefreshMobList(zoneName)
-                end)
-                zBtn:SetScript("OnEnter", function()
-                    zFS:SetTextColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1)
-                end)
-                zBtn:SetScript("OnLeave", function()
-                    if dbTabCurrentZone == zoneName then
-                        zFS:SetTextColor(1, 1, 1, 1)
-                    else
-                        zFS:SetTextColor(0.8, 0.8, 0.8, 1)
-                    end
-                end)
-
-                btnY = btnY - 16
-            end
-        end
-        zoneChild:SetHeight(math.abs(btnY) + 8)
-    end
-
-    t2:SetScript("OnShow", function()
-        RefreshZoneList()
-        if dbTabCurrentZone then
-            RefreshMobList(dbTabCurrentZone)
-        end
+        AMA.ApplyResetKeybind()
+        if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
+    end)
+    resetHotkeyBtn:SetScript("OnHide", function(self)
+        self:EnableKeyboard(false)
     end)
 
     -- ================================================================
-    -- TAB 3: ABOUT
+    -- TAB 2: ABOUT
     -- ================================================================
 
-    local t3 = tabContents[3]
+    local t2 = tabContents[2]
     local ay = -24
 
     local function CenterLabel(text, yOff)
-        local lbl = t3:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-        lbl:SetPoint("TOP", t3, "TOP", 0, yOff)
+        local lbl = t2:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+        lbl:SetPoint("TOP", t2, "TOP", 0, yOff)
         lbl:SetText(text)
         lbl:SetJustifyH("CENTER")
         return lbl
@@ -1006,6 +810,15 @@ function AMA.RefreshConfigFrame()
         end
     end
 
+    if resetHotkeyBtn then
+        local key = AutoMarkAssistDB and AutoMarkAssistDB.resetMarksKey
+        if not key or key == "" then
+            resetHotkeyBtn:SetText("Click to Bind")
+        else
+            resetHotkeyBtn:SetText(key)
+        end
+    end
+
     -- Mode buttons.
     if modeBtns then
         local mode = AMA.GetMarkingMode()
@@ -1058,3 +871,4 @@ function AMA.OpenConfigFrame(tabIdx)
     AMA.RefreshConfigFrame()
     if tabIdx and ShowTab then ShowTab(tabIdx) end
 end
+

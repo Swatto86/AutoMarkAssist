@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 3.0.4
+### Architecture Changes
+- **First-Come-First-Serve (FCFS) System:** Transitioned from a strict database priority system to a dynamic FCFS marking framework. The obsolete Database tab has been removed from the Configuration UI.
+- **Waterfall Cascading Marks:** Added dynamic mark cascading upon target death. When the Skull target dies, the Cross target promotes to Skull, and the next available CC mark seamlessly promotes to Cross.
+
+### Enhancements
+- **Reset Marks Keybind:** Re-engineered the frame handling for the "Reset Marks" functionality to ensure hardware input is cleanly captured. The default keybind is now 'F'. Pressing it correctly clears all marks explicitly assigned by the user.
+- **Manual Mode 'NONE' Modifier:** You can now configure the Manual Marking mode to use "NONE" as the modifier key. Mouseover targets will immediately activate the scroll-wheel mark selector.
+- **Environment Targeting:** Validated seamless support for _anniversary_ (Classic) client environments.
+
+# AutoMarkAssist Changelog
+
 ## 3.0.3
 ### Bug Fixes
 - **Verbose Mode Consistency:** Fully integrated Verbose mode across all remaining slash commands and GUI configuration toggles. The chat frame will only alert you of changes you make via the GUI or chat commands if Verbose mode is properly toggled on!
@@ -491,4 +503,5 @@ The entire architecture of AutoMarkAssist has been vastly simplified, dramatical
 - Initial release. Priority-based proximity marking for TBC Anniversary dungeons.
 
 </details>
+
 

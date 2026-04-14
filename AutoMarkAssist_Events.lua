@@ -137,10 +137,11 @@ frame:RegisterEvent("ADDON_LOADED")
 -- ============================================================
 
 local resetKeyBtn = CreateFrame("Button", "AMA_ResetMarksButton", UIParent)
-resetKeyBtn:SetSize(1, 1); resetKeyBtn:Hide()
-resetKeyBtn:RegisterForClicks("AnyUp")
+resetKeyBtn:SetSize(1, 1)
+resetKeyBtn:SetAlpha(0)
+resetKeyBtn:RegisterForClicks("AnyUp", "AnyDown")
 resetKeyBtn:SetScript("OnClick", function()
-    if AMA.ResetState then AMA.ResetState() end
+    if AMA.ResetWithMessage then AMA.ResetWithMessage() end
 end)
 
 function AMA.ApplyResetKeybind()
@@ -409,12 +410,11 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         for guid, markIdx in pairs(AMA.markedGUIDs) do
             local token = AMA.markTokens[markIdx]
             local name = token and UnitName(token) or "?"
-            local pri = AMA.guidPriority[guid] or "?"
             local source = AMA.guidMarkSource[guid] or "?"
-            AMA.Print(string.format("  %s %s - %s (%s, %s)",
+            AMA.Print(string.format("  %s %s - %s (%s)",
                 AMA.MARK_ICON_COORDS[markIdx] or "",
                 AMA.MARK_NAMES[markIdx] or "?",
-                name, pri, source))
+                name, source))
             count = count + 1
         end
         if count == 0 then

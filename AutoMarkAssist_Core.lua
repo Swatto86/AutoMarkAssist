@@ -1,5 +1,5 @@
 -- AutoMarkAssist_Core.lua
--- Mark allocation, priority detection, CC matching, sync, and rebalance.
+-- Mark allocation, CC matching, sync, and rebalance.
 -- Loaded after AutoMarkAssist.lua (namespace).
 
 local AMA = AutoMarkAssist
@@ -18,22 +18,8 @@ local MARK_CROSS    = 7
 local MARK_SKULL    = 8
 local MARK_NONE     = 0
 
-local PRIORITY_BOSS   = "BOSS"
-local PRIORITY_HIGH   = "HIGH"
-local PRIORITY_CC     = "CC"
-local PRIORITY_MEDIUM = "MEDIUM"
-local PRIORITY_LOW    = "LOW"
-
 local MARK_SOURCE_LOCAL    = "local"
 local MARK_SOURCE_OBSERVED = "observed"
-
-local PRIORITY_RANK = {
-    [PRIORITY_BOSS]   = 0,
-    [PRIORITY_HIGH]   = 1,
-    [PRIORITY_CC]     = 2,
-    [PRIORITY_MEDIUM] = 3,
-    [PRIORITY_LOW]    = 4,
-}
 
 -- ============================================================
 -- MARK STATE
@@ -42,7 +28,6 @@ local PRIORITY_RANK = {
 AMA.markedGUIDs    = {}   -- guid -> markIdx
 AMA.markOwners     = {}   -- markIdx -> guid
 AMA.markTokens     = {}   -- markIdx -> unitToken
-AMA.guidPriority   = {}   -- guid -> priority tier
 AMA.guidMarkSource = {}   -- guid -> "local" | "observed"
 AMA.pullMarkCount  = 0
 
@@ -119,11 +104,10 @@ end
 -- MARK TRACKING
 -- ============================================================
 
-function AMA.RecordMark(guid, markIdx, token, priority)
+function AMA.RecordMark(guid, markIdx, token)
     AMA.markedGUIDs[guid] = markIdx
     AMA.markOwners[markIdx] = guid
     AMA.markTokens[markIdx] = token
-    AMA.guidPriority[guid] = priority
     AMA.guidMarkSource[guid] = MARK_SOURCE_LOCAL
     AMA.pullMarkCount = AMA.pullMarkCount + 1
 end
@@ -136,7 +120,6 @@ local function ForgetTrackedMark(guid)
     end
     AMA.markedGUIDs[guid] = nil
     AMA.markTokens[markIdx] = nil
-    AMA.guidPriority[guid] = nil
     AMA.guidMarkSource[guid] = nil
     if next(AMA.markedGUIDs) == nil then
         AMA.pullMarkCount = 0
@@ -159,6 +142,10 @@ end
 -- ============================================================
 
 local function IsUnitInRange(unitToken, rangeIdx)
+    -- Map Trade range (2) to Duel range (3) because CheckInteractDistance index 2 
+    -- returns false for hostile NPCs, breaking proximity marking at ~11yd.
+    if rangeIdx == 2 then rangeIdx = 3 end
+
     local ok, result = pcall(CheckInteractDistance, unitToken, rangeIdx or 4)
     if not ok then return false end
     return result == 1 or result == true
@@ -258,7 +245,7 @@ function AMA.GetZoneAdditions(zoneName, create)
 end
 
 -- ============================================================
--- MOB PRIORITY DETECTION
+-- MOB FILTERING
 -- ============================================================
 
 local function MatchesKeyword(name, keywords)
@@ -269,54 +256,29 @@ local function MatchesKeyword(name, keywords)
     return false
 end
 
-local function GetMobPriority(unitToken)
+local function IsMarkableTarget(unitToken)
     local name = UnitName(unitToken)
-    if not name or name == "" then return nil end
+    if not name or name == "" then return false end
 
     -- Skip critters.
     if AutoMarkAssistDB and AutoMarkAssistDB.skipCritters then
         local ctype = UnitCreatureType and UnitCreatureType(unitToken)
-        if ctype == "Critter" then return nil end
+        if ctype == "Critter" then return false end
     end
 
-    -- Check classification: bosses and rares.
-    local class = UnitClassification and UnitClassification(unitToken)
-    if class == "worldboss" or class == "raidboss" then
-        return PRIORITY_BOSS, name
-    end
-    if class == "elite" or class == "rareelite" or class == "rare" then
-        -- Check zone DB first for elites.
+    -- Check zone database to see if explicitly skipped
+    if AMA.currentZoneMobDB and AMA.currentZoneMobDB[name] == "SKIP" then
+        return false
     end
 
-    -- Check zone database.
-    if AMA.currentZoneMobDB and AMA.currentZoneMobDB[name] then
-        local pri = AMA.currentZoneMobDB[name]
-        if pri == "SKIP" then return nil end
-        return pri, name
-    end
-
-    -- Keyword heuristics for mobs not in DB.
-    if MatchesKeyword(name, AMA.HIGH_KEYWORDS) then
-        return PRIORITY_HIGH, name
-    end
-    if MatchesKeyword(name, AMA.CC_KEYWORDS) then
-        return PRIORITY_CC, name
-    end
-
-    -- Default to MEDIUM for mobs in a dungeon/raid zone with a DB.
-    if AMA.currentZoneMobDB then
-        return PRIORITY_MEDIUM, name
-    end
-
-    -- Outside a known zone, mark as MEDIUM if it's attackable.
-    return PRIORITY_MEDIUM, name
+    return true, name
 end
 
 -- ============================================================
 -- MARK ALLOCATION
 -- The simplified allocation works as follows:
--- 1. BOSS/HIGH priority -> Skull, then Cross
--- 2. CC priority -> matching CC mark if class is in group
+-- 1. Try to assign Skull or Cross (if free)
+-- 2. Try to find a matching CC mark for the creature type
 -- 3. Any remaining -> next free enabled mark
 -- ============================================================
 
@@ -353,76 +315,32 @@ local function FindCCMark(creatureType)
     return nil
 end
 
-local function AllocateMark(priority, unitToken)
-    if priority == PRIORITY_BOSS or priority == PRIORITY_HIGH then
-        -- Try kill marks first.
-        local killOrder = BuildKillOrder()
-        for _, m in ipairs(killOrder) do
-            if not AMA.markOwners[m] then return m end
+local function AllocateMark(unitToken)
+    -- 1. Try kill marks first (Skull, Cross).
+    for _, m in ipairs(AMA.KILL_MARKS) do
+        if AMA.IsMarkEnabled(m) and not AMA.markOwners[m] then
+            return m
         end
-        return nil
     end
 
-    if priority == PRIORITY_CC then
-        -- Try to find a matching CC mark based on creature type.
-        local ctype = unitToken and UnitCreatureType and UnitCreatureType(unitToken)
-        local ccMark = FindCCMark(ctype)
-        if ccMark then return ccMark end
-        -- Fall through to kill order if no CC match.
-    end
+    -- 2. Try to find a matching CC mark based on creature type.
+    local ctype = unitToken and UnitCreatureType and UnitCreatureType(unitToken)
+    local ccMark = FindCCMark(ctype)
+    if ccMark then return ccMark end
 
-    -- For MEDIUM, LOW, or CC-without-match: use next free enabled mark.
+    -- 3. For any remaining, use next free non-CC mark.
     local killOrder = BuildKillOrder()
     for _, m in ipairs(killOrder) do
         if not AMA.markOwners[m] then return m end
     end
-    -- Also try CC marks as overflow.
+    
+    -- 4. Try CC marks as overflow if nothing else is available.
     local reserved = AMA.GetReservedCCMarks()
     for markIdx in pairs(reserved) do
         if not AMA.markOwners[markIdx] then return markIdx end
     end
+    
     return nil
-end
-
--- Dynamic allocation: can displace a lower-priority mob.
-local function AllocateMarkDynamic(priority, unitToken)
-    local mark = AllocateMark(priority, unitToken)
-    if mark then return mark, nil end
-
-    if not (AutoMarkAssistDB and AutoMarkAssistDB.dynamicMarking) then
-        return nil, nil
-    end
-
-    -- Try to displace a lower-priority mob, or a distant/stale mob of the same priority.
-    local myRank = PRIORITY_RANK[priority] or 3
-    local bestMark, bestGUID, bestRank = nil, nil, -1
-
-    for m = 1, 8 do
-        if AMA.IsMarkEnabled(m) then
-            local ownerGUID = AMA.markOwners[m]
-            if ownerGUID and AMA.guidMarkSource[ownerGUID] == MARK_SOURCE_LOCAL then
-                local ownerPri = AMA.guidPriority[ownerGUID] or PRIORITY_MEDIUM
-                local ownerRank = PRIORITY_RANK[ownerPri] or 3
-                
-                local token = AMA.markTokens[m]
-                -- Evaluate physical closeness, subtracting defensive rank from out-of-range or stale mobs
-                local isClose = token and UnitExists(token) and IsUnitInRange(token, AutoMarkAssistDB and AutoMarkAssistDB.proximityRange or 4)
-                
-                local effectiveRank = ownerRank
-                if not isClose then
-                    effectiveRank = ownerRank + 0.5
-                end
-
-                if myRank < effectiveRank and effectiveRank > bestRank then
-                    bestMark = m
-                    bestGUID = ownerGUID
-                    bestRank = effectiveRank
-                end
-            end
-        end
-    end
-
-    return bestMark, bestGUID
 end
 
 -- ============================================================
@@ -446,7 +364,6 @@ function AMA.SyncVisibleMarks()
                         AMA.markedGUIDs[guid] = visibleMark
                         AMA.markOwners[visibleMark] = guid
                         AMA.markTokens[visibleMark] = token
-                        AMA.guidPriority[guid] = PRIORITY_MEDIUM
                         AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
                     elseif trackedMark ~= visibleMark then
                         -- Mark changed externally.
@@ -454,7 +371,6 @@ function AMA.SyncVisibleMarks()
                         AMA.markedGUIDs[guid] = visibleMark
                         AMA.markOwners[visibleMark] = guid
                         AMA.markTokens[visibleMark] = token
-                        AMA.guidPriority[guid] = PRIORITY_MEDIUM
                         AMA.guidMarkSource[guid] = MARK_SOURCE_OBSERVED
                     else
                         -- Update token reference.
@@ -487,29 +403,13 @@ function AMA.AssignMark(unitToken, force, source)
     -- Range check.
     if not IsUnitInAutoMarkRange(unitToken) then return end
 
-    -- Get priority.
-    local priority, mobName = GetMobPriority(unitToken)
-    if not priority then return end
+    -- Check if it's a valid target
+    local isValid, mobName = IsMarkableTarget(unitToken)
+    if not isValid then return end
 
     -- Allocate a mark.
-    local markIdx, evictGUID
-    if AutoMarkAssistDB and AutoMarkAssistDB.dynamicMarking then
-        markIdx, evictGUID = AllocateMarkDynamic(priority, unitToken)
-    else
-        markIdx = AllocateMark(priority, unitToken)
-    end
-
+    local markIdx = AllocateMark(unitToken)
     if not markIdx then return end
-
-    -- Evict displaced mob if needed.
-    if evictGUID then
-        local evictMark = AMA.markedGUIDs[evictGUID]
-        local evictToken = evictMark and AMA.markTokens[evictMark]
-        if evictToken and UnitExists(evictToken) then
-            AMA.TrySetRaidTarget(evictToken, 0)
-        end
-        ForgetTrackedMark(evictGUID)
-    end
 
     -- Apply the mark.
     local applied, reason = AMA.TrySetRaidTarget(unitToken, markIdx)
@@ -519,11 +419,10 @@ function AMA.AssignMark(unitToken, force, source)
         return
     end
 
-    AMA.RecordMark(guid, markIdx, unitToken, priority)
-    AMA.VPrint(string.format("Marked %s -> %s (%s, %s)",
+    AMA.RecordMark(guid, markIdx, unitToken)
+    AMA.VPrint(string.format("Marked %s -> %s (%s)",
         mobName or "?",
         AMA.MARK_NAMES[markIdx] or tostring(markIdx),
-        priority,
         source or "auto"))
 end
 
@@ -532,11 +431,25 @@ end
 -- ============================================================
 
 function AMA.ResetState()
-    -- Clear all locally-assigned marks from mobs.
+    -- Clear marks from known marked units that are currently visible to us.
+    local tokensCleared = {}
+
+    -- First try the tokens actively visible in our scanner
+    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+        if UnitExists(token) then
+            local guid = UnitGUID and UnitGUID(token)
+            if guid and AMA.markedGUIDs[guid] and AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
+                pcall(SetRaidTarget, token, 0)
+                tokensCleared[guid] = true
+            end
+        end
+    end
+
+    -- Then try the originally cached tokens as long as they still point to the same mob
     for guid, markIdx in pairs(AMA.markedGUIDs) do
-        if AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
+        if not tokensCleared[guid] and AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
             local token = AMA.markTokens[markIdx]
-            if token and UnitExists(token) then
+            if token and UnitExists(token) and (UnitGUID and UnitGUID(token) == guid) then
                 pcall(SetRaidTarget, token, 0)
             end
         end
@@ -546,7 +459,6 @@ function AMA.ResetState()
     wipe(AMA.markedGUIDs)
     wipe(AMA.markOwners)
     wipe(AMA.markTokens)
-    wipe(AMA.guidPriority)
     wipe(AMA.guidMarkSource)
     AMA.pullMarkCount = 0
 end
@@ -566,34 +478,46 @@ function AMA.CascadeMarksAfterDeath()
     if AMA.GetMarkingMode() == "manual" then return end
     if AMA.IsCombatMarkLockActive() then return end
 
-    -- Re-scan visible mobs and re-assign if better marks are free.
-    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
-        if UnitExists(token) and UnitCanAttack("player", token)
-        and not (UnitIsDead and UnitIsDead(token)) then
-            local guid = UnitGUID and UnitGUID(token)
-            if guid and AMA.markedGUIDs[guid]
-            and AMA.guidMarkSource[guid] == MARK_SOURCE_LOCAL then
-                local priority = AMA.guidPriority[guid]
-                if priority then
-                    local currentMark = AMA.markedGUIDs[guid]
-                    local idealMark = AllocateMark(priority, token)
-                    -- If the ideal mark is "better" (higher prestige), re-assign.
-                    if idealMark and idealMark ~= currentMark then
-                        local myRank = PRIORITY_RANK[priority] or 3
-                        -- Only cascade kill marks upward.
-                        if priority == PRIORITY_HIGH or priority == PRIORITY_BOSS then
-                            if idealMark == MARK_SKULL or
-                               (idealMark == MARK_CROSS and currentMark ~= MARK_SKULL) then
-                                ForgetTrackedMark(guid)
-                                local applied = AMA.TrySetRaidTarget(token, idealMark)
-                                if applied then
-                                    AMA.RecordMark(guid, idealMark, token, priority)
-                                    AMA.VPrint("Cascaded: " .. (UnitName(token) or "?") ..
-                                        " -> " .. (AMA.MARK_NAMES[idealMark] or "?"))
-                                end
-                            end
-                        end
-                    end
+    -- 1. Try to promote Cross to Skull if Skull is free
+    if AMA.IsMarkEnabled(MARK_SKULL) and not AMA.markOwners[MARK_SKULL] then
+        if AMA.IsMarkEnabled(MARK_CROSS) and AMA.markOwners[MARK_CROSS] then
+            local crossGuid = AMA.markOwners[MARK_CROSS]
+            local crossToken = AMA.markTokens[MARK_CROSS]
+            
+            if crossToken and UnitExists(crossToken) and not UnitIsDead(crossToken) then
+                ForgetTrackedMark(crossGuid)
+                local applied = AMA.TrySetRaidTarget(crossToken, MARK_SKULL)
+                if applied then
+                    AMA.RecordMark(crossGuid, MARK_SKULL, crossToken)
+                    AMA.VPrint("Promoted Cross to Skull: " .. (UnitName(crossToken) or "?"))
+                end
+            end
+        end
+    end
+
+    -- 2. Try to promote a CC mark to Cross if Cross is now free
+    if AMA.IsMarkEnabled(MARK_CROSS) and not AMA.markOwners[MARK_CROSS] then
+        local bestMarkToPromote = nil
+        
+        -- Default to finding *any* remaining mark to promote to Cross
+        for m = 1, 6 do
+            if AMA.markOwners[m] then
+                bestMarkToPromote = m
+                break
+            end
+        end
+
+        if bestMarkToPromote then
+            local promoGuid = AMA.markOwners[bestMarkToPromote]
+            local promoToken = AMA.markTokens[bestMarkToPromote]
+            local oldMarkName = AMA.MARK_NAMES[bestMarkToPromote] or tostring(bestMarkToPromote)
+            
+            if promoToken and UnitExists(promoToken) and not UnitIsDead(promoToken) then
+                ForgetTrackedMark(promoGuid)
+                local applied = AMA.TrySetRaidTarget(promoToken, MARK_CROSS)
+                if applied then
+                    AMA.RecordMark(promoGuid, MARK_CROSS, promoToken)
+                    AMA.VPrint("Promoted " .. oldMarkName .. " to Cross: " .. (UnitName(promoToken) or "?"))
                 end
             end
         end
