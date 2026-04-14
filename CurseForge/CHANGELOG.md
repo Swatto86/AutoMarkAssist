@@ -1,6 +1,6 @@
 # AutoMarkAssist Changelog
 
-## 3.0.1
+## 3.0.2
 ### Bug Fixes
 - **Config UI Elements:** Increased configuration window height to properly fit Announce Now and Preview buttons.
 - **Manual Mode Flickering:** Fixed a bug where releasing the modifier key did not dismiss the underlying scroll listener, causing the mark selector HUD to flicker aggressively.
