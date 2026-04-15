@@ -103,9 +103,11 @@ CommitPendingManualMark = function(reason)
     if selectedMark == 0 then
         if currentMark > 0 then
             local cleared = AMA.TrySetRaidTarget and AMA.TrySetRaidTarget(token, 0)
-            if cleared and AMA.ForgetMark then
-                AMA.ForgetMark(guid)
+            if not cleared then
+                ClearPendingManualMark()
+                return false
             end
+            if AMA.ForgetMark then AMA.ForgetMark(guid) end
         end
         ClearPendingManualMark()
         return true

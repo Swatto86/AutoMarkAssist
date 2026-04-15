@@ -1,5 +1,24 @@
 # AutoMarkAssist Changelog
 
+## 3.1.0
+
+### New Features
+- **Per-Mob Mark Database:** Replaced the old priority string system (HIGH/MEDIUM/LOW/CC) with concrete mark assignments per mob. Every mob in the database now maps directly to a specific mark index (e.g., Skull, Moon) or SKIP.
+- **Database Config Tab:** New "Database" tab in the config panel. Browse all mobs for the current zone, see their assigned marks, left-click to cycle through marks, right-click to revert player overrides. Add custom mobs or reset the zone to defaults.
+- **Manual Mode Learning:** In manual mode, marking a mob inside an instance automatically saves your preference to the database. Future pulls will use your learned marks.
+- **Smart Mark Allocation:** New allocation chain — DB preference → kill marks (Skull/Cross FCFS) → CC by creature type and group composition → any remaining enabled mark → spill into reserved CC marks.
+- **CC Creature Type Matching:** CC marks are only assigned to mobs whose creature type matches the CC ability (e.g., Moon only on Humanoids/Beasts for Polymorph, Star only on Undead for Shackle).
+
+### Bug Fixes
+- **Auto-Reset Respects Other Players:** Leaving combat now only clears marks the addon set locally. Marks placed by other players (e.g., another tank marking the next pack) are preserved. Explicit user actions (`/ama reset`, keybind) still clear everything.
+- **Removed Player-Bounce Fallback:** The reset logic no longer bounces marks through the player frame to force-clear orphaned marks. This prevented a race condition where bouncing could accidentally strip marks set by other players on mobs outside your scanning range.
+- **ForgetTrackedMark State Consistency:** Fixed a minor state desync where clearing a mark that belonged to a different GUID could incorrectly nil the token reference for the actual owner.
+- **Manual Mode Clear Return Value:** `CommitPendingManualMark` now correctly returns false when clearing a mark fails, instead of always returning true.
+- **Removed Dead Code:** Cleaned up unused `pullMarkCount` tracking field and removed stale `NormalizeZoneScopedMobSettings()` call from the event handler.
+
+### Migration
+- Existing saved variables are automatically migrated. Old `mobOverrides` (HIGH→Skull, CC→Moon), `mobRemovals` (→SKIP), and `zoneAdditions` are converted to the new `mobMarks` format.
+
 ## 3.0.5
 ### Bug Fixes
 - **Orphaned Mark Leaks (Ghost Marks):** Resolved a critical state desync bug where marks owned by despawned or out-of-range mobs were never reclaimed. Skull and Cross could be permanently locked by a "ghost" owner from a previous pack, causing subsequent packs to receive incorrect marks (e.g. Triangle instead of Cross).

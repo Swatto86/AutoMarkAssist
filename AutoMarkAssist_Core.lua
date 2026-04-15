@@ -19,7 +19,6 @@ AMA.markedGUIDs    = {}   -- guid -> markIdx
 AMA.markOwners     = {}   -- markIdx -> guid
 AMA.markTokens     = {}   -- markIdx -> unitToken
 AMA.guidMarkSource = {}   -- guid -> "local" | "observed"
-AMA.pullMarkCount  = 0
 
 -- ============================================================
 -- UNIT TOKEN LIST
@@ -117,7 +116,6 @@ function AMA.RecordMark(guid, markIdx, token)
     AMA.markOwners[markIdx] = guid
     AMA.markTokens[markIdx] = token
     AMA.guidMarkSource[guid] = MARK_SOURCE_LOCAL
-    AMA.pullMarkCount = AMA.pullMarkCount + 1
 end
 
 local function ForgetTrackedMark(guid)
@@ -125,13 +123,10 @@ local function ForgetTrackedMark(guid)
     if not markIdx then return nil end
     if AMA.markOwners[markIdx] == guid then
         AMA.markOwners[markIdx] = nil
+        AMA.markTokens[markIdx] = nil
     end
     AMA.markedGUIDs[guid] = nil
-    AMA.markTokens[markIdx] = nil
     AMA.guidMarkSource[guid] = nil
-    if next(AMA.markedGUIDs) == nil then
-        AMA.pullMarkCount = 0
-    end
     return markIdx
 end
 

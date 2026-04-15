@@ -361,7 +361,6 @@ function AMA.ResetState(forceAll)
     wipe(AMA.markOwners)
     wipe(AMA.markTokens)
     wipe(AMA.guidMarkSource)
-    AMA.pullMarkCount = 0
 end
 
 function AMA.ResetWithMessage(forceAll)

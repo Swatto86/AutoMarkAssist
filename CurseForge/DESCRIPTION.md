@@ -1,6 +1,6 @@
 # AutoMarkAssist
 
-AutoMarkAssist is a WoW Classic addon that automatically marks mobs in dungeons and raids using a fast, First-Come-First-Serve (FCFS) architecture. It detects your group composition and intelligently assigns CC marks to the right targets. When high-value targets die, marks will dynamically cascade (e.g., when Skull dies, Cross becomes the new Skull, leaving Cross open for another CC mark). 
+AutoMarkAssist is a WoW Classic addon that automatically marks mobs in dungeons and raids. It ships with a built-in database of dungeon and raid mobs with preferred mark assignments, detects your group's CC composition, and intelligently allocates kill and crowd-control marks. When high-value targets die, marks dynamically cascade (e.g., Skull dies → Cross promotes to Skull, freeing Cross for the next target).
 
 ## Mark Assignments
 
@@ -13,37 +13,52 @@ AutoMarkAssist is a WoW Classic addon that automatically marks mobs in dungeons 
 - **Circle** = Hibernate (Druid)
 - **Square** = Trap (Hunter) — disabled by default
 
-Skull and Cross are always kill targets. CC marks are only used when the matching class is in your group. Unused CC marks become extra kill targets!
+Skull and Cross are always kill targets. CC marks activate only when the matching class is in your group. Unused CC marks become extra kill targets.
+
+## Per-Mob Mark Database
+
+The addon includes a built-in database covering Classic, TBC, WotLK, Cata, and MoP dungeons and raids. Each mob has a preferred mark (e.g., Skull for high-threat targets, Moon for polymorphable humanoids). The allocation priority is:
+
+1. **Database preference** — If the mob has a stored mark and it's available, use it.
+2. **Kill marks (FCFS)** — Skull first, then Cross.
+3. **CC by creature type** — Match the mob's creature type to your group's CC abilities.
+4. **Any remaining enabled mark** — Fill non-CC marks first, then spill into CC marks if needed.
+
+You can customise per-mob marks in the **Database tab** of the config panel, or let manual mode learn your preferences inside instances.
 
 ## Three Marking Modes
 
-- **Proximity** (default) — Auto-marks hostile mobs within range.
+- **Proximity** (default) — Auto-marks hostile mobs within range on a 0.5s scan timer.
 - **Mouseover** — Marks when you hover over a mob.
-- **Manual** — Hold a modifier key (or choose "NONE") and scroll your mouse wheel over a target to pick your own marks.
+- **Manual** — Hold a modifier key (or choose "NONE") and scroll your mouse wheel over a target to pick marks. Inside instances, your choices are saved to the database for future pulls.
 
 Only one mode is active at a time.
 
 ## Smart CC Detection
 
-The addon reads your group roster and determines available CC:
+The addon reads your group roster and activates CC marks for present classes:
 
-- Mage -> Polymorph
-- Rogue -> Sap
-- Warlock -> Banish 
-- Priest -> Shackle
-- Druid -> Hibernate
+- Mage → Polymorph (Moon)
+- Rogue → Sap (Diamond)
+- Warlock → Banish (Triangle)
+- Priest → Shackle (Star)
+- Druid → Hibernate (Circle)
+- Hunter → Trap (Square)
 
-When these classes enter your group, their corresponding marks "activate" and deploy.
+Creature type matters — a Mage's Moon mark will only be assigned to Humanoids, Beasts, and Critters, not to Undead or Demons.
 
 ## Usage
 
 Type `/ama` or `/automarkassist` to open the configuration panel.
 
 Other commands:
-- `/ama show`
-- `/ama hide`
+- `/ama enable` / `disable` / `toggle`
+- `/ama reset` — Clear all marks.
+- `/ama announce` — Post mark plan to party chat.
+- `/ama preview` — Preview mark plan locally.
+- `/ama mode <proximity|mouseover|manual>`
+- `/ama verbose` — Toggle debug output.
 - `/ama help`
-- `/ama reset` - Manually clear marks assigned by the addon.
 
 ## Good fit for
 
@@ -54,7 +69,8 @@ Other commands:
 ## Notes and limitations
 
 - Retail is not supported.
-- If Blizzard does not allow your character to place a raid icon in the current group, the addon cannot place one either, and it will now suppress group announcements that would imply active marks.
+- If Blizzard does not allow your character to place a raid icon in the current group, the addon cannot mark and will suppress announcements.
+- Auto-reset on leaving combat only clears marks the addon set — marks placed by other players are preserved.
 
 ## Source and support
 
