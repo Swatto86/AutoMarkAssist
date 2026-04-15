@@ -136,6 +136,7 @@ CommitPendingManualMark = function(reason)
         local existing = AMA.LookupMobMark and AMA.LookupMobMark(name)
         if existing ~= selectedMark then
             AMA.SetPlayerMobMark(zone, name, selectedMark)
+            AMA.currentZoneMobDB = AMA.BuildZoneMobDB(zone)
             AMA.VPrint(string.format("Learned: %s = %s in %s",
                 name, AMA.MARK_NAMES[selectedMark] or tostring(selectedMark), zone))
         end

@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.2.1
+
+### Bug Fixes
+- **Manual Mode DB Rebuild:** Manually marking a mob inside an instance now immediately rebuilds the zone mob database. Previously, learned marks were saved but not active until the next zone change, causing subsequent proximity/mouseover passes to use stale data.
+
 ## 3.2.0
 
 ### New Features
