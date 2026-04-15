@@ -1,36 +1,15 @@
 -- AutoMarkAssist_Events.lua
--- Zone tracking, event handling, proximity scanner, and slash commands.
+-- Zone tracking, event handling, and slash commands.
 -- Loaded last (after AutoMarkAssist_Config.lua).
 
 local AMA = AutoMarkAssist
 
 -- ============================================================
--- FILE-SCOPE CONSTANTS
+-- FILE-SCOPE STATE
 -- ============================================================
 
-local SCAN_INTERVAL = 0.5
 local pendingAnnounceAt = nil
 local lastAnnounceKey = nil
-
--- ============================================================
--- UNIT TOKEN LIST
--- ============================================================
-
-do
-    AMA.SCAN_UNIT_TOKENS = {
-        "target", "focus", "mouseover",
-        "player",
-        "party1", "party2", "party3", "party4",
-        "party1target", "party2target", "party3target", "party4target",
-    }
-    for i = 1, 40 do
-        AMA.SCAN_UNIT_TOKENS[#AMA.SCAN_UNIT_TOKENS + 1] = "raid" .. i
-        AMA.SCAN_UNIT_TOKENS[#AMA.SCAN_UNIT_TOKENS + 1] = "raid" .. i .. "target"
-    end
-    for i = 1, 20 do
-        AMA.SCAN_UNIT_TOKENS[#AMA.SCAN_UNIT_TOKENS + 1] = "nameplate" .. i
-    end
-end
 
 -- ============================================================
 -- ZONE DATABASE HELPER
@@ -154,36 +133,17 @@ function AMA.ApplyResetKeybind()
 end
 
 -- ============================================================
--- PROXIMITY SCANNER (OnUpdate)
+-- ANNOUNCE TICK (OnUpdate)
 -- ============================================================
 
-local scanElapsed = 0
+local announceElapsed = 0
+local ANNOUNCE_INTERVAL = 0.5
 
 frame:SetScript("OnUpdate", function(self, elapsed)
-    scanElapsed = scanElapsed + elapsed
-    if scanElapsed < SCAN_INTERVAL then return end
-    scanElapsed = 0
-
-    if not AutoMarkAssistDB then return end
-
+    announceElapsed = announceElapsed + elapsed
+    if announceElapsed < ANNOUNCE_INTERVAL then return end
+    announceElapsed = 0
     TryPendingAnnounce()
-
-    if not AutoMarkAssistDB.enabled then return end
-    if AMA.GetMarkingMode() ~= "proximity" then return end
-    if AMA.IsCombatMarkLockActive and AMA.IsCombatMarkLockActive() then return end
-
-    local canMark = AMA.CanMarkReason()
-    if not canMark then return end
-
-    if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
-
-    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS) do
-        if UnitExists(token) and UnitCanAttack("player", token) then
-            if not (UnitIsDead and UnitIsDead(token)) then
-                AMA.AssignMark(token, false, "proximity")
-            end
-        end
-    end
 end)
 
 -- ============================================================
@@ -203,7 +163,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
         -- Backfill missing defaults.
         AMA.BackfillDefaults(AutoMarkAssistDB)
-        AMA.NormalizeZoneScopedMobSettings()
 
         -- Register gameplay events.
         frame:RegisterEvent("PLAYER_ENTERING_WORLD")
@@ -257,11 +216,9 @@ frame:SetScript("OnEvent", function(self, event, ...)
             return
         end
 
-        if not AMA.IsAddonEnabled() then return end
-        if mode ~= "mouseover" then return end
-        if AMA.IsCombatMarkLockActive and AMA.IsCombatMarkLockActive() then return end
-        if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
-        AMA.AssignMark("mouseover", false, "mouseover")
+        if mode == "mouseover" then
+            AMA.HandleMouseoverMark()
+        end
 
     elseif event == "MODIFIER_STATE_CHANGED" then
         if not AutoMarkAssistDB then return end

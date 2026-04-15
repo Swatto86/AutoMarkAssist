@@ -19,7 +19,7 @@ local MARK_CROSS    = 7
 local MARK_SKULL    = 8
 
 local CONFIG_W = 540
-local CONFIG_H = 780
+local CONFIG_H = 820
 local TAB_H    = 24
 local CONFIG_MIN_SCALE   = 0.55
 local CONFIG_SCREEN_PAD  = 24
@@ -389,6 +389,7 @@ end
 
 local cfgFrame, currentTab, tabContents, tabBtns, ShowTab
 local ApplyResponsiveConfigLayout
+local cfgUserMoved = false
 local modeBtns, proxRangeBtns, modBtns, announceChannelBtns
 local announcePrefixEdit, scrollOrderCells, invertScrollBtn, resetHotkeyBtn
 local markToggleBoxes = {}
@@ -413,8 +414,10 @@ ApplyResponsiveConfigLayout = function()
     local usableH = math.max(1, uiH - CONFIG_SCREEN_PAD * 2)
     local scale = math.max(CONFIG_MIN_SCALE, math.min(1, usableW / CONFIG_W, usableH / CONFIG_H))
     cfgFrame:SetScale(scale)
-    cfgFrame:ClearAllPoints()
-    cfgFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
+    if not cfgUserMoved then
+        cfgFrame:ClearAllPoints()
+        cfgFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 40)
+    end
 end
 
 -- ============================================================
@@ -431,7 +434,7 @@ do
     cfgFrame:SetScript("OnDragStart", function(self) self:StartMoving() end)
     cfgFrame:SetScript("OnDragStop", function(self)
         self:StopMovingOrSizing()
-        if ApplyResponsiveConfigLayout then ApplyResponsiveConfigLayout() end
+        cfgUserMoved = true
     end)
     cfgFrame:SetClampedToScreen(true)
     cfgFrame:Hide()
@@ -472,7 +475,7 @@ do
     closeBtn:SetScript("OnClick", function() cfgFrame:Hide() end)
 
     -- ── TAB BAR ──
-    local TAB_NAMES = { "General", "About" }
+    local TAB_NAMES = { "General", "Database", "About" }
     tabContents = {}
     tabBtns = {}
     currentTab = 1
@@ -484,8 +487,8 @@ do
         tabBtns[i] = tb
 
         local content = CreateFrame("Frame", nil, cfgFrame)
-        content:SetPoint("TOPLEFT", cfgFrame, "TOPLEFT", 0, -26 - TAB_H - 2)
-        content:SetPoint("BOTTOMRIGHT", cfgFrame, "BOTTOMRIGHT", 0, 0)
+        content:SetPoint("TOPLEFT", cfgFrame, "TOPLEFT", 8, -26 - TAB_H - 2)
+        content:SetPoint("BOTTOMRIGHT", cfgFrame, "BOTTOMRIGHT", -8, 8)
         content:Hide()
         tabContents[i] = content
     end
@@ -496,7 +499,7 @@ do
             if i == idx then content:Show() else content:Hide() end
             tabBtns[i]:SetActive(i == idx)
         end
-        if idx == 2 and RefreshDBTab then RefreshDBTab() end
+        if idx == 2 and AMA._RefreshDBTab then AMA._RefreshDBTab() end
     end
 
     for i, tb in ipairs(tabBtns) do
@@ -747,10 +750,16 @@ do
     end)
 
     -- ================================================================
-    -- TAB 2: ABOUT
+    -- TAB 2: DATABASE
     -- ================================================================
 
-    local t2 = tabContents[2]
+    AMA.BuildDBTab(tabContents[2])
+
+    -- ================================================================
+    -- TAB 3: ABOUT
+    -- ================================================================
+
+    local t2 = tabContents[3]
     local ay = -24
 
     local function CenterLabel(text, yOff)
@@ -874,6 +883,7 @@ end
 function AMA.OpenConfigFrame(tabIdx)
     if not cfgFrame then return end
     if ApplyResponsiveConfigLayout then ApplyResponsiveConfigLayout() end
+    if not cfgFrame:IsShown() then cfgUserMoved = false end
     cfgFrame:Show()
     AMA.RefreshConfigFrame()
     if tabIdx and ShowTab then ShowTab(tabIdx) end

@@ -11,200 +11,142 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Utgarde Keep"] = {
-    ["Dragonflayer Runecaster"]     = "HIGH",   -- rune caster; interrupt
-    ["Dragonflayer Spiritualist"]   = "HIGH",   -- healer
-    ["Dragonflayer Heartsplitter"]  = "HIGH",   -- ranged; multishot
-    ["Dragonflayer Strategist"]     = "HIGH",   -- rallies nearby vrykul
-    ["Dragonflayer Ironhelm"]       = "MEDIUM",
-    ["Dragonflayer Bonecrusher"]    = "MEDIUM",
-    ["Dragonflayer Weaponsmith"]    = "MEDIUM",
-    ["Tunneling Ghoul"]             = "CC",     -- undead, shackleable
-    ["Enslaved Proto-Drake"]        = "CC",     -- dragonkin, CC-able
-    ["Dragonflayer Metalworker"]    = "LOW",
+    ["Dragonflayer Runecaster"]     = 8,   -- rune caster; interrupt
+    ["Dragonflayer Spiritualist"]   = 8,   -- healer
+    ["Dragonflayer Heartsplitter"]  = 8,   -- ranged; multishot
+    ["Dragonflayer Strategist"]     = 8,   -- rallies nearby vrykul
+    ["Tunneling Ghoul"]             = 5,     -- undead, shackleable
+    ["Enslaved Proto-Drake"]        = 5,     -- dragonkin, CC-able
 }
 
 db["The Nexus"] = {
-    ["Azure Magus"]                 = "HIGH",   -- arcane missiles + polymorph
-    ["Azure Warder"]                = "HIGH",   -- mana burn + arcane torrent
-    ["Mage Hunter Initiate"]        = "HIGH",   -- spellsteal + caster
-    ["Mage Hunter Ascendant"]       = "HIGH",   -- anti-caster; dangerous
-    ["Crystalline Frayer"]          = "MEDIUM",
-    ["Crystalline Protector"]       = "MEDIUM",
-    ["Alliance Ranger"]             = "CC",     -- humanoid, CC-able
-    ["Horde Ranger"]                = "CC",     -- humanoid, CC-able
-    ["Chaotic Rift"]                = "HIGH",   -- spawns adds
-    ["Crystalline Keeper"]          = "LOW",
+    ["Azure Magus"]                 = 8,   -- arcane missiles + polymorph
+    ["Azure Warder"]                = 8,   -- mana burn + arcane torrent
+    ["Mage Hunter Initiate"]        = 8,   -- spellsteal + caster
+    ["Mage Hunter Ascendant"]       = 8,   -- anti-caster; dangerous
+    ["Alliance Ranger"]             = 5,     -- humanoid, CC-able
+    ["Horde Ranger"]                = 5,     -- humanoid, CC-able
+    ["Chaotic Rift"]                = 8,   -- spawns adds
 }
 
 db["Azjol-Nerub"] = {
-    ["Anubar Crypt Fiend"]          = "MEDIUM",
-    ["Anubar Skirmisher"]           = "MEDIUM",
-    ["Anubar Champion"]             = "MEDIUM",
-    ["Anubar Shadowcaster"]         = "HIGH",   -- shadow bolt volley caster
-    ["Anubar Venomancer"]           = "HIGH",   -- poison + web venom
+    ["Anubar Shadowcaster"]         = 8,   -- shadow bolt volley caster
+    ["Anubar Venomancer"]           = 8,   -- poison + web venom
     ["Skittering Swarmer"]          = "SKIP",   -- mass swarm filler
-    ["Skittering Infector"]         = "CC",     -- beast, trappable
-    ["Anubar Crusher"]              = "MEDIUM",
-    ["Watcher Gashra"]              = "HIGH",   -- web wrap + poison
+    ["Skittering Infector"]         = 5,     -- beast, trappable
+    ["Watcher Gashra"]              = 8,   -- web wrap + poison
 }
 
 db["Ahn'kahet: The Old Kingdom"] = {
-    ["Twilight Apostle"]            = "HIGH",   -- healer + shadow mend
-    ["Twilight Darkcaster"]         = "HIGH",   -- shadow bolt volley
-    ["Twilight Necromancer"]        = "HIGH",   -- raises undead adds
-    ["Twilight Worshipper"]         = "CC",     -- humanoid, CC-able
-    ["Ahn'kahar Guardian"]          = "MEDIUM",
-    ["Ahn'kahar Spell Flinger"]     = "HIGH",   -- shadow + insanity caster
-    ["Frostbringer"]                = "HIGH",   -- frost caster
-    ["Bonegrinder"]                 = "MEDIUM",
-    ["Forgotten One"]               = "MEDIUM",
-    ["Plague Walker"]               = "LOW",
+    ["Twilight Apostle"]            = 8,   -- healer + shadow mend
+    ["Twilight Darkcaster"]         = 8,   -- shadow bolt volley
+    ["Twilight Necromancer"]        = 8,   -- raises undead adds
+    ["Twilight Worshipper"]         = 5,     -- humanoid, CC-able
+    ["Ahn'kahar Spell Flinger"]     = 8,   -- shadow + insanity caster
+    ["Frostbringer"]                = 8,   -- frost caster
 }
 
 db["Drak'Tharon Keep"] = {
-    ["Drakkari Shaman"]             = "HIGH",   -- healer + lightning bolt
-    ["Drakkari Medicine Man"]       = "HIGH",   -- healer
-    ["Drakkari Commander"]          = "HIGH",   -- battle shout + whirlwind
-    ["Drakkari Warrior"]            = "MEDIUM",
-    ["Drakkari Guardian"]           = "MEDIUM",
-    ["Risen Shadowcaster"]          = "HIGH",   -- shadow caster
-    ["Fetid Troll Corpse"]          = "CC",     -- undead, shackleable
-    ["Drakkari Bat"]                = "CC",     -- beast, trappable
-    ["Scourge Brute"]               = "MEDIUM",
-    ["Wretched Belcher"]            = "LOW",
+    ["Drakkari Shaman"]             = 8,   -- healer + lightning bolt
+    ["Drakkari Medicine Man"]       = 8,   -- healer
+    ["Drakkari Commander"]          = 8,   -- battle shout + whirlwind
+    ["Risen Shadowcaster"]          = 8,   -- shadow caster
+    ["Fetid Troll Corpse"]          = 5,     -- undead, shackleable
+    ["Drakkari Bat"]                = 5,     -- beast, trappable
 }
 
 db["The Violet Hold"] = {
-    ["Azure Captain"]               = "HIGH",   -- rallies invaders
-    ["Azure Sorceress"]             = "HIGH",   -- arcane caster
-    ["Azure Raider"]                = "MEDIUM",
-    ["Azure Stalker"]               = "HIGH",   -- stealth + burst
-    ["Azure Invader"]               = "MEDIUM",
-    ["Azure Binder"]                = "HIGH",   -- portal channeler
-    ["Azure Mage Slayer"]           = "CC",     -- humanoid, CC-able
-    ["Azure Scale Binder"]          = "HIGH",   -- dragonkin caster
-    ["Portal Keeper"]               = "HIGH",   -- must die to close portal
-    ["Portal Guardian"]             = "MEDIUM",
+    ["Azure Captain"]               = 8,   -- rallies invaders
+    ["Azure Sorceress"]             = 8,   -- arcane caster
+    ["Azure Stalker"]               = 8,   -- stealth + burst
+    ["Azure Binder"]                = 8,   -- portal channeler
+    ["Azure Mage Slayer"]           = 5,     -- humanoid, CC-able
+    ["Azure Scale Binder"]          = 8,   -- dragonkin caster
+    ["Portal Keeper"]               = 8,   -- must die to close portal
 }
 
 db["Gundrak"] = {
-    ["Drakkari Elemental"]          = "CC",     -- elemental, banishable
-    ["Drakkari Colossus"]           = "MEDIUM",
-    ["Drakkari Golem"]              = "MEDIUM",
-    ["Drakkari Medicine Man"]       = "HIGH",   -- healer
-    ["Living Mojo"]                 = "CC",     -- elemental, banishable
-    ["Drakkari Fire Weaver"]        = "HIGH",   -- fire caster
-    ["Drakkari Rhino"]              = "MEDIUM",
-    ["Spitting Cobra"]              = "CC",     -- beast, trappable
-    ["Drakkari Lancer"]             = "MEDIUM",
-    ["Drakkari Earthshaker"]        = "HIGH",   -- AoE stomp caster
+    ["Drakkari Elemental"]          = 5,     -- elemental, banishable
+    ["Drakkari Medicine Man"]       = 8,   -- healer
+    ["Living Mojo"]                 = 5,     -- elemental, banishable
+    ["Drakkari Fire Weaver"]        = 8,   -- fire caster
+    ["Spitting Cobra"]              = 5,     -- beast, trappable
+    ["Drakkari Earthshaker"]        = 8,   -- AoE stomp caster
 }
 
 db["Halls of Stone"] = {
-    ["Dark Rune Theurgist"]         = "HIGH",   -- lightning bolt caster
-    ["Dark Rune Stormcaller"]       = "HIGH",   -- chain lightning
-    ["Dark Rune Scholar"]           = "HIGH",   -- shadow caster
-    ["Dark Rune Elementalist"]      = "HIGH",   -- summons elementals
-    ["Dark Rune Giant"]             = "MEDIUM",
-    ["Dark Rune Warrior"]           = "MEDIUM",
-    ["Dark Rune Protector"]         = "CC",     -- humanoid, CC-able
-    ["Iron Trogg"]                  = "MEDIUM",
-    ["Iron Golem Custodian"]        = "MEDIUM",
-    ["Dark Rune Worker"]            = "LOW",
+    ["Dark Rune Theurgist"]         = 8,   -- lightning bolt caster
+    ["Dark Rune Stormcaller"]       = 8,   -- chain lightning
+    ["Dark Rune Scholar"]           = 8,   -- shadow caster
+    ["Dark Rune Elementalist"]      = 8,   -- summons elementals
+    ["Dark Rune Protector"]         = 5,     -- humanoid, CC-able
 }
 
 db["Halls of Lightning"] = {
-    ["Stormforged Sentinel"]        = "MEDIUM",
-    ["Stormforged Tactician"]       = "HIGH",   -- tactical strike + charge
-    ["Stormforged Mender"]          = "HIGH",   -- healer; top priority
-    ["Stormforged Construct"]       = "MEDIUM",
-    ["Stormfury Revenant"]          = "HIGH",   -- lightning caster
-    ["Slag"]                        = "CC",     -- elemental, banishable
-    ["Hardened Steel Berserker"]     = "HIGH",   -- Enrage + whirlwind
-    ["Hardened Steel Reaver"]       = "MEDIUM",
-    ["Lightning Construct"]         = "MEDIUM",
-    ["Titanium Vanguard"]           = "LOW",
+    ["Stormforged Tactician"]       = 8,   -- tactical strike + charge
+    ["Stormforged Mender"]          = 8,   -- healer; top priority
+    ["Stormfury Revenant"]          = 8,   -- lightning caster
+    ["Slag"]                        = 5,     -- elemental, banishable
+    ["Hardened Steel Berserker"]     = 8,   -- Enrage + whirlwind
 }
 
 db["The Oculus"] = {
-    ["Azure Ring Guardian"]         = "MEDIUM",
-    ["Azure Ley-Whelp"]            = "CC",     -- dragonkin, CC-able
-    ["Centrifuge Construct"]        = "MEDIUM",
-    ["Mage-Lord Urom"]             = "HIGH",   -- caster boss (not auto-detected in trash form)
-    ["Phantasmal Mammoth"]          = "MEDIUM",
-    ["Phantasmal Cloudscraper"]     = "MEDIUM",
-    ["Constructed Arcane Wraith"]   = "HIGH",   -- arcane caster
-    ["Phantasmal Air"]              = "CC",     -- elemental, banishable
+    ["Azure Ley-Whelp"]            = 5,     -- dragonkin, CC-able
+    ["Mage-Lord Urom"]             = 8,   -- caster boss (not auto-detected in trash form)
+    ["Constructed Arcane Wraith"]   = 8,   -- arcane caster
+    ["Phantasmal Air"]              = 5,     -- elemental, banishable
 }
 
 db["Culling of Stratholme"] = {
-    ["Crypt Fiend"]                 = "MEDIUM",
-    ["Tomb Stalker"]                = "MEDIUM",
-    ["Dark Necromancer"]            = "HIGH",   -- raises undead
-    ["Bile Golem"]                  = "MEDIUM",
-    ["Enraged Ghoul"]               = "CC",     -- undead, shackleable
-    ["Acolyte"]                     = "HIGH",   -- caster + shadow
-    ["Master Necromancer"]          = "HIGH",   -- raises undead; interrupt
-    ["Infinite Corruptor Agent"]    = "HIGH",   -- optional timed boss add
+    ["Dark Necromancer"]            = 8,   -- raises undead
+    ["Enraged Ghoul"]               = 5,     -- undead, shackleable
+    ["Acolyte"]                     = 8,   -- caster + shadow
+    ["Master Necromancer"]          = 8,   -- raises undead; interrupt
+    ["Infinite Corruptor Agent"]    = 8,   -- optional timed boss add
     ["Ghoul"]                       = "SKIP",   -- mass zombie filler
     ["Risen Zombie"]                = "SKIP",   -- mass zombie filler
 }
 
 db["Utgarde Pinnacle"] = {
-    ["Dragonflayer Seer"]           = "HIGH",   -- healer + lightning
-    ["Ymirjar Witch Doctor"]        = "HIGH",   -- healer + shadow bolt
-    ["Ymirjar Berserker"]           = "HIGH",   -- Enrage + heavy melee
-    ["Ymirjar Warrior"]             = "MEDIUM",
-    ["Ymirjar Harpooner"]           = "HIGH",   -- ranged; harpoon pull
-    ["Dragonflayer Deathseeker"]    = "MEDIUM",
-    ["Savage Worg"]                 = "CC",     -- beast, trappable
-    ["Scourge Hulk"]                = "MEDIUM",
-    ["Ymirjar Dusk Shaman"]         = "HIGH",   -- shadow caster
-    ["Dragonflayer Fanatic"]        = "CC",     -- humanoid, CC-able
+    ["Dragonflayer Seer"]           = 8,   -- healer + lightning
+    ["Ymirjar Witch Doctor"]        = 8,   -- healer + shadow bolt
+    ["Ymirjar Berserker"]           = 8,   -- Enrage + heavy melee
+    ["Ymirjar Harpooner"]           = 8,   -- ranged; harpoon pull
+    ["Savage Worg"]                 = 5,     -- beast, trappable
+    ["Ymirjar Dusk Shaman"]         = 8,   -- shadow caster
+    ["Dragonflayer Fanatic"]        = 5,     -- humanoid, CC-able
 }
 
 db["Trial of the Champion"] = {
-    ["Argent Confessor"]            = "HIGH",   -- healer
-    ["Argent Lightwielder"]         = "HIGH",   -- holy caster + heal
-    ["Argent Monk"]                 = "MEDIUM",
-    ["Argent Priestess"]            = "HIGH",   -- healer
-    ["Memory of Past Foe"]          = "MEDIUM",
-    ["Risen Champion"]              = "MEDIUM",
+    ["Argent Confessor"]            = 8,   -- healer
+    ["Argent Lightwielder"]         = 8,   -- holy caster + heal
+    ["Argent Priestess"]            = 8,   -- healer
     ["Black Knight's Ghoul"]        = "SKIP",   -- summoned filler
 }
 
 db["The Forge of Souls"] = {
-    ["Spectral Warden"]             = "MEDIUM",
-    ["Soulguard Animator"]          = "HIGH",   -- raises dead; shadow caster
-    ["Soulguard Adept"]             = "HIGH",   -- shadow caster
-    ["Soulguard Reaper"]            = "MEDIUM",
-    ["Soulguard Bonecaster"]        = "HIGH",   -- bone volley caster
-    ["Soulguard Watchman"]          = "MEDIUM",
-    ["Soul Horror"]                 = "CC",     -- undead, shackleable
+    ["Soulguard Animator"]          = 8,   -- raises dead; shadow caster
+    ["Soulguard Adept"]             = 8,   -- shadow caster
+    ["Soulguard Bonecaster"]        = 8,   -- bone volley caster
+    ["Soul Horror"]                 = 5,     -- undead, shackleable
     ["Spiteful Apparition"]         = "SKIP",   -- mass spirit filler
 }
 
 db["Pit of Saron"] = {
-    ["Deathwhisper Necrolyte"]      = "HIGH",   -- healer + shadow
-    ["Deathwhisper Shadowcaster"]   = "HIGH",   -- shadow bolt volley
-    ["Deathwhisper Torturer"]       = "HIGH",   -- curse + pain caster
-    ["Ymirjar Deathbringer"]        = "MEDIUM",
-    ["Ymirjar Wrathbringer"]        = "MEDIUM",
-    ["Ymirjar Skycaller"]           = "HIGH",   -- frost + lightning caster
-    ["Ymirjar Flamebearer"]         = "HIGH",   -- fire caster
-    ["Fallen Warrior"]              = "CC",     -- undead, shackleable
-    ["Wrathbone Skeleton"]          = "MEDIUM",
-    ["Hungering Ghoul"]             = "LOW",
+    ["Deathwhisper Necrolyte"]      = 8,   -- healer + shadow
+    ["Deathwhisper Shadowcaster"]   = 8,   -- shadow bolt volley
+    ["Deathwhisper Torturer"]       = 8,   -- curse + pain caster
+    ["Ymirjar Skycaller"]           = 8,   -- frost + lightning caster
+    ["Ymirjar Flamebearer"]         = 8,   -- fire caster
+    ["Fallen Warrior"]              = 5,     -- undead, shackleable
 }
 
 db["Halls of Reflection"] = {
-    ["Phantom Mage"]                = "HIGH",   -- fireball + flamestrike
-    ["Tortured Rifleman"]           = "HIGH",   -- ranged; shoot + curse
-    ["Shadowy Mercenary"]           = "HIGH",   -- stealth + backstab
-    ["Spectral Footman"]            = "MEDIUM",
-    ["Ghostly Priest"]              = "HIGH",   -- healer
-    ["Dark Ranger"]                 = "HIGH",   -- ranged + magic
-    ["Frostsworn General"]          = "MEDIUM",
+    ["Phantom Mage"]                = 8,   -- fireball + flamestrike
+    ["Tortured Rifleman"]           = 8,   -- ranged; shoot + curse
+    ["Shadowy Mercenary"]           = 8,   -- stealth + backstab
+    ["Ghostly Priest"]              = 8,   -- healer
+    ["Dark Ranger"]                 = 8,   -- ranged + magic
 }
 
 -- ============================================================
@@ -212,159 +154,97 @@ db["Halls of Reflection"] = {
 -- ============================================================
 
 db["Vault of Archavon"] = {
-    ["Tempest Minion"]              = "HIGH",   -- Emalon add; kill on Overcharge
-    ["Tempest Warder"]              = "HIGH",   -- dangerous caster support
-    ["Archavon Warder"]             = "MEDIUM",
-    ["Flame Warder"]                = "MEDIUM",
-    ["Frost Warder"]                = "MEDIUM",
-    ["Archavon the Stone Watcher"]  = "LOW",
-    ["Emalon the Storm Watcher"]    = "LOW",
-    ["Koralon the Flame Watcher"]   = "LOW",
-    ["Toravon the Ice Watcher"]     = "LOW",
+    ["Tempest Minion"]              = 8,   -- Emalon add; kill on Overcharge
+    ["Tempest Warder"]              = 8,   -- dangerous caster support
 }
 
 db["The Obsidian Sanctum"] = {
-    ["Acolyte of Shadron"]          = "HIGH",   -- portal add; kill quickly
-    ["Acolyte of Vesperon"]         = "HIGH",   -- portal add; kill quickly
-    ["Disciple of Shadron"]         = "HIGH",   -- twilight add support
-    ["Disciple of Vesperon"]        = "HIGH",   -- twilight add support
-    ["Onyx Blaze Mistress"]         = "HIGH",   -- caster trash
-    ["Onyx Flight Captain"]         = "HIGH",   -- dangerous dragonkin support
-    ["Onyx Sanctum Guardian"]       = "MEDIUM",
-    ["Onyx Brood General"]          = "MEDIUM",
-    ["Lava Blaze"]                  = "MEDIUM",
-    ["Tenebron"]                    = "LOW",
-    ["Shadron"]                     = "LOW",
-    ["Vesperon"]                    = "LOW",
-    ["Sartharion"]                  = "LOW",
+    ["Acolyte of Shadron"]          = 8,   -- portal add; kill quickly
+    ["Acolyte of Vesperon"]         = 8,   -- portal add; kill quickly
+    ["Disciple of Shadron"]         = 8,   -- twilight add support
+    ["Disciple of Vesperon"]        = 8,   -- twilight add support
+    ["Onyx Blaze Mistress"]         = 8,   -- caster trash
+    ["Onyx Flight Captain"]         = 8,   -- dangerous dragonkin support
 }
 
 db["The Eye of Eternity"] = {
-    ["Power Spark"]                 = "HIGH",   -- must die before it reaches Malygos
-    ["Nexus Lord"]                  = "HIGH",   -- caster add
-    ["Scion of Eternity"]           = "HIGH",   -- ranged dragon phase add
-    ["Malygos"]                     = "LOW",
+    ["Power Spark"]                 = 8,   -- must die before it reaches Malygos
+    ["Nexus Lord"]                  = 8,   -- caster add
+    ["Scion of Eternity"]           = 8,   -- ranged dragon phase add
 }
 
 db["Ulduar"] = {
-    ["Dark Rune Acolyte"]           = "HIGH",   -- healer trash
-    ["Dark Rune Champion"]          = "HIGH",   -- dangerous melee + whirlwind
-    ["Dark Rune Evoker"]            = "HIGH",   -- caster trash
-    ["Dark Rune Guardian"]          = "MEDIUM",
-    ["Dark Rune Ravager"]           = "MEDIUM",
-    ["Dark Rune Sentinel"]          = "MEDIUM",
-    ["Dark Rune Thunderer"]         = "HIGH",   -- chain lightning trash
-    ["Dark Rune Watcher"]           = "HIGH",   -- dangerous ranged trash
-    ["Dark Rune Warbringer"]        = "MEDIUM",
-    ["Ancient Rune Giant"]          = "MEDIUM",
-    ["Runic Colossus"]              = "MEDIUM",
-    ["Iron Honor Guard"]            = "MEDIUM",
-    ["Iron Mender"]                 = "HIGH",   -- healer support on the gauntlet
-    ["Lightning Charged Iron Dwarf"] = "HIGH",  -- dangerous caster add
-    ["Molten Colossus"]             = "MEDIUM",
-    ["Forge Construct"]             = "HIGH",   -- dangerous forge trash
-    ["Ancient Conservator"]         = "HIGH",   -- silence aura; kill quickly
-    ["Guardian of Life"]            = "HIGH",
-    ["Nature's Blade"]              = "HIGH",
-    ["Snaplasher"]                  = "HIGH",
-    ["Ancient Water Spirit"]        = "HIGH",
-    ["Storm Lasher"]                = "HIGH",
-    ["Sanctum Sentry"]              = "HIGH",   -- Auriaya pull add
-    ["Feral Defender"]              = "HIGH",   -- Auriaya add
-    ["Assault Bot"]                 = "HIGH",   -- Mimiron priority add
-    ["Runemaster Molgeim"]          = "HIGH",   -- Iron Council focus target
-    ["Stormcaller Brundir"]         = "HIGH",   -- Iron Council focus target
-    ["Steelbreaker"]                = "HIGH",   -- Iron Council focus target
-    ["Corruptor Tentacle"]          = "HIGH",
-    ["Crusher Tentacle"]            = "HIGH",
-    ["Constrictor Tentacle"]        = "HIGH",
-    ["Guardian of Yogg-Saron"]      = "HIGH",
-    ["Deathsworn Zealot"]           = "HIGH",   -- General Vezax add
-    ["Faceless Horror"]             = "MEDIUM",
-    ["Saronite Animus"]             = "HIGH",   -- General Vezax hard mode add
-    ["Immortal Guardian"]           = "HIGH",   -- Yogg-Saron phase 3 add
-    ["Auriaya"]                     = "LOW",
-    ["Freya"]                       = "LOW",
-    ["General Vezax"]               = "LOW",
-    ["Mimiron"]                     = "LOW",
-    ["Yogg-Saron"]                  = "LOW",
+    ["Dark Rune Acolyte"]           = 8,   -- healer trash
+    ["Dark Rune Champion"]          = 8,   -- dangerous melee + whirlwind
+    ["Dark Rune Evoker"]            = 8,   -- caster trash
+    ["Dark Rune Thunderer"]         = 8,   -- chain lightning trash
+    ["Dark Rune Watcher"]           = 8,   -- dangerous ranged trash
+    ["Iron Mender"]                 = 8,   -- healer support on the gauntlet
+    ["Lightning Charged Iron Dwarf"] = 8,  -- dangerous caster add
+    ["Forge Construct"]             = 8,   -- dangerous forge trash
+    ["Ancient Conservator"]         = 8,   -- silence aura; kill quickly
+    ["Guardian of Life"]            = 8,
+    ["Nature's Blade"]              = 8,
+    ["Snaplasher"]                  = 8,
+    ["Ancient Water Spirit"]        = 8,
+    ["Storm Lasher"]                = 8,
+    ["Sanctum Sentry"]              = 8,   -- Auriaya pull add
+    ["Feral Defender"]              = 8,   -- Auriaya add
+    ["Assault Bot"]                 = 8,   -- Mimiron priority add
+    ["Runemaster Molgeim"]          = 8,   -- Iron Council focus target
+    ["Stormcaller Brundir"]         = 8,   -- Iron Council focus target
+    ["Steelbreaker"]                = 8,   -- Iron Council focus target
+    ["Corruptor Tentacle"]          = 8,
+    ["Crusher Tentacle"]            = 8,
+    ["Constrictor Tentacle"]        = 8,
+    ["Guardian of Yogg-Saron"]      = 8,
+    ["Deathsworn Zealot"]           = 8,   -- General Vezax add
+    ["Saronite Animus"]             = 8,   -- General Vezax hard mode add
+    ["Immortal Guardian"]           = 8,   -- Yogg-Saron phase 3 add
 }
 
 db["Trial of the Crusader"] = {
-    ["Snobold Vassal"]              = "HIGH",   -- Gormok add
-    ["Mistress of Pain"]            = "HIGH",   -- Jaraxxus add
-    ["Felflame Infernal"]           = "HIGH",   -- Jaraxxus add
-    ["Nether Portal"]               = "HIGH",   -- spawns Mistress of Pain
-    ["Infernal Volcano"]            = "HIGH",   -- spawns infernals
-    ["Nerubian Burrower"]           = "HIGH",   -- Anub'arak add
+    ["Snobold Vassal"]              = 8,   -- Gormok add
+    ["Mistress of Pain"]            = 8,   -- Jaraxxus add
+    ["Felflame Infernal"]           = 8,   -- Jaraxxus add
+    ["Nether Portal"]               = 8,   -- spawns Mistress of Pain
+    ["Infernal Volcano"]            = 8,   -- spawns infernals
+    ["Nerubian Burrower"]           = 8,   -- Anub'arak add
     ["Swarm Scarab"]                = "SKIP",   -- filler scarabs during Anub'arak
-    ["Gormok the Impaler"]          = "LOW",
-    ["Acidmaw"]                     = "LOW",
-    ["Dreadscale"]                  = "LOW",
-    ["Icehowl"]                     = "LOW",
-    ["Lord Jaraxxus"]               = "LOW",
-    ["Fjola Lightbane"]             = "LOW",
-    ["Eydis Darkbane"]              = "LOW",
-    ["Anub'arak"]                   = "LOW",
 }
 
 db["Icecrown Citadel"] = {
-    ["Ancient Skeletal Soldier"]    = "MEDIUM",
-    ["Blazing Skeleton"]            = "HIGH",   -- Valithria add
-    ["Blighted Abomination"]        = "MEDIUM",
-    ["Blood Beast"]                 = "HIGH",   -- Saurfang add
-    ["Cult Adherent"]               = "HIGH",   -- Deathwhisper caster add
-    ["Cult Fanatic"]                = "HIGH",   -- Deathwhisper melee add
-    ["Darkfallen Archmage"]         = "HIGH",   -- Blood wing caster trash
-    ["Darkfallen Blood Knight"]     = "HIGH",   -- dangerous self-healing melee
-    ["Darkfallen Commander"]        = "MEDIUM",
-    ["Darkfallen Lieutenant"]       = "MEDIUM",
-    ["Darkfallen Tactician"]        = "HIGH",
-    ["Deathbound Ward"]             = "MEDIUM",
-    ["Deathspeaker Attendant"]      = "HIGH",
-    ["Deathspeaker Disciple"]       = "HIGH",
-    ["Deathspeaker High Priest"]    = "HIGH",
-    ["Deathspeaker Zealot"]         = "MEDIUM",
-    ["Nerub'ar Broodkeeper"]        = "HIGH",
-    ["Nerub'ar Champion"]           = "MEDIUM",
-    ["Nerub'ar Webweaver"]          = "HIGH",
-    ["Plague Scientist"]            = "HIGH",
-    ["Pustulating Horror"]          = "HIGH",
-    ["Shambling Horror"]            = "HIGH",   -- Lich King phase 1 add
-    ["Raging Spirit"]               = "HIGH",   -- Lich King transition add
-    ["Servant of the Throne"]       = "HIGH",
-    ["Val'kyr Herald"]              = "HIGH",
-    ["Val'kyr Shadowguard"]         = "HIGH",
-    ["Vampiric Fiend"]              = "HIGH",
-    ["Volatile Ooze"]               = "HIGH",   -- Putricide add
-    ["Gas Cloud"]                   = "HIGH",   -- Putricide add
-    ["Rotting Frost Giant"]         = "MEDIUM",
-    ["Spire Frostwyrm"]             = "MEDIUM",
-    ["Spire Gargoyle"]              = "MEDIUM",
-    ["Frostwarden Sorceress"]       = "HIGH",
-    ["Frostwarden Warrior"]         = "MEDIUM",
-    ["Ymirjar Deathbringer"]        = "MEDIUM",
-    ["Ymirjar Frostbinder"]         = "HIGH",
-    ["Ymirjar Huntress"]            = "HIGH",
-    ["Ymirjar Warlord"]             = "MEDIUM",
-    ["Lady Deathwhisper"]           = "LOW",
-    ["Deathbringer Saurfang"]       = "LOW",
-    ["Professor Putricide"]         = "LOW",
-    ["Blood-Queen Lana'thel"]       = "LOW",
-    ["Sindragosa"]                  = "LOW",
-    ["The Lich King"]               = "LOW",
+    ["Blazing Skeleton"]            = 8,   -- Valithria add
+    ["Blood Beast"]                 = 8,   -- Saurfang add
+    ["Cult Adherent"]               = 8,   -- Deathwhisper caster add
+    ["Cult Fanatic"]                = 8,   -- Deathwhisper melee add
+    ["Darkfallen Archmage"]         = 8,   -- Blood wing caster trash
+    ["Darkfallen Blood Knight"]     = 8,   -- dangerous self-healing melee
+    ["Darkfallen Tactician"]        = 8,
+    ["Deathspeaker Attendant"]      = 8,
+    ["Deathspeaker Disciple"]       = 8,
+    ["Deathspeaker High Priest"]    = 8,
+    ["Nerub'ar Broodkeeper"]        = 8,
+    ["Nerub'ar Webweaver"]          = 8,
+    ["Plague Scientist"]            = 8,
+    ["Pustulating Horror"]          = 8,
+    ["Shambling Horror"]            = 8,   -- Lich King phase 1 add
+    ["Raging Spirit"]               = 8,   -- Lich King transition add
+    ["Servant of the Throne"]       = 8,
+    ["Val'kyr Herald"]              = 8,
+    ["Val'kyr Shadowguard"]         = 8,
+    ["Vampiric Fiend"]              = 8,
+    ["Volatile Ooze"]               = 8,   -- Putricide add
+    ["Gas Cloud"]                   = 8,   -- Putricide add
+    ["Frostwarden Sorceress"]       = 8,
+    ["Ymirjar Frostbinder"]         = 8,
+    ["Ymirjar Huntress"]            = 8,
 }
 
 db["The Ruby Sanctum"] = {
-    ["Charscale Commander"]         = "HIGH",   -- dangerous trash caster/support
-    ["Charscale Invoker"]           = "HIGH",   -- dangerous trash caster/support
-    ["Onyx Flamecaller"]            = "HIGH",   -- dangerous dragonkin caster
-    ["Charscale Assaulter"]         = "MEDIUM",
-    ["Charscale Elite"]             = "MEDIUM",
-    ["Saviana Ragefire"]            = "LOW",
-    ["Baltharus the Warborn"]       = "LOW",
-    ["General Zarithrian"]          = "LOW",
-    ["Halion"]                      = "LOW",
+    ["Charscale Commander"]         = 8,   -- dangerous trash caster/support
+    ["Charscale Invoker"]           = 8,   -- dangerous trash caster/support
+    ["Onyx Flamecaller"]            = 8,   -- dangerous dragonkin caster
 }
 
 -- ============================================================

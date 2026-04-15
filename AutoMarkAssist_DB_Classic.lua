@@ -1,18 +1,17 @@
 -- AutoMarkAssist_DB_Classic.lua
--- Mob kill-priority database for Classic (Vanilla) dungeons and raids.
+-- Mob mark-preference database for Classic (Vanilla) dungeons and raids.
 -- This is the FIRST DB module loaded -- it creates the global tables.
 -- Subsequent expansion modules merge into these tables.
 --
 -- NOTE: Mob names reflect post-Cataclysm revamps where applicable.
 -- Classic Era and TBC/WotLK Classic servers may use original pre-Cata names
--- for some mobs.  The addon falls back to MEDIUM for unknown mobs; adjust
--- entries in-game via the Database tab or by editing this file directly.
+-- for some mobs.  Unknown mobs are marked via FCFS; adjust entries
+-- in-game via the Database tab or by editing this file directly.
 --
--- Priority values:
---   "HIGH"   -> Skull/Cross pool  (healers, interruptible casters, most dangerous)
---   "CC"     -> Square/Moon/Diamond pool  (crowd-control targets)
---   "MEDIUM" -> Triangle/Circle pool  (standard dangerous mobs)
---   "LOW"    -> Star pool  (least threatening)
+-- Mark values:
+--   8        -> Skull (priority kill target)
+--   5        -> Moon  (CC preference, e.g. Polymorph)
+--   1-7      -> Any specific mark preference
 --   "SKIP"   -> Never mark this mob.
 --
 -- Adjust via the in-game Database tab or by editing this file directly.
@@ -26,247 +25,174 @@ AutoMarkAssist_MobDB = {
     -- ============================================================
 
     ["Ragefire Chasm"] = {
-        ["Corrupted Houndmaster"]       = "HIGH",   -- calls beasts; kill first
-        ["Dark Shaman Acolyte"]         = "HIGH",   -- flame shock caster
-        ["Searing Blade Cultist"]       = "MEDIUM",
-        ["Searing Blade Enforcer"]      = "MEDIUM",
-        ["Molten Elemental"]            = "CC",     -- elemental, banishable
-        ["Corrupted Whelp"]             = "LOW",
+        ["Corrupted Houndmaster"]       = 8,   -- calls beasts; kill first
+        ["Dark Shaman Acolyte"]         = 8,   -- flame shock caster
+        ["Molten Elemental"]            = 5,     -- elemental, banishable
     },
 
     ["Wailing Caverns"] = {
-        ["Druid of the Fang"]           = "HIGH",   -- healer + lightning bolt caster
-        ["Deviate Ravager"]             = "MEDIUM",
-        ["Deviate Viper"]               = "CC",     -- beast, trappable
-        ["Deviate Shambler"]            = "MEDIUM",
-        ["Deviate Guardian"]            = "MEDIUM",
-        ["Deviate Adder"]               = "CC",     -- beast, trappable
-        ["Evolving Ectoplasm"]          = "LOW",
+        ["Druid of the Fang"]           = 8,   -- healer + lightning bolt caster
+        ["Deviate Viper"]               = 5,     -- beast, trappable
+        ["Deviate Adder"]               = 5,     -- beast, trappable
         ["Serpentbloom Snake"]          = "SKIP",   -- ambient filler
     },
 
     ["The Deadmines"] = {
-        ["Defias Blood Wizard"]         = "HIGH",   -- fire caster; interrupt priority
-        ["Defias Squallshaper"]         = "HIGH",   -- frost caster + heal
-        ["Defias Envoker"]              = "HIGH",   -- holy fire caster
-        ["Defias Reaper"]               = "MEDIUM",
-        ["Defias Overseer"]             = "MEDIUM",
-        ["Defias Miner"]                = "LOW",
-        ["Defias Digger"]               = "LOW",
-        ["Defias Pirate"]               = "CC",     -- humanoid, CC-able
-        ["Goblin Woodcarver"]           = "MEDIUM",
-        ["Defias Taskmaster"]           = "HIGH",   -- buffs nearby adds
+        ["Defias Blood Wizard"]         = 8,   -- fire caster; interrupt priority
+        ["Defias Squallshaper"]         = 8,   -- frost caster + heal
+        ["Defias Envoker"]              = 8,   -- holy fire caster
+        ["Defias Pirate"]               = 5,     -- humanoid, CC-able
+        ["Defias Taskmaster"]           = 8,   -- buffs nearby adds
     },
 
     ["Shadowfang Keep"] = {
-        ["Tormented Officer"]           = "HIGH",   -- forsaken caster
-        ["Wailing Guardsman"]           = "HIGH",   -- screaming strikes + fear
-        ["Unstable Ravager"]            = "HIGH",   -- volatile damage
-        ["Fetid Ghoul"]                 = "MEDIUM",
-        ["Mindless Horror"]             = "MEDIUM",
-        ["Dark Creeper"]                = "CC",     -- stealth mob, CC-able
-        ["Corpse Eater"]                = "CC",     -- beast, trappable
-        ["Deathsworn Captain"]          = "MEDIUM",
-        ["Haunted Servitor"]            = "LOW",
+        ["Tormented Officer"]           = 8,   -- forsaken caster
+        ["Wailing Guardsman"]           = 8,   -- screaming strikes + fear
+        ["Unstable Ravager"]            = 8,   -- volatile damage
+        ["Dark Creeper"]                = 5,     -- stealth mob, CC-able
+        ["Corpse Eater"]                = 5,     -- beast, trappable
     },
 
     ["The Stockade"] = {
-        ["Petty Criminal"]              = "LOW",
-        ["Defias Convict"]              = "MEDIUM",
-        ["Defias Prisoner"]             = "CC",     -- humanoid, CC-able
-        ["Defias Inmate"]               = "MEDIUM",
-        ["Defias Insurgent"]            = "HIGH",   -- rallying cry buffs nearby
-        ["Riverpaw Mystic"]             = "HIGH",   -- caster; lightning bolt
-        ["Riverpaw Gnoll"]              = "MEDIUM",
+        ["Defias Prisoner"]             = 5,     -- humanoid, CC-able
+        ["Defias Insurgent"]            = 8,   -- rallying cry buffs nearby
+        ["Riverpaw Mystic"]             = 8,   -- caster; lightning bolt
     },
 
     ["Blackfathom Deeps"] = {
-        ["Twilight Aquamancer"]         = "HIGH",   -- frost caster
-        ["Twilight Shadowmage"]         = "HIGH",   -- shadow bolt volley
-        ["Blackfathom Tide Priestess"]  = "HIGH",   -- healer
-        ["Twilight Reaver"]             = "MEDIUM",
-        ["Murkshallow Snapclaw"]        = "CC",     -- beast, trappable
-        ["Fallenroot Rogue"]            = "CC",     -- stealth, humanoid CC-able
-        ["Blackfathom Myrmidon"]        = "MEDIUM",
-        ["Aku'mai Snapjaw"]             = "LOW",
+        ["Twilight Aquamancer"]         = 8,   -- frost caster
+        ["Twilight Shadowmage"]         = 8,   -- shadow bolt volley
+        ["Blackfathom Tide Priestess"]  = 8,   -- healer
+        ["Murkshallow Snapclaw"]        = 5,     -- beast, trappable
+        ["Fallenroot Rogue"]            = 5,     -- stealth, humanoid CC-able
     },
 
     ["Gnomeregan"] = {
-        ["Mechanized Sentry"]           = "MEDIUM",
-        ["Mechanized Guardian"]         = "MEDIUM",
-        ["Arcane Nullifier X-21"]       = "HIGH",   -- silences and counterspells
-        ["Leprous Technician"]          = "HIGH",   -- disease caster
-        ["Leprous Gnome"]               = "CC",     -- humanoid, CC-able
-        ["Caverndeep Burrower"]         = "CC",     -- beast, trappable
-        ["Irradiated Invader"]          = "MEDIUM",
-        ["Mobile Alert System"]         = "HIGH",   -- calls reinforcements
-        ["Dark Iron Agent"]             = "HIGH",   -- stealth + sabotage
-        ["Irradiated Pillager"]         = "LOW",
+        ["Arcane Nullifier X-21"]       = 8,   -- silences and counterspells
+        ["Leprous Technician"]          = 8,   -- disease caster
+        ["Leprous Gnome"]               = 5,     -- humanoid, CC-able
+        ["Caverndeep Burrower"]         = 5,     -- beast, trappable
+        ["Mobile Alert System"]         = 8,   -- calls reinforcements
+        ["Dark Iron Agent"]             = 8,   -- stealth + sabotage
     },
 
     ["Razorfen Kraul"] = {
-        ["Razorfen Quilguard"]          = "MEDIUM",
-        ["Razorfen Dustweaver"]         = "HIGH",   -- lightning + heal
-        ["Razorfen Geomancer"]          = "HIGH",   -- earth caster
-        ["Death's Head Seer"]           = "HIGH",   -- shadow bolt volley
-        ["Death's Head Cultist"]        = "HIGH",   -- shadow caster
-        ["Razorfen Servitor"]           = "CC",     -- humanoid, CC-able
-        ["Razorfen Handler"]            = "MEDIUM",
-        ["Razorfen Beastmaster"]        = "HIGH",   -- beast caller
-        ["Razorfen Groundshaker"]       = "MEDIUM",
+        ["Razorfen Dustweaver"]         = 8,   -- lightning + heal
+        ["Razorfen Geomancer"]          = 8,   -- earth caster
+        ["Death's Head Seer"]           = 8,   -- shadow bolt volley
+        ["Death's Head Cultist"]        = 8,   -- shadow caster
+        ["Razorfen Servitor"]           = 5,     -- humanoid, CC-able
+        ["Razorfen Beastmaster"]        = 8,   -- beast caller
         ["Kraul Bat"]                   = "SKIP",   -- ambient beast filler
     },
 
     ["Razorfen Downs"] = {
-        ["Death's Head Necromancer"]    = "HIGH",   -- raises undead
-        ["Death's Head Sage"]           = "HIGH",   -- shadow caster + heal
-        ["Withered Spearhide"]          = "MEDIUM",
-        ["Withered Warrior"]            = "MEDIUM",
-        ["Withered Quilguard"]          = "CC",     -- can be CC'd
-        ["Withered Reaver"]             = "MEDIUM",
-        ["Frozen Soul"]                 = "CC",     -- undead, shackleable
-        ["Boneflayer Ghoul"]            = "LOW",
+        ["Death's Head Necromancer"]    = 8,   -- raises undead
+        ["Death's Head Sage"]           = 8,   -- shadow caster + heal
+        ["Withered Quilguard"]          = 5,     -- can be CC'd
+        ["Frozen Soul"]                 = 5,     -- undead, shackleable
     },
 
     ["Scarlet Halls"] = {
-        ["Scarlet Evoker"]              = "HIGH",   -- fire caster; flamestrike
-        ["Scarlet Treasurer"]           = "HIGH",   -- healer
-        ["Scarlet Defender"]            = "MEDIUM",
-        ["Scarlet Myrmidon"]            = "MEDIUM",
-        ["Scarlet Scholar"]             = "HIGH",   -- arcane caster
-        ["Scarlet Cannoneer"]           = "HIGH",   -- ranged; interrupt priority
-        ["Master Dog Trainer"]          = "HIGH",   -- beast caller
-        ["Scarlet Evangelist"]          = "CC",     -- humanoid, CC-able
-        ["Scarlet Hall Guardian"]       = "MEDIUM",
+        ["Scarlet Evoker"]              = 8,   -- fire caster; flamestrike
+        ["Scarlet Treasurer"]           = 8,   -- healer
+        ["Scarlet Scholar"]             = 8,   -- arcane caster
+        ["Scarlet Cannoneer"]           = 8,   -- ranged; interrupt priority
+        ["Master Dog Trainer"]          = 8,   -- beast caller
+        ["Scarlet Evangelist"]          = 5,     -- humanoid, CC-able
         ["Hound"]                       = "SKIP",   -- pet filler; kill trainer
     },
 
     ["Scarlet Monastery"] = {
-        ["Scarlet Zealot"]              = "HIGH",   -- fanatical self-buffer
-        ["Scarlet Chaplain"]            = "HIGH",   -- healer; must die first
-        ["Scarlet Judicator"]           = "HIGH",   -- holy caster + judgement
-        ["Scarlet Centurion"]           = "MEDIUM",
-        ["Scarlet Crusader"]            = "MEDIUM",
-        ["Scarlet Fanatic"]             = "CC",     -- humanoid, CC-able
-        ["Scarlet Friar"]               = "HIGH",   -- healer
-        ["Scarlet Purifier"]            = "HIGH",   -- consecration + holy fire
-        ["Scarlet Monk"]                = "MEDIUM",
-        ["Scarlet Initiate"]            = "LOW",
+        ["Scarlet Zealot"]              = 8,   -- fanatical self-buffer
+        ["Scarlet Chaplain"]            = 8,   -- healer; must die first
+        ["Scarlet Judicator"]           = 8,   -- holy caster + judgement
+        ["Scarlet Fanatic"]             = 5,     -- humanoid, CC-able
+        ["Scarlet Friar"]               = 8,   -- healer
+        ["Scarlet Purifier"]            = 8,   -- consecration + holy fire
     },
 
     ["Zul'Farrak"] = {
-        ["Sandfury Witch Doctor"]       = "HIGH",   -- healer + hex
-        ["Sandfury Shadowcaster"]       = "HIGH",   -- shadow bolt volley
-        ["Sandfury Firecaller"]         = "HIGH",   -- fire nova + fireball
-        ["Sandfury Executioner"]        = "MEDIUM",
-        ["Sandfury Guardian"]           = "MEDIUM",
-        ["Sandfury Blood Drinker"]      = "HIGH",   -- life drain caster
-        ["Sandfury Zealot"]             = "CC",     -- humanoid, CC-able
-        ["Sandfury Slave"]              = "LOW",
-        ["Sandfury Cretin"]             = "LOW",
+        ["Sandfury Witch Doctor"]       = 8,   -- healer + hex
+        ["Sandfury Shadowcaster"]       = 8,   -- shadow bolt volley
+        ["Sandfury Firecaller"]         = 8,   -- fire nova + fireball
+        ["Sandfury Blood Drinker"]      = 8,   -- life drain caster
+        ["Sandfury Zealot"]             = 5,     -- humanoid, CC-able
         ["Troll Totem"]                 = "SKIP",   -- totem filler
     },
 
     ["Maraudon"] = {
-        ["Celebras Elementalist"]       = "HIGH",   -- nature caster
-        ["Primordial Behemoth"]         = "MEDIUM",
-        ["Barbed Lasher"]               = "CC",     -- plant, incapacitateable
-        ["Cavern Shambler"]             = "MEDIUM",
-        ["Putrid Shrieker"]             = "HIGH",   -- fear + disease
+        ["Celebras Elementalist"]       = 8,   -- nature caster
+        ["Barbed Lasher"]               = 5,     -- plant, incapacitateable
+        ["Putrid Shrieker"]             = 8,   -- fear + disease
         ["Vile Larva"]                  = "SKIP",   -- swarm filler
-        ["Centaur Pariah"]              = "HIGH",   -- caster
-        ["Thessala Hydra"]              = "MEDIUM",
-        ["Living Decay"]                = "LOW",
+        ["Centaur Pariah"]              = 8,   -- caster
     },
 
     ["Dire Maul"] = {
-        ["Gordok Ogre-Mage"]            = "HIGH",   -- arcane caster
-        ["Gordok Warlock"]              = "HIGH",   -- shadow bolt + summons
-        ["Gordok Mage-Lord"]            = "HIGH",   -- polymorph + blizzard
-        ["Gordok Brute"]                = "MEDIUM",
-        ["Gordok Enforcer"]             = "MEDIUM",
-        ["Gordok Captain"]              = "MEDIUM",
-        ["Gordok Bushwacker"]           = "CC",     -- humanoid, CC-able
-        ["Wildspawn Imp"]               = "CC",     -- demon, banishable
-        ["Wildspawn Shadowstalker"]     = "HIGH",   -- stealth + backstab
-        ["Wildspawn Felsworn"]          = "HIGH",   -- fel caster
-        ["Warpwood Treant"]             = "CC",     -- nature mob, incapacitateable
-        ["Petrified Guardian"]          = "LOW",
+        ["Gordok Ogre-Mage"]            = 8,   -- arcane caster
+        ["Gordok Warlock"]              = 8,   -- shadow bolt + summons
+        ["Gordok Mage-Lord"]            = 8,   -- polymorph + blizzard
+        ["Gordok Bushwacker"]           = 5,     -- humanoid, CC-able
+        ["Wildspawn Imp"]               = 5,     -- demon, banishable
+        ["Wildspawn Shadowstalker"]     = 8,   -- stealth + backstab
+        ["Wildspawn Felsworn"]          = 8,   -- fel caster
+        ["Warpwood Treant"]             = 5,     -- nature mob, incapacitateable
         ["Felvine Shard"]               = "SKIP",   -- environmental filler
     },
 
     ["Stratholme"] = {
-        ["Crypt Crawler"]               = "MEDIUM",
-        ["Plague Ghoul"]                = "MEDIUM",
-        ["Risen Sorcerer"]              = "HIGH",   -- shadow caster
-        ["Risen Priest"]                = "HIGH",   -- healer
-        ["Black Guard Sentry"]          = "MEDIUM",
-        ["Crimson Sorcerer"]            = "HIGH",   -- fire mage caster
-        ["Crimson Priest"]              = "HIGH",   -- healer
-        ["Crimson Defender"]            = "MEDIUM",
-        ["Crimson Gallant"]             = "CC",     -- humanoid, CC-able
-        ["Thuzadin Necromancer"]        = "HIGH",   -- raises undead
-        ["Thuzadin Shadowcaster"]       = "HIGH",   -- shadow caster
+        ["Risen Sorcerer"]              = 8,   -- shadow caster
+        ["Risen Priest"]                = 8,   -- healer
+        ["Crimson Sorcerer"]            = 8,   -- fire mage caster
+        ["Crimson Priest"]              = 8,   -- healer
+        ["Crimson Gallant"]             = 5,     -- humanoid, CC-able
+        ["Thuzadin Necromancer"]        = 8,   -- raises undead
+        ["Thuzadin Shadowcaster"]       = 8,   -- shadow caster
         ["Mindless Skeleton"]           = "SKIP",   -- mass undead filler
         ["Plagued Rat"]                 = "SKIP",   -- ambient filler
     },
 
     ["Scholomance"] = {
-        ["Risen Guard"]                 = "MEDIUM",
-        ["Scholomance Acolyte"]         = "HIGH",   -- shadow caster
-        ["Scholomance Necrolyte"]       = "HIGH",   -- healer + raises adds
-        ["Scholomance Neophyte"]        = "CC",     -- humanoid, CC-able
-        ["Boneweaver"]                  = "HIGH",   -- bone caster
-        ["Flesh Horror"]                = "MEDIUM",
-        ["Rattlegore Animated"]         = "MEDIUM",
-        ["Candlestick Mage"]            = "HIGH",   -- fire caster
-        ["Meat Golem"]                  = "LOW",
+        ["Scholomance Acolyte"]         = 8,   -- shadow caster
+        ["Scholomance Necrolyte"]       = 8,   -- healer + raises adds
+        ["Scholomance Neophyte"]        = 5,     -- humanoid, CC-able
+        ["Boneweaver"]                  = 8,   -- bone caster
+        ["Candlestick Mage"]            = 8,   -- fire caster
         ["Reanimated Corpse"]           = "SKIP",   -- mass raise filler
     },
 
     ["The Temple of Atal'Hakkar"] = {
-        ["Atal'ai Deathwalker"]         = "HIGH",   -- shadow damage caster
-        ["Atal'ai Priest"]              = "HIGH",   -- healer
-        ["Atal'ai Witch Doctor"]        = "HIGH",   -- hex + heal
-        ["Atal'ai Warrior"]             = "MEDIUM",
-        ["Atal'ai Slave"]               = "CC",     -- humanoid, CC-able
-        ["Mummified Atal'ai"]           = "MEDIUM",
-        ["Gaseous Lurker"]              = "CC",     -- elemental, banishable
-        ["Atal'ai Corpse Eater"]        = "LOW",
+        ["Atal'ai Deathwalker"]         = 8,   -- shadow damage caster
+        ["Atal'ai Priest"]              = 8,   -- healer
+        ["Atal'ai Witch Doctor"]        = 8,   -- hex + heal
+        ["Atal'ai Slave"]               = 5,     -- humanoid, CC-able
+        ["Gaseous Lurker"]              = 5,     -- elemental, banishable
         ["Jade Ooze"]                   = "SKIP",   -- environmental filler
     },
 
     ["Blackrock Depths"] = {
-        ["Shadowforge Surveyor"]        = "HIGH",   -- ranged caster
-        ["Shadowforge Flame Keeper"]    = "HIGH",   -- fire damage + buff
-        ["Shadowforge Sharpshooter"]    = "HIGH",   -- ranged multishot
-        ["Dark Iron Medic"]             = "HIGH",   -- healer
-        ["Shadowforge Senator"]         = "HIGH",   -- fireball + flamestrike
-        ["Dark Iron Tastetester"]       = "CC",     -- humanoid, CC-able
-        ["Dark Iron Slaver"]            = "MEDIUM",
-        ["Dark Iron Taskmaster"]        = "MEDIUM",
-        ["Dark Iron Steelbreaker"]      = "MEDIUM",
-        ["Anvilrage Soldier"]           = "MEDIUM",
-        ["Anvilrage Officer"]           = "HIGH",   -- rallies nearby mobs
-        ["Fireguard Destroyer"]         = "MEDIUM",
-        ["Shadowforge Peasant"]         = "LOW",
+        ["Shadowforge Surveyor"]        = 8,   -- ranged caster
+        ["Shadowforge Flame Keeper"]    = 8,   -- fire damage + buff
+        ["Shadowforge Sharpshooter"]    = 8,   -- ranged multishot
+        ["Dark Iron Medic"]             = 8,   -- healer
+        ["Shadowforge Senator"]         = 8,   -- fireball + flamestrike
+        ["Dark Iron Tastetester"]       = 5,     -- humanoid, CC-able
+        ["Anvilrage Officer"]           = 8,   -- rallies nearby mobs
     },
 
     ["Lower Blackrock Spire"] = {
-        ["Blackhand Summoner"]          = "HIGH",   -- fire caster + demon summons
-        ["Blackhand Incarcerator"]      = "HIGH",   -- stuns party members
-        ["Blackhand Veteran"]           = "MEDIUM",
-        ["Smolderthorn Shadow Priest"]  = "HIGH",   -- healer + shadow damage
-        ["Smolderthorn Witch Doctor"]   = "HIGH",   -- healer + hex
-        ["Smolderthorn Seer"]           = "HIGH",   -- lightning bolt caster
-        ["Smolderthorn Berserker"]      = "MEDIUM",
-        ["Smolderthorn Headhunter"]     = "CC",     -- humanoid, CC-able
-        ["Scarshield Warlock"]          = "HIGH",   -- demon summoner
-        ["Scarshield Spellbinder"]      = "HIGH",   -- counterspell + arcane
-        ["Spirestone Mystic"]           = "HIGH",   -- caster
-        ["Spirestone Ogre Magus"]       = "HIGH",   -- frostbolt + polymorph
-        ["Spirestone Battle Mage"]      = "CC",     -- humanoid, CC-able
-        ["Spirestone Warlord"]          = "MEDIUM",
+        ["Blackhand Summoner"]          = 8,   -- fire caster + demon summons
+        ["Blackhand Incarcerator"]      = 8,   -- stuns party members
+        ["Smolderthorn Shadow Priest"]  = 8,   -- healer + shadow damage
+        ["Smolderthorn Witch Doctor"]   = 8,   -- healer + hex
+        ["Smolderthorn Seer"]           = 8,   -- lightning bolt caster
+        ["Smolderthorn Headhunter"]     = 5,     -- humanoid, CC-able
+        ["Scarshield Warlock"]          = 8,   -- demon summoner
+        ["Scarshield Spellbinder"]      = 8,   -- counterspell + arcane
+        ["Spirestone Mystic"]           = 8,   -- caster
+        ["Spirestone Ogre Magus"]       = 8,   -- frostbolt + polymorph
+        ["Spirestone Battle Mage"]      = 5,     -- humanoid, CC-able
     },
 
     -- ============================================================
@@ -274,65 +200,36 @@ AutoMarkAssist_MobDB = {
     -- ============================================================
 
     ["Molten Core"] = {
-        ["Firelord"]                    = "HIGH",
-        ["Flamewaker Healer"]          = "HIGH",
-        ["Flamewaker Priest"]          = "HIGH",
-        ["Firesworn"]                  = "HIGH",
-        ["Son of Flame"]               = "HIGH",
-        ["Ancient Core Hound"]         = "CC",
-        ["Core Hound"]                 = "CC",
-        ["Lava Elemental"]             = "CC",
-        ["Lava Surger"]                = "CC",
-        ["Primal Flame Elemental"]     = "CC",
-        ["Flameguard"]                 = "MEDIUM",
-        ["Flamewaker"]                 = "MEDIUM",
-        ["Flamewaker Elite"]           = "MEDIUM",
-        ["Flamewaker Protector"]       = "MEDIUM",
-        ["Firewalker"]                 = "MEDIUM",
-        ["Lava Annihilator"]           = "MEDIUM",
-        ["Lava Reaver"]                = "MEDIUM",
-        ["Molten Destroyer"]           = "MEDIUM",
-        ["Molten Giant"]               = "MEDIUM",
-        ["Core Rager"]                 = "LOW",
-        ["Magmakin"]                   = "LOW",
-        ["Majordomo Executus"]         = "LOW",    -- let Firesworn take primary kill-order marks first
+        ["Firelord"]                    = 8,
+        ["Flamewaker Healer"]          = 8,
+        ["Flamewaker Priest"]          = 8,
+        ["Firesworn"]                  = 8,
+        ["Son of Flame"]               = 8,
+        ["Ancient Core Hound"]         = 5,
+        ["Core Hound"]                 = 5,
+        ["Lava Elemental"]             = 5,
+        ["Lava Surger"]                = 5,
+        ["Primal Flame Elemental"]     = 5,
         ["Flame Imp"]                  = "SKIP",
         ["Lava Spawn"]                 = "SKIP",
     },
 
     ["Onyxia's Lair"] = {
-        ["Onyxian Warder"]             = "HIGH",
-        ["Onyxian Lair Guard"]         = "MEDIUM",
-        ["Onyxian Whelp"]              = "LOW",
-        ["Onyxia"]                     = "LOW",    -- keeps whelps and warders ahead of the boss when they are active
+        ["Onyxian Warder"]             = 8,
     },
 
     ["Blackwing Lair"] = {
-        ["Grethok the Controller"]     = "HIGH",
-        ["Blackwing Mage"]             = "HIGH",
-        ["Blackwing Spellbinder"]      = "HIGH",
-        ["Blackwing Taskmaster"]       = "HIGH",
-        ["Blackwing Warlock"]          = "HIGH",
-        ["Death Talon Captain"]        = "HIGH",
-        ["Death Talon Flamescale"]     = "HIGH",
-        ["Death Talon Hatcher"]        = "HIGH",
-        ["Death Talon Overseer"]       = "HIGH",
-        ["Master Elemental Shaper Krixix"] = "HIGH",
-        ["Enraged Felguard"]           = "CC",
-        ["Black Drakonid"]             = "MEDIUM",
-        ["Blackwing Guardsman"]        = "MEDIUM",
-        ["Blackwing Legionnaire"]      = "MEDIUM",
-        ["Blackwing Technician"]       = "LOW",
-        ["Blue Drakonid"]              = "MEDIUM",
-        ["Bone Construct"]             = "LOW",
-        ["Bronze Drakonid"]            = "MEDIUM",
-        ["Chromatic Drakonid"]         = "MEDIUM",
-        ["Death Talon Dragonspawn"]    = "MEDIUM",
-        ["Death Talon Seether"]        = "MEDIUM",
-        ["Death Talon Wyrmguard"]      = "MEDIUM",
-        ["Death Talon Wyrmkin"]        = "MEDIUM",
-        ["Green Drakonid"]             = "MEDIUM",
-        ["Red Drakonid"]               = "MEDIUM",
+        ["Grethok the Controller"]     = 8,
+        ["Blackwing Mage"]             = 8,
+        ["Blackwing Spellbinder"]      = 8,
+        ["Blackwing Taskmaster"]       = 8,
+        ["Blackwing Warlock"]          = 8,
+        ["Death Talon Captain"]        = 8,
+        ["Death Talon Flamescale"]     = 8,
+        ["Death Talon Hatcher"]        = 8,
+        ["Death Talon Overseer"]       = 8,
+        ["Master Elemental Shaper Krixix"] = 8,
+        ["Enraged Felguard"]           = 5,
         ["Black Whelp"]                = "SKIP",
         ["Blue Whelp"]                 = "SKIP",
         ["Bronze Whelp"]               = "SKIP",
@@ -345,39 +242,29 @@ AutoMarkAssist_MobDB = {
     },
 
     ["Zul'Gurub"] = {
-        ["Gurubashi Bat Rider"]        = "HIGH",
-        ["Gurubashi Blood Drinker"]    = "HIGH",
-        ["Hakkari Blood Priest"]       = "HIGH",
-        ["Hakkari Priest"]             = "HIGH",
-        ["Hakkari Shadow Hunter"]      = "HIGH",
-        ["Hakkari Shadowcaster"]       = "HIGH",
-        ["Hakkari Witch Doctor"]       = "HIGH",
-        ["Mad Servant"]                = "HIGH",
-        ["Ohgan"]                      = "HIGH",
-        ["Powerful Healing Ward"]      = "HIGH",
-        ["Son of Hakkar"]              = "HIGH",
-        ["Zanza the Restless"]         = "HIGH",
-        ["Zealot Lor'Khan"]            = "HIGH",
-        ["Mad Voidwalker"]             = "CC",
-        ["Razzashi Adder"]             = "CC",
-        ["Razzashi Cobra"]             = "CC",
-        ["Razzashi Raptor"]            = "CC",
-        ["Razzashi Serpent"]           = "CC",
-        ["Razzashi Venombrood"]        = "CC",
-        ["Zulian Guardian"]            = "CC",
-        ["Zulian Panther"]             = "CC",
-        ["Zulian Stalker"]             = "CC",
-        ["Zulian Tiger"]               = "CC",
-        ["Gurubashi Axe Thrower"]      = "MEDIUM",
-        ["Gurubashi Berserker"]        = "MEDIUM",
-        ["Gurubashi Champion"]         = "MEDIUM",
-        ["Gurubashi Headhunter"]       = "MEDIUM",
-        ["Voodoo Slave"]               = "MEDIUM",
-        ["Zealot Zath"]                = "MEDIUM",
-        ["Bloodseeker Bat"]            = "LOW",
-        ["Frenzied Bloodseeker Bat"]   = "LOW",
-        ["Spawn of Mar'li"]            = "LOW",
-        ["Zulian Cub"]                 = "LOW",
+        ["Gurubashi Bat Rider"]        = 8,
+        ["Gurubashi Blood Drinker"]    = 8,
+        ["Hakkari Blood Priest"]       = 8,
+        ["Hakkari Priest"]             = 8,
+        ["Hakkari Shadow Hunter"]      = 8,
+        ["Hakkari Shadowcaster"]       = 8,
+        ["Hakkari Witch Doctor"]       = 8,
+        ["Mad Servant"]                = 8,
+        ["Ohgan"]                      = 8,
+        ["Powerful Healing Ward"]      = 8,
+        ["Son of Hakkar"]              = 8,
+        ["Zanza the Restless"]         = 8,
+        ["Zealot Lor'Khan"]            = 8,
+        ["Mad Voidwalker"]             = 5,
+        ["Razzashi Adder"]             = 5,
+        ["Razzashi Cobra"]             = 5,
+        ["Razzashi Raptor"]            = 5,
+        ["Razzashi Serpent"]           = 5,
+        ["Razzashi Venombrood"]        = 5,
+        ["Zulian Guardian"]            = 5,
+        ["Zulian Panther"]             = 5,
+        ["Zulian Stalker"]             = 5,
+        ["Zulian Tiger"]               = 5,
         ["Frog"]                       = "SKIP",
         ["Jungle Toad"]                = "SKIP",
         ["Parasitic Serpent"]          = "SKIP",
@@ -387,36 +274,16 @@ AutoMarkAssist_MobDB = {
     },
 
     ["Ruins of Ahn'Qiraj"] = {
-        ["Anubisath Guardian"]         = "HIGH",
-        ["Anubisath Swarmguard"]       = "HIGH",
-        ["Colonel Zerran"]             = "HIGH",
-        ["Hive'Zara Hornet"]           = "HIGH",
-        ["Hive'Zara Stinger"]          = "HIGH",
-        ["Mana Fiend"]                 = "HIGH",
-        ["Major Yeggeth"]              = "HIGH",
-        ["Obsidian Destroyer"]         = "HIGH",
-        ["Spitting Scarab"]            = "HIGH",
-        ["Swarmguard Needler"]         = "HIGH",
-        ["Anubisath Warrior"]          = "MEDIUM",
-        ["Captain Drenn"]              = "MEDIUM",
-        ["Captain Qeez"]               = "MEDIUM",
-        ["Captain Tuubid"]             = "MEDIUM",
-        ["Captain Xurrem"]             = "MEDIUM",
-        ["Flesh Hunter"]               = "MEDIUM",
-        ["Hive'Zara Collector"]        = "MEDIUM",
-        ["Hive'Zara Drone"]            = "MEDIUM",
-        ["Hive'Zara Sandstalker"]      = "MEDIUM",
-        ["Hive'Zara Soldier"]          = "MEDIUM",
-        ["Hive'Zara Tail Lasher"]      = "MEDIUM",
-        ["Hive'Zara Wasp"]             = "MEDIUM",
-        ["Major Pakkon"]               = "MEDIUM",
-        ["Qiraji Gladiator"]           = "MEDIUM",
-        ["Qiraji Swarmguard"]          = "MEDIUM",
-        ["Qiraji Warrior"]             = "MEDIUM",
-        ["Shrieker Scarab"]            = "MEDIUM",
-        ["Hive'Zara Hatchling"]        = "LOW",
-        ["Hive'Zara Swarmer"]          = "LOW",
-        ["Vile Scarab"]                = "LOW",
+        ["Anubisath Guardian"]         = 8,
+        ["Anubisath Swarmguard"]       = 8,
+        ["Colonel Zerran"]             = 8,
+        ["Hive'Zara Hornet"]           = 8,
+        ["Hive'Zara Stinger"]          = 8,
+        ["Mana Fiend"]                 = 8,
+        ["Major Yeggeth"]              = 8,
+        ["Obsidian Destroyer"]         = 8,
+        ["Spitting Scarab"]            = 8,
+        ["Swarmguard Needler"]         = 8,
         ["Beetle"]                     = "SKIP",
         ["Buru Egg"]                   = "SKIP",
         ["Canal Frenzy"]               = "SKIP",
@@ -426,38 +293,18 @@ AutoMarkAssist_MobDB = {
     },
 
     ["Temple of Ahn'Qiraj"] = {
-        ["Anubisath Defender"]         = "HIGH",
-        ["Anubisath Sentinel"]         = "HIGH",
-        ["Eye Tentacle"]               = "HIGH",
-        ["Giant Eye Tentacle"]         = "HIGH",
-        ["Obsidian Eradicator"]        = "HIGH",
-        ["Obsidian Nullifier"]         = "HIGH",
-        ["Qiraji Brainwasher"]         = "HIGH",
-        ["Qiraji Mindslayer"]          = "HIGH",
-        ["Spawn of Fankriss"]          = "HIGH",
-        ["Vekniss Stinger"]            = "HIGH",
-        ["Vekniss Borer"]              = "CC",
-        ["Vekniss Wasp"]               = "CC",
-        ["Anubisath Swarmguard"]       = "MEDIUM",
-        ["Anubisath Warder"]           = "MEDIUM",
-        ["Anubisath Warrior"]          = "MEDIUM",
-        ["Claw Tentacle"]              = "MEDIUM",
-        ["Giant Claw Tentacle"]        = "MEDIUM",
-        ["Qiraji Champion"]            = "MEDIUM",
-        ["Qiraji Lasher"]              = "MEDIUM",
-        ["Qiraji Slayer"]              = "MEDIUM",
-        ["Qiraji Warlord"]             = "MEDIUM",
-        ["Sartura's Royal Guard"]      = "MEDIUM",
-        ["Vekniss Guardian"]           = "MEDIUM",
-        ["Vekniss Hive Crawler"]       = "MEDIUM",
-        ["Vekniss Soldier"]            = "MEDIUM",
-        ["Vekniss Warrior"]            = "MEDIUM",
-        ["Ouro Scarab"]                = "LOW",
-        ["Qiraji Scarab"]              = "LOW",
-        ["Qiraji Scorpion"]            = "LOW",
-        ["Vekniss Drone"]              = "LOW",
-        ["Vekniss Hatchling"]          = "LOW",
-        ["Yauj Brood"]                 = "LOW",
+        ["Anubisath Defender"]         = 8,
+        ["Anubisath Sentinel"]         = 8,
+        ["Eye Tentacle"]               = 8,
+        ["Giant Eye Tentacle"]         = 8,
+        ["Obsidian Eradicator"]        = 8,
+        ["Obsidian Nullifier"]         = 8,
+        ["Qiraji Brainwasher"]         = 8,
+        ["Qiraji Mindslayer"]          = 8,
+        ["Spawn of Fankriss"]          = 8,
+        ["Vekniss Stinger"]            = 8,
+        ["Vekniss Borer"]              = 5,
+        ["Vekniss Wasp"]               = 5,
         ["Beetle"]                     = "SKIP",
         ["Dark Blue Qiraji Battle Tank"] = "SKIP",
         ["Gilded Scarab"]              = "SKIP",
@@ -470,59 +317,33 @@ AutoMarkAssist_MobDB = {
     },
 
     ["Naxxramas"] = {
-        ["Bile Retcher"]               = "HIGH",
-        ["Deathknight Captain"]        = "HIGH",
-        ["Deathknight Cavalier"]       = "HIGH",
-        ["Eye Stalk"]                  = "HIGH",
-        ["Mad Scientist"]             = "HIGH",
-        ["Naxxramas Acolyte"]          = "HIGH",
-        ["Naxxramas Cultist"]          = "HIGH",
-        ["Necro Knight"]               = "HIGH",
-        ["Necropolis Acolyte"]         = "HIGH",
-        ["Shade of Naxxramas"]         = "HIGH",
-        ["Skeletal Smith"]             = "HIGH",
-        ["Soul Weaver"]                = "HIGH",
-        ["Spectral Deathknight"]       = "HIGH",
-        ["Spectral Rider"]             = "HIGH",
-        ["Spirit of Naxxramas"]        = "HIGH",
-        ["Stoneskin Gargoyle"]         = "HIGH",
-        ["Surgical Assistant"]         = "HIGH",
-        ["Unholy Staff"]               = "HIGH",
-        ["Unrelenting Deathknight"]    = "HIGH",
-        ["Unrelenting Rider"]          = "HIGH",
-        ["Carrion Spinner"]            = "CC",
-        ["Dread Creeper"]              = "CC",
-        ["Frenzied Bat"]               = "CC",
-        ["Infectious Skitterer"]       = "CC",
-        ["Plagued Bat"]                = "CC",
-        ["Plagued Deathhound"]         = "CC",
-        ["Venom Stalker"]              = "CC",
-        ["Abomination"]                = "MEDIUM",
-        ["Bony Construct"]             = "MEDIUM",
-        ["Crypt Guard"]                = "MEDIUM",
-        ["Crypt Reaver"]               = "MEDIUM",
-        ["Deathknight Understudy"]     = "MEDIUM",
-        ["Deathknight Vindicator"]     = "MEDIUM",
-        ["Infectious Ghoul"]           = "MEDIUM",
-        ["Living Monstrosity"]         = "MEDIUM",
-        ["Patchwork Golem"]            = "MEDIUM",
-        ["Plagued Champion"]           = "MEDIUM",
-        ["Plagued Construct"]          = "MEDIUM",
-        ["Plagued Gargoyle"]           = "MEDIUM",
-        ["Plagued Guardian"]           = "MEDIUM",
-        ["Plagued Warrior"]            = "MEDIUM",
-        ["Sludge Belcher"]             = "MEDIUM",
-        ["Soldier of the Frozen Wastes"] = "MEDIUM",
-        ["Stitched Spewer"]            = "MEDIUM",
-        ["Tomb Horror"]                = "MEDIUM",
-        ["Unstoppable Abomination"]    = "MEDIUM",
-        ["Deathchill Servant"]         = "LOW",
-        ["Maexxna Spiderling"]         = "LOW",
-        ["Rotting Ghoul"]              = "LOW",
-        ["Spectral Horse"]             = "LOW",
-        ["Spectral Trainee"]           = "LOW",
-        ["Unrelenting Trainee"]        = "LOW",
-        ["Zombie Chow"]                = "LOW",
+        ["Bile Retcher"]               = 8,
+        ["Deathknight Captain"]        = 8,
+        ["Deathknight Cavalier"]       = 8,
+        ["Eye Stalk"]                  = 8,
+        ["Mad Scientist"]             = 8,
+        ["Naxxramas Acolyte"]          = 8,
+        ["Naxxramas Cultist"]          = 8,
+        ["Necro Knight"]               = 8,
+        ["Necropolis Acolyte"]         = 8,
+        ["Shade of Naxxramas"]         = 8,
+        ["Skeletal Smith"]             = 8,
+        ["Soul Weaver"]                = 8,
+        ["Spectral Deathknight"]       = 8,
+        ["Spectral Rider"]             = 8,
+        ["Spirit of Naxxramas"]        = 8,
+        ["Stoneskin Gargoyle"]         = 8,
+        ["Surgical Assistant"]         = 8,
+        ["Unholy Staff"]               = 8,
+        ["Unrelenting Deathknight"]    = 8,
+        ["Unrelenting Rider"]          = 8,
+        ["Carrion Spinner"]            = 5,
+        ["Dread Creeper"]              = 5,
+        ["Frenzied Bat"]               = 5,
+        ["Infectious Skitterer"]       = 5,
+        ["Plagued Bat"]                = 5,
+        ["Plagued Deathhound"]         = 5,
+        ["Venom Stalker"]              = 5,
         ["Bile Sludge"]                = "SKIP",
         ["Corpse Scarab"]              = "SKIP",
         ["Larva"]                      = "SKIP",

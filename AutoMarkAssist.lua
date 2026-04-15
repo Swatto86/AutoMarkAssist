@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.0.5"
+AMA.VERSION    = "3.1.0"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -137,9 +137,7 @@ AMA.DB_DEFAULTS = {
     manualModifier     = "ALT",
     manualScrollOrder  = { 8, 7, 3, 4, 5, 6, 2, 1 },
     invertScroll       = true,
-    mobOverrides       = {},
-    mobRemovals        = {},
-    zoneAdditions      = {},
+    mobMarks           = {},
     resetMarksKey      = "F",
 }
 
@@ -320,7 +318,54 @@ function AMA.MigrateFromOldVersion(db)
         db.announceOnEntry = db.autoAnnounceDungeonCC
     end
 
+    -- Migrate old priority-string DB format (mobOverrides/mobRemovals/zoneAdditions)
+    -- into the new mobMarks table.
+    local PRIORITY_MAP = { HIGH = 8, CC = 5 }
+    if not db.mobMarks then db.mobMarks = {} end
+
+    if type(db.mobOverrides) == "table" then
+        for zone, mobs in pairs(db.mobOverrides) do
+            if type(mobs) == "table" then
+                db.mobMarks[zone] = db.mobMarks[zone] or {}
+                for mob, val in pairs(mobs) do
+                    if type(val) == "string" and PRIORITY_MAP[val] then
+                        db.mobMarks[zone][mob] = PRIORITY_MAP[val]
+                    elseif type(val) == "number" or val == "SKIP" then
+                        db.mobMarks[zone][mob] = val
+                    end
+                end
+            end
+        end
+    end
+    if type(db.mobRemovals) == "table" then
+        for zone, mobs in pairs(db.mobRemovals) do
+            if type(mobs) == "table" then
+                db.mobMarks[zone] = db.mobMarks[zone] or {}
+                for mob in pairs(mobs) do
+                    db.mobMarks[zone][mob] = "SKIP"
+                end
+            end
+        end
+    end
+    if type(db.zoneAdditions) == "table" then
+        for zone, mobs in pairs(db.zoneAdditions) do
+            if type(mobs) == "table" then
+                db.mobMarks[zone] = db.mobMarks[zone] or {}
+                for mob, val in pairs(mobs) do
+                    if type(val) == "string" and PRIORITY_MAP[val] then
+                        db.mobMarks[zone][mob] = PRIORITY_MAP[val]
+                    elseif type(val) == "number" or val == "SKIP" then
+                        db.mobMarks[zone][mob] = val
+                    end
+                end
+            end
+        end
+    end
+
     -- Remove obsolete keys.
+    db.mobOverrides = nil
+    db.mobRemovals = nil
+    db.zoneAdditions = nil
     db.markPools = nil
     db.smartCCRoleMarks = nil
     db.ccLimit = nil

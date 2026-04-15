@@ -11,153 +11,115 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Blackrock Caverns"] = {
-    ["Twilight Flame Caller"]       = "HIGH",   -- fire caster; interrupt
-    ["Twilight Zealot"]             = "MEDIUM",
-    ["Twilight Torturer"]           = "HIGH",   -- shadow damage + chains
-    ["Twilight Obsidian Borer"]     = "MEDIUM",
-    ["Twilight Sadist"]             = "HIGH",   -- damage caster
-    ["Mad Prisoner"]                = "CC",     -- humanoid, CC-able
-    ["Twilight Element Warden"]     = "HIGH",   -- summons elementals
-    ["Evolved Twilight Zealot"]     = "MEDIUM",
+    ["Twilight Flame Caller"]       = 8,   -- fire caster; interrupt
+    ["Twilight Torturer"]           = 8,   -- shadow damage + chains
+    ["Twilight Sadist"]             = 8,   -- damage caster
+    ["Mad Prisoner"]                = 5,     -- humanoid, CC-able
+    ["Twilight Element Warden"]     = 8,   -- summons elementals
     ["Incendiary Spark"]            = "SKIP",   -- spark filler
 }
 
 db["Throne of the Tides"] = {
-    ["Naz'jar Tempest Witch"]       = "HIGH",   -- frost + lightning caster
-    ["Naz'jar Sentinel"]            = "MEDIUM",
-    ["Naz'jar Honor Guard"]         = "MEDIUM",
-    ["Naz'jar Spiritmender"]        = "HIGH",   -- healer
-    ["Tainted Sentry"]              = "MEDIUM",
-    ["Faceless Watcher"]            = "HIGH",   -- shadow damage + mind flay
-    ["Gilgoblin Aquamage"]          = "HIGH",   -- water caster
-    ["Gilgoblin Hunter"]            = "CC",     -- humanoid, CC-able
+    ["Naz'jar Tempest Witch"]       = 8,   -- frost + lightning caster
+    ["Naz'jar Spiritmender"]        = 8,   -- healer
+    ["Faceless Watcher"]            = 8,   -- shadow damage + mind flay
+    ["Gilgoblin Aquamage"]          = 8,   -- water caster
+    ["Gilgoblin Hunter"]            = 5,     -- humanoid, CC-able
     ["Deep Murloc Drudge"]          = "SKIP",   -- mass murloc filler
 }
 
 db["The Stonecore"] = {
-    ["Stonecore Berserker"]         = "MEDIUM",
-    ["Stonecore Bruiser"]           = "MEDIUM",
-    ["Stonecore Earthshaper"]       = "HIGH",   -- earth caster + ground AoE
-    ["Stonecore Flayer"]            = "MEDIUM",
-    ["Stonecore Magmalord"]         = "HIGH",   -- fire caster; interrupt
-    ["Stonecore Rift Conjurer"]     = "HIGH",   -- summons voidwalkers
-    ["Stonecore Warbringer"]        = "MEDIUM",
-    ["Millhouse Manastorm"]         = "HIGH",   -- arcane caster (as trash)
+    ["Stonecore Earthshaper"]       = 8,   -- earth caster + ground AoE
+    ["Stonecore Magmalord"]         = 8,   -- fire caster; interrupt
+    ["Stonecore Rift Conjurer"]     = 8,   -- summons voidwalkers
+    ["Millhouse Manastorm"]         = 8,   -- arcane caster (as trash)
     ["IMP"]                         = "SKIP",   -- summoned imp filler
 }
 
 db["The Vortex Pinnacle"] = {
-    ["Gust Soldier"]                = "MEDIUM",
-    ["Lurking Tempest"]             = "HIGH",   -- lightning caster
-    ["Minister of Air"]             = "HIGH",   -- chain lightning + heal
-    ["Servant of Asaad"]            = "MEDIUM",
-    ["Temple Adept"]                = "HIGH",   -- healer
-    ["Turbulent Squall"]            = "HIGH",   -- lightning caster
-    ["Wild Vortex"]                 = "CC",     -- elemental, banishable
-    ["Young Storm Dragon"]          = "CC",     -- dragonkin, CC-able
+    ["Lurking Tempest"]             = 8,   -- lightning caster
+    ["Minister of Air"]             = 8,   -- chain lightning + heal
+    ["Temple Adept"]                = 8,   -- healer
+    ["Turbulent Squall"]            = 8,   -- lightning caster
+    ["Wild Vortex"]                 = 5,     -- elemental, banishable
+    ["Young Storm Dragon"]          = 5,     -- dragonkin, CC-able
     ["Howling Gale"]                = "SKIP",   -- environmental filler
 }
 
 db["Lost City of the Tol'vir"] = {
-    ["Neferset Darkcaster"]         = "HIGH",   -- shadow caster
-    ["Neferset Plaguebringer"]      = "HIGH",   -- disease + shadow damage
-    ["Oathsworn Captain"]           = "MEDIUM",
-    ["Oathsworn Myrmidon"]          = "MEDIUM",
-    ["Oathsworn Pathfinder"]        = "HIGH",   -- ranged + multishot
-    ["Oathsworn Skinner"]           = "CC",     -- humanoid, CC-able
-    ["Oathsworn Wanderer"]          = "MEDIUM",
-    ["Pygmy Brute"]                 = "LOW",
+    ["Neferset Darkcaster"]         = 8,   -- shadow caster
+    ["Neferset Plaguebringer"]      = 8,   -- disease + shadow damage
+    ["Oathsworn Pathfinder"]        = 8,   -- ranged + multishot
+    ["Oathsworn Skinner"]           = 5,     -- humanoid, CC-able
     ["Pygmy Scout"]                 = "SKIP",   -- pygmy filler
 }
 
 db["Halls of Origination"] = {
-    ["Temple Runecaster"]           = "HIGH",   -- rune caster; interrupt
-    ["Temple Shadowlancer"]         = "HIGH",   -- stealth + shadow damage
-    ["Temple Fireshaper"]           = "HIGH",   -- fire caster
-    ["Temple Swiftstalker"]         = "HIGH",   -- ranged + rapid shot
-    ["Air Warden"]                  = "CC",     -- elemental, banishable
-    ["Earth Warden"]                = "MEDIUM",
-    ["Flame Warden"]                = "CC",     -- elemental, banishable
-    ["Water Warden"]                = "HIGH",   -- healer elemental
-    ["Temple Guardian"]             = "MEDIUM",
-    ["Stone Trogg Brute"]           = "MEDIUM",
-    ["Stone Trogg Pillager"]        = "LOW",
+    ["Temple Runecaster"]           = 8,   -- rune caster; interrupt
+    ["Temple Shadowlancer"]         = 8,   -- stealth + shadow damage
+    ["Temple Fireshaper"]           = 8,   -- fire caster
+    ["Temple Swiftstalker"]         = 8,   -- ranged + rapid shot
+    ["Air Warden"]                  = 5,     -- elemental, banishable
+    ["Flame Warden"]                = 5,     -- elemental, banishable
+    ["Water Warden"]                = 8,   -- healer elemental
 }
 
 db["Grim Batol"] = {
-    ["Twilight Armsmaster"]         = "MEDIUM",
-    ["Twilight Beguiler"]           = "HIGH",   -- mind control + shadow
-    ["Twilight Drake"]              = "MEDIUM",
-    ["Twilight Earthcaller"]        = "HIGH",   -- earth caster; summons
-    ["Twilight Firecatcher"]        = "HIGH",   -- fire caster
-    ["Twilight Shadow Weaver"]      = "HIGH",   -- shadow bolt volley
-    ["Twilight Stormbreaker"]       = "HIGH",   -- chain lightning
-    ["Twilight Thundercaller"]      = "HIGH",   -- lightning + storm caster
-    ["Twilight War-Mage"]           = "HIGH",   -- polymorph + fireball
-    ["Twilight Wyrmcaller"]         = "HIGH",   -- calls drake adds
-    ["Azureborne Seer"]             = "HIGH",   -- twilight caster
-    ["Enslaved Gronn Brute"]        = "MEDIUM",
-    ["Trogg Dweller"]               = "LOW",
+    ["Twilight Beguiler"]           = 8,   -- mind control + shadow
+    ["Twilight Earthcaller"]        = 8,   -- earth caster; summons
+    ["Twilight Firecatcher"]        = 8,   -- fire caster
+    ["Twilight Shadow Weaver"]      = 8,   -- shadow bolt volley
+    ["Twilight Stormbreaker"]       = 8,   -- chain lightning
+    ["Twilight Thundercaller"]      = 8,   -- lightning + storm caster
+    ["Twilight War-Mage"]           = 8,   -- polymorph + fireball
+    ["Twilight Wyrmcaller"]         = 8,   -- calls drake adds
+    ["Azureborne Seer"]             = 8,   -- twilight caster
 }
 
 db["Zul'Aman"] = {
-    ["Amani'shi Flame Caster"]      = "HIGH",   -- fire caster
-    ["Amani'shi Medicine Man"]      = "HIGH",   -- healer + hex
-    ["Amani'shi Scout"]             = "HIGH",   -- calls reinforcements
-    ["Amani'shi Beast Tamer"]       = "HIGH",   -- beast caller
-    ["Amani'shi Warrior"]           = "MEDIUM",
-    ["Amani'shi Protector"]         = "MEDIUM",
-    ["Amani'shi Guardian"]          = "CC",     -- humanoid, CC-able
-    ["Amani Lynx"]                  = "CC",     -- beast, trappable
+    ["Amani'shi Flame Caster"]      = 8,   -- fire caster
+    ["Amani'shi Medicine Man"]      = 8,   -- healer + hex
+    ["Amani'shi Scout"]             = 8,   -- calls reinforcements
+    ["Amani'shi Beast Tamer"]       = 8,   -- beast caller
+    ["Amani'shi Guardian"]          = 5,     -- humanoid, CC-able
+    ["Amani Lynx"]                  = 5,     -- beast, trappable
     ["Forest Frog"]                 = "SKIP",   -- hex target filler
 }
 
 db["Zul'Gurub"] = {
-    ["Gurubashi Shadow Hunter"]     = "HIGH",   -- shadow bolt + hex
-    ["Gurubashi Blood Drinker"]     = "HIGH",   -- life drain caster
-    ["Gurubashi Berserker"]         = "MEDIUM",
-    ["Gurubashi Cauldron Mixer"]    = "HIGH",   -- poison caster
-    ["Gurubashi Master Chef"]       = "MEDIUM",
-    ["Tiki Lord Zim'wae"]           = "HIGH",   -- fire caster + totems
-    ["Florawing Hive Queen"]        = "HIGH",   -- poison + summons
-    ["Venomancer T'Kulu"]           = "HIGH",   -- poison caster
+    ["Gurubashi Shadow Hunter"]     = 8,   -- shadow bolt + hex
+    ["Gurubashi Blood Drinker"]     = 8,   -- life drain caster
+    ["Gurubashi Cauldron Mixer"]    = 8,   -- poison caster
+    ["Tiki Lord Zim'wae"]           = 8,   -- fire caster + totems
+    ["Florawing Hive Queen"]        = 8,   -- poison + summons
+    ["Venomancer T'Kulu"]           = 8,   -- poison caster
     ["Zanzili Zombie"]              = "SKIP",   -- mass zombie filler
 }
 
 db["End Time"] = {
-    ["Time-Twisted Breaker"]        = "MEDIUM",
-    ["Time-Twisted Drake"]          = "MEDIUM",
-    ["Time-Twisted Geist"]          = "CC",     -- undead, shackleable
-    ["Time-Twisted Nightsaber"]     = "CC",     -- beast, trappable
-    ["Time-Twisted Priest"]         = "HIGH",   -- healer
-    ["Time-Twisted Rifleman"]       = "HIGH",   -- ranged; multishot
-    ["Time-Twisted Scourge Beast"]  = "MEDIUM",
-    ["Time-Twisted Seer"]           = "HIGH",   -- arcane caster
-    ["Time-Twisted Sorceress"]      = "HIGH",   -- frost + fire caster
-    ["Infinite Warden"]             = "MEDIUM",
+    ["Time-Twisted Geist"]          = 5,     -- undead, shackleable
+    ["Time-Twisted Nightsaber"]     = 5,     -- beast, trappable
+    ["Time-Twisted Priest"]         = 8,   -- healer
+    ["Time-Twisted Rifleman"]       = 8,   -- ranged; multishot
+    ["Time-Twisted Seer"]           = 8,   -- arcane caster
+    ["Time-Twisted Sorceress"]      = 8,   -- frost + fire caster
 }
 
 db["Well of Eternity"] = {
-    ["Dreadlord Defender"]          = "HIGH",   -- shadow damage + fear
-    ["Enchanted Highmistress"]      = "HIGH",   -- arcane caster
-    ["Eternal Champion"]            = "MEDIUM",
-    ["Eye of the Legion"]           = "HIGH",   -- shadow beam
+    ["Dreadlord Defender"]          = 8,   -- shadow damage + fear
+    ["Enchanted Highmistress"]      = 8,   -- arcane caster
+    ["Eye of the Legion"]           = 8,   -- shadow beam
     ["Fel Crystal"]                 = "SKIP",   -- crystal filler
-    ["Legion Demon"]                = "CC",     -- demon, banishable
-    ["Shadowbat"]                   = "CC",     -- beast, trappable
-    ["Var'azun"]                    = "HIGH",   -- shadow caster
+    ["Legion Demon"]                = 5,     -- demon, banishable
+    ["Shadowbat"]                   = 5,     -- beast, trappable
+    ["Var'azun"]                    = 8,   -- shadow caster
 }
 
 db["Hour of Twilight"] = {
-    ["Twilight Assassin"]           = "HIGH",   -- stealth + garrote
-    ["Twilight Bruiser"]            = "MEDIUM",
-    ["Twilight Ranger"]             = "HIGH",   -- ranged + ice trap
-    ["Twilight Shadow Knight"]      = "MEDIUM",
-    ["Twilight Thug"]               = "MEDIUM",
-    ["Faceless Brute"]              = "MEDIUM",
-    ["Faceless Shadow Weaver"]      = "HIGH",   -- shadow + void
-    ["Crystalline Elemental"]       = "CC",     -- elemental, banishable
-    ["Frozen Servitor"]             = "LOW",
+    ["Twilight Assassin"]           = 8,   -- stealth + garrote
+    ["Twilight Ranger"]             = 8,   -- ranged + ice trap
+    ["Faceless Shadow Weaver"]      = 8,   -- shadow + void
+    ["Crystalline Elemental"]       = 5,     -- elemental, banishable
 }
 
 -- ============================================================
@@ -165,136 +127,84 @@ db["Hour of Twilight"] = {
 -- ============================================================
 
 db["Blackwing Descent"] = {
-    ["Arcanotron"]                  = "HIGH",   -- Omnotron target caller
-    ["Electron"]                    = "HIGH",   -- Omnotron target caller
-    ["Magmatron"]                   = "HIGH",   -- Omnotron target caller
-    ["Toxitron"]                    = "HIGH",   -- Omnotron target caller
-    ["Aberration"]                  = "HIGH",   -- Maloriak add
-    ["Prime Subject"]               = "HIGH",   -- Maloriak add
-    ["Lava Parasite"]               = "HIGH",   -- Magmaw add
-    ["Blazing Bone Construct"]      = "HIGH",   -- Nefarian add
-    ["Animated Bone Warrior"]       = "MEDIUM",
-    ["Drakonid Chainwielder"]       = "HIGH",
-    ["Drakonid Drudge"]             = "MEDIUM",
-    ["Drakonid Slayer"]             = "MEDIUM",
-    ["Drakeadon Mongrel"]           = "MEDIUM",
-    ["Golem Sentry"]                = "MEDIUM",
-    ["Magmaw"]                      = "LOW",
-    ["Maloriak"]                    = "LOW",
-    ["Atramedes"]                   = "LOW",
-    ["Chimaeron"]                   = "LOW",
-    ["Nefarian"]                    = "LOW",
-    ["Onyxia"]                      = "LOW",
+    ["Arcanotron"]                  = 8,   -- Omnotron target caller
+    ["Electron"]                    = 8,   -- Omnotron target caller
+    ["Magmatron"]                   = 8,   -- Omnotron target caller
+    ["Toxitron"]                    = 8,   -- Omnotron target caller
+    ["Aberration"]                  = 8,   -- Maloriak add
+    ["Prime Subject"]               = 8,   -- Maloriak add
+    ["Lava Parasite"]               = 8,   -- Magmaw add
+    ["Blazing Bone Construct"]      = 8,   -- Nefarian add
+    ["Drakonid Chainwielder"]       = 8,
 }
 
 db["The Bastion of Twilight"] = {
-    ["Chosen Seer"]                 = "HIGH",   -- healer/caster trash
-    ["Twilight Dark Mender"]        = "HIGH",   -- healer
-    ["Twilight Shadow Mender"]      = "HIGH",   -- healer
-    ["Twilight Elementalist"]       = "HIGH",   -- dangerous caster trash
-    ["Twilight Soul Blade"]         = "HIGH",   -- dangerous melee burst
-    ["Twilight Shadow Knight"]      = "MEDIUM",
-    ["Twilight Brute"]              = "MEDIUM",
-    ["Azureborne Destroyer"]        = "MEDIUM",
-    ["Faceless Guardian"]           = "HIGH",
-    ["Corrupting Adherent"]         = "HIGH",   -- Cho'gall add
-    ["Darkened Creation"]           = "HIGH",   -- Cho'gall add
-    ["Blood of the Old God"]        = "HIGH",   -- Cho'gall add
-    ["Spiked Tentacle"]             = "HIGH",   -- Sinestra add
-    ["Elementium Monstrosity"]      = "HIGH",   -- Ascendant Council fusion target
-    ["Halfus Wyrmbreaker"]          = "LOW",
-    ["Valiona"]                     = "LOW",
-    ["Theralion"]                   = "LOW",
-    ["Cho'gall"]                    = "LOW",
-    ["Sinestra"]                    = "LOW",
-    ["Feludius"]                    = "LOW",
-    ["Ignacious"]                   = "LOW",
-    ["Arion"]                       = "LOW",
-    ["Terrastra"]                   = "LOW",
+    ["Chosen Seer"]                 = 8,   -- healer/caster trash
+    ["Twilight Dark Mender"]        = 8,   -- healer
+    ["Twilight Shadow Mender"]      = 8,   -- healer
+    ["Twilight Elementalist"]       = 8,   -- dangerous caster trash
+    ["Twilight Soul Blade"]         = 8,   -- dangerous melee burst
+    ["Faceless Guardian"]           = 8,
+    ["Corrupting Adherent"]         = 8,   -- Cho'gall add
+    ["Darkened Creation"]           = 8,   -- Cho'gall add
+    ["Blood of the Old God"]        = 8,   -- Cho'gall add
+    ["Spiked Tentacle"]             = 8,   -- Sinestra add
+    ["Elementium Monstrosity"]      = 8,   -- Ascendant Council fusion target
 }
 
 db["Throne of the Four Winds"] = {
-    ["Ravenous Creeper"]            = "HIGH",   -- Anshal add
-    ["Stormling"]                   = "HIGH",   -- Al'Akir add
-    ["Anshal"]                      = "LOW",
-    ["Nezir"]                       = "LOW",
-    ["Rohash"]                      = "LOW",
-    ["Al'Akir"]                     = "LOW",
+    ["Ravenous Creeper"]            = 8,   -- Anshal add
+    ["Stormling"]                   = 8,   -- Al'Akir add
 }
 
 db["Baradin Hold"] = {
-    ["Disciple of Hate"]            = "HIGH",   -- Alizabal add
-    ["Eye of Occu'thar"]            = "HIGH",   -- Occu'thar add
-    ["Argaloth"]                    = "LOW",
-    ["Occu'thar"]                   = "LOW",
-    ["Alizabal"]                    = "LOW",
+    ["Disciple of Hate"]            = 8,   -- Alizabal add
+    ["Eye of Occu'thar"]            = 8,   -- Occu'thar add
 }
 
 db["Firelands"] = {
-    ["Flamewaker Cauterizer"]       = "HIGH",   -- healer
-    ["Flamewaker Subjugator"]       = "HIGH",   -- dangerous caster
-    ["Flamewaker Pathfinder"]       = "HIGH",
-    ["Flamewaker Beast Handler"]    = "HIGH",
-    ["Flamewaker Hound Master"]     = "HIGH",
-    ["Flamewaker Animator"]         = "HIGH",
-    ["Flamewaker Sentinel"]         = "MEDIUM",
-    ["Flamewaker Overseer"]         = "MEDIUM",
-    ["Unbound Pyrelord"]            = "HIGH",
-    ["Unbound Smoldering Elemental"] = "CC",    -- elemental, banishable
-    ["Molten Lord"]                 = "HIGH",
-    ["Molten Surger"]               = "MEDIUM",
-    ["Ancient Core Hound"]          = "CC",     -- beast, trappable
-    ["Cinderweb Spinner"]           = "HIGH",
-    ["Cinderweb Drone"]             = "MEDIUM",
+    ["Flamewaker Cauterizer"]       = 8,   -- healer
+    ["Flamewaker Subjugator"]       = 8,   -- dangerous caster
+    ["Flamewaker Pathfinder"]       = 8,
+    ["Flamewaker Beast Handler"]    = 8,
+    ["Flamewaker Hound Master"]     = 8,
+    ["Flamewaker Animator"]         = 8,
+    ["Unbound Pyrelord"]            = 8,
+    ["Unbound Smoldering Elemental"] = 5,    -- elemental, banishable
+    ["Molten Lord"]                 = 8,
+    ["Ancient Core Hound"]          = 5,     -- beast, trappable
+    ["Cinderweb Spinner"]           = 8,
     ["Cinderweb Spiderling"]        = "SKIP",   -- filler spiderlings
-    ["Blazing Talon Initiate"]      = "HIGH",
-    ["Voracious Hatchling"]         = "HIGH",
-    ["Harbinger of Flame"]          = "HIGH",
-    ["Druid of the Flame"]          = "HIGH",
-    ["Fire Scorpion"]               = "MEDIUM",
-    ["Rageface"]                    = "HIGH",   -- Shannox dog
-    ["Riplimb"]                     = "HIGH",   -- Shannox dog
-    ["Beth'tilac"]                  = "LOW",
-    ["Alysrazor"]                   = "LOW",
-    ["Baleroc"]                     = "LOW",
-    ["Lord Rhyolith"]               = "LOW",
-    ["Majordomo Staghelm"]          = "LOW",
-    ["Ragnaros"]                    = "LOW",
-    ["Shannox"]                     = "LOW",
+    ["Blazing Talon Initiate"]      = 8,
+    ["Voracious Hatchling"]         = 8,
+    ["Harbinger of Flame"]          = 8,
+    ["Druid of the Flame"]          = 8,
+    ["Rageface"]                    = 8,   -- Shannox dog
+    ["Riplimb"]                     = 8,   -- Shannox dog
 }
 
 db["Dragon Soul"] = {
-    ["Twilight Elite Dreadblade"]   = "HIGH",
-    ["Twilight Elite Slayer"]       = "HIGH",
-    ["Twilight Frost Evoker"]       = "HIGH",
-    ["Twilight Siege Captain"]      = "HIGH",
-    ["Twilight Siege Breaker"]      = "MEDIUM",
-    ["Twilight Sapper"]             = "HIGH",   -- Warmaster add
-    ["Twilight Assault Drake"]      = "MEDIUM",
-    ["Harbinger of Twilight"]       = "HIGH",
-    ["Harbinger of Destruction"]    = "HIGH",
-    ["Faceless Corruptor"]          = "HIGH",
-    ["Ancient Water Lord"]          = "HIGH",
-    ["Stormbinder Adept"]           = "HIGH",
-    ["Stormborn Myrmidon"]          = "MEDIUM",
-    ["Elementium Bolt"]             = "HIGH",
-    ["Elementium Terror"]           = "HIGH",
-    ["Mutated Corruption"]          = "HIGH",
-    ["Wing Tentacle"]               = "HIGH",
-    ["Claw of Go'rath"]             = "HIGH",
-    ["Eye of Go'rath"]              = "HIGH",
-    ["Flail of Go'rath"]            = "HIGH",
-    ["Blistering Tentacle"]         = "HIGH",
-    ["Hideous Amalgamation"]        = "HIGH",
-    ["Burning Tendons"]             = "HIGH",
-    ["Congealing Blood"]            = "HIGH",
-    ["Morchok"]                     = "LOW",
-    ["Warlord Zon'ozz"]             = "LOW",
-    ["Yor'sahj the Unsleeping"]     = "LOW",
-    ["Hagara the Stormbinder"]      = "LOW",
-    ["Ultraxion"]                   = "LOW",
-    ["Warmaster Blackhorn"]         = "LOW",
-    ["Deathwing"]                   = "LOW",
+    ["Twilight Elite Dreadblade"]   = 8,
+    ["Twilight Elite Slayer"]       = 8,
+    ["Twilight Frost Evoker"]       = 8,
+    ["Twilight Siege Captain"]      = 8,
+    ["Twilight Sapper"]             = 8,   -- Warmaster add
+    ["Harbinger of Twilight"]       = 8,
+    ["Harbinger of Destruction"]    = 8,
+    ["Faceless Corruptor"]          = 8,
+    ["Ancient Water Lord"]          = 8,
+    ["Stormbinder Adept"]           = 8,
+    ["Elementium Bolt"]             = 8,
+    ["Elementium Terror"]           = 8,
+    ["Mutated Corruption"]          = 8,
+    ["Wing Tentacle"]               = 8,
+    ["Claw of Go'rath"]             = 8,
+    ["Eye of Go'rath"]              = 8,
+    ["Flail of Go'rath"]            = 8,
+    ["Blistering Tentacle"]         = 8,
+    ["Hideous Amalgamation"]        = 8,
+    ["Burning Tendons"]             = 8,
+    ["Congealing Blood"]            = 8,
 }
 
 -- ============================================================
