@@ -226,10 +226,11 @@ for k, v in pairs(newAliases) do aliases[k] = v end
 -- EXPANSION ORDER  (appended to the shared table)
 -- ============================================================
 
-table.insert(order, { name = "Mists of Pandaria", zones = {
+table.insert(order, { name = "Mists of Pandaria", dungeons = {
     "Temple of the Jade Serpent", "Stormstout Brewery",
     "Gate of the Setting Sun", "Shado-Pan Monastery",
     "Siege of Niuzao Temple", "Mogu'shan Palace",
+}, raids = {
     "Mogu'shan Vaults", "Heart of Fear", "Terrace of Endless Spring",
     "Throne of Thunder", "Siege of Orgrimmar",
 }})

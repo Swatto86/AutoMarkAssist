@@ -24,7 +24,7 @@ The addon includes a built-in database covering Classic, TBC, WotLK, Cata, and M
 3. **CC by creature type** — Match the mob's creature type to your group's CC abilities.
 4. **Any remaining enabled mark** — Fill non-CC marks first, then spill into CC marks if needed.
 
-You can customise per-mob marks in the **Database tab** of the config panel, or let manual mode learn your preferences inside instances.
+You can customise per-mob marks in the **Database tab** of the config panel. The tab features a full zone browser organised by expansion and instance type (Dungeons / Raids), so you can browse and edit marks for any zone without being inside it. Manual mode also learns your preferences inside instances.
 
 ## Three Marking Modes
 

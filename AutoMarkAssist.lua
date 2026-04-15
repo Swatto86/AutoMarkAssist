@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.1.0"
+AMA.VERSION    = "3.2.0"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -138,7 +138,7 @@ AMA.DB_DEFAULTS = {
     manualScrollOrder  = { 8, 7, 3, 4, 5, 6, 2, 1 },
     invertScroll       = true,
     mobMarks           = {},
-    resetMarksKey      = "F",
+    resetMarksKey      = "",
 }
 
 -- ============================================================

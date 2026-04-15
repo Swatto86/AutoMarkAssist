@@ -1,5 +1,16 @@
 # AutoMarkAssist Changelog
 
+## 3.2.0
+
+### New Features
+- **Database Zone Browser:** Redesigned the Database tab with a full zone navigation tree. Browse all dungeons and raids organised by expansion (Classic → MoP), with collapsible Dungeons/Raids sub-categories. Select any zone to view and edit its mob marks — no need to be inside the instance.
+- **Current Zone Highlighting:** Your current zone is highlighted green in the navigation tree and auto-expanded when the panel opens.
+- **Mob Count Indicators:** Each zone in the navigation tree shows the number of configured mobs in parentheses.
+
+### Changes
+- **Database Structure:** Expansion data is now split into `dungeons` and `raids` sub-tables for clearer organisation.
+- **Reset Marks Keybind Default:** New installs no longer have a default reset marks keybind. Existing users who set one will keep their binding.
+
 ## 3.1.0
 
 ### New Features

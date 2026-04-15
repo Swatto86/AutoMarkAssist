@@ -421,12 +421,13 @@ AutoMarkAssist_ZoneAliases = {
 -- ============================================================
 
 AutoMarkAssist_ExpansionOrder = {
-    { name = "Classic", zones = {
+    { name = "Classic", dungeons = {
         "Ragefire Chasm", "Wailing Caverns", "The Deadmines", "Shadowfang Keep",
         "The Stockade", "Blackfathom Deeps", "Gnomeregan", "Razorfen Kraul",
         "Razorfen Downs", "Scarlet Halls", "Scarlet Monastery", "Zul'Farrak",
         "Maraudon", "Dire Maul", "Stratholme", "Scholomance",
         "The Temple of Atal'Hakkar", "Blackrock Depths", "Lower Blackrock Spire",
+    }, raids = {
         "Molten Core", "Onyxia's Lair", "Blackwing Lair", "Zul'Gurub",
         "Ruins of Ahn'Qiraj", "Temple of Ahn'Qiraj", "Naxxramas",
     }},
