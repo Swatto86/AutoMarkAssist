@@ -120,7 +120,7 @@ resetKeyBtn:SetSize(1, 1)
 resetKeyBtn:SetAlpha(0)
 resetKeyBtn:RegisterForClicks("AnyUp", "AnyDown")
 resetKeyBtn:SetScript("OnClick", function()
-    if AMA.ResetWithMessage then AMA.ResetWithMessage() end
+    if AMA.ResetWithMessage then AMA.ResetWithMessage(true) end
 end)
 
 function AMA.ApplyResetKeybind()
@@ -294,7 +294,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
             and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
 
     elseif cmd == "reset" or cmd == "clear" then
-        AMA.ResetWithMessage()
+        AMA.ResetWithMessage(true)
 
     elseif cmd == "announce" then
         AMA.AnnounceMarkPlan(true)

@@ -334,10 +334,12 @@ end
 -- RESET STATE
 -- ============================================================
 
-function AMA.ResetState()
+function AMA.ResetState(forceAll)
     local marksToClear = {}
-    for markIdx in pairs(AMA.markOwners) do
-        marksToClear[markIdx] = true
+    for markIdx, ownerGuid in pairs(AMA.markOwners) do
+        if forceAll or AMA.guidMarkSource[ownerGuid] == MARK_SOURCE_LOCAL then
+            marksToClear[markIdx] = true
+        end
     end
 
     local clearedMarks = {}
@@ -351,20 +353,9 @@ function AMA.ResetState()
         end
     end
 
-    local playerMark = GetRaidTargetIndex and GetRaidTargetIndex("player")
-    local bouncedAny = false
-
-    for markIdx in pairs(marksToClear) do
-        if not clearedMarks[markIdx] then
-            pcall(SetRaidTarget, "player", markIdx)
-            pcall(SetRaidTarget, "player", 0)
-            bouncedAny = true
-        end
-    end
-
-    if bouncedAny and playerMark and not marksToClear[playerMark] then
-        pcall(SetRaidTarget, "player", playerMark)
-    end
+    -- Skip the player-bounce fallback: if we can't find the token the mob is
+    -- likely dead anyway, and bouncing would nuke marks set by other players
+    -- on mobs we can't currently see.
 
     wipe(AMA.markedGUIDs)
     wipe(AMA.markOwners)
@@ -373,8 +364,8 @@ function AMA.ResetState()
     AMA.pullMarkCount = 0
 end
 
-function AMA.ResetWithMessage()
-    AMA.ResetState()
+function AMA.ResetWithMessage(forceAll)
+    AMA.ResetState(forceAll)
     if AutoMarkAssistDB and AutoMarkAssistDB.verbose then
         AMA.Print("All marks cleared.")
     end
