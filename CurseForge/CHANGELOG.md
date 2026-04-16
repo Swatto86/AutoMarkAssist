@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.1
+
+### Bug Fixes
+- **Reset Marks Throttle Fix:** Rewrote `ResetState` to avoid hammering `SetRaidTarget` in a single frame. Visible unit tokens are cleared directly first, then any remaining marks are bounced through the player with staggered 0.15 s delays via `C_Timer.After`. A final safety clear ensures no mark is left on the player. This eliminates the "too many group actions" spam and the stuck Skull/Circle on the player's head when pressing the reset keybind or running `/ama reset`.
+
 ## 3.4.0
 
 ### New Features

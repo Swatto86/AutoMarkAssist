@@ -605,42 +605,63 @@ end
 -- ============================================================
 
 function AMA.ResetState(forceAll)
+    -- Decide which mark indices to clear.
+    local marksToClear = {}
     if forceAll then
-        -- Nuclear: bounce every mark through the player to clear it from
-        -- whatever mob holds it, regardless of visibility or proximity.
         for i = 1, 8 do
-            pcall(SetRaidTarget, "player", i)
-            pcall(SetRaidTarget, "player", 0)
+            marksToClear[i] = true
         end
     else
-        -- Selective: only clear marks this addon applied.
-        local marksToClear = {}
         for markIdx, ownerGuid in pairs(AMA.markOwners) do
             if AMA.guidMarkSource[ownerGuid] == MARK_SOURCE_LOCAL then
                 marksToClear[markIdx] = true
             end
         end
+    end
 
-        -- Try via visible unit tokens first (avoids the brief player-icon flash).
-        local clearedMarks = {}
-        for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
-            if UnitExists(token) then
-                local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
-                if visibleMark > 0 and marksToClear[visibleMark] and not clearedMarks[visibleMark] then
-                    pcall(SetRaidTarget, token, 0)
-                    clearedMarks[visibleMark] = true
-                end
+    -- Phase 1: clear via visible unit tokens (instant, no player flash).
+    local clearedMarks = {}
+    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+        if UnitExists(token) then
+            local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
+            if visibleMark > 0 and marksToClear[visibleMark] and not clearedMarks[visibleMark] then
+                pcall(SetRaidTarget, token, 0)
+                clearedMarks[visibleMark] = true
             end
         end
+    end
 
-        -- Fallback: bounce any remaining marks through the player so marks
-        -- on out-of-range or off-nameplate mobs are still cleared.
-        for markIdx in pairs(marksToClear) do
-            if not clearedMarks[markIdx] then
-                pcall(SetRaidTarget, "player", markIdx)
+    -- Also check the player (someone else may have marked us).
+    local playerMark = GetRaidTargetIndex and GetRaidTargetIndex("player") or 0
+    if playerMark > 0 and marksToClear[playerMark] and not clearedMarks[playerMark] then
+        pcall(SetRaidTarget, "player", 0)
+        clearedMarks[playerMark] = true
+    end
+
+    -- Phase 2: stagger player-bounce for remaining marks to avoid throttle.
+    local remaining = {}
+    for markIdx in pairs(marksToClear) do
+        if not clearedMarks[markIdx] then
+            remaining[#remaining + 1] = markIdx
+        end
+    end
+
+    if #remaining > 0 then
+        local idx = 0
+        local function BounceNext()
+            idx = idx + 1
+            if idx > #remaining then
+                -- Final safety: ensure the player is left unmarked.
                 pcall(SetRaidTarget, "player", 0)
+                return
             end
+            pcall(SetRaidTarget, "player", remaining[idx])
+            C_Timer.After(0.15, function()
+                pcall(SetRaidTarget, "player", 0)
+                C_Timer.After(0.15, BounceNext)
+            end)
         end
+        BounceNext()
     end
 
     wipe(AMA.markedGUIDs)
