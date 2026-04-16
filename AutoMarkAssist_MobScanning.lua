@@ -45,7 +45,25 @@ function AMA.ResolveZoneName(rawZone)
     return rawZone
 end
 
---- Build a merged mob→mark table for the given zone.
+--- Normalise a mob DB entry to { mark, creatureType, ccImmune } or "SKIP".
+--- Handles plain-number entries (static DB, legacy player overrides)
+--- and the new table format.
+local function NormaliseMobEntry(entry)
+    if entry == "SKIP" then return "SKIP" end
+    if type(entry) == "number" then
+        return { mark = entry, creatureType = nil, ccImmune = false }
+    end
+    if type(entry) == "table" and entry.mark then
+        return {
+            mark = entry.mark,
+            creatureType = entry.creatureType or nil,
+            ccImmune = entry.ccImmune or false,
+        }
+    end
+    return nil
+end
+
+--- Build a merged mob→entry table for the given zone.
 --- Player overrides (mobMarks) win over static DB entries.
 function AMA.BuildZoneMobDB(zoneName)
     if not zoneName or zoneName == "" then return nil end
@@ -58,18 +76,18 @@ function AMA.BuildZoneMobDB(zoneName)
 
     local merged = {}
     if baseMobs then
-        for mob, mark in pairs(baseMobs) do merged[mob] = mark end
+        for mob, entry in pairs(baseMobs) do merged[mob] = NormaliseMobEntry(entry) end
     end
     if playerMobs then
-        for mob, mark in pairs(playerMobs) do merged[mob] = mark end
+        for mob, entry in pairs(playerMobs) do merged[mob] = NormaliseMobEntry(entry) end
     end
 
     if next(merged) == nil then return nil end
     return merged
 end
 
---- Look up the preferred mark for a mob in the current zone.
---- Returns: markIdx (number), "SKIP", or nil (no preference).
+--- Look up the preferred mark and creature type for a mob.
+--- Returns: { mark, creatureType }, "SKIP", or nil.
 function AMA.LookupMobMark(mobName)
     if not mobName then return nil end
 
@@ -78,7 +96,7 @@ function AMA.LookupMobMark(mobName)
     if zone and AutoMarkAssistDB and AutoMarkAssistDB.mobMarks then
         local playerMobs = AutoMarkAssistDB.mobMarks[zone]
         if playerMobs and playerMobs[mobName] ~= nil then
-            return playerMobs[mobName]
+            return NormaliseMobEntry(playerMobs[mobName])
         end
     end
 
@@ -90,15 +108,39 @@ function AMA.LookupMobMark(mobName)
     return nil
 end
 
---- Save a player mark preference for a mob in the current zone.
-function AMA.SetPlayerMobMark(zoneName, mobName, markIdx)
+--- Save a player mark preference + creature type for a mob.
+--- If creatureType is nil, preserves any previously stored creature type.
+--- If ccImmune is nil, preserves any previously stored ccImmune flag.
+function AMA.SetPlayerMobMark(zoneName, mobName, markIdx, creatureType, ccImmune)
     if not AutoMarkAssistDB then return end
     if not zoneName or not mobName then return end
     if not AutoMarkAssistDB.mobMarks then AutoMarkAssistDB.mobMarks = {} end
     if not AutoMarkAssistDB.mobMarks[zoneName] then
         AutoMarkAssistDB.mobMarks[zoneName] = {}
     end
-    AutoMarkAssistDB.mobMarks[zoneName][mobName] = markIdx
+    if markIdx == "SKIP" then
+        AutoMarkAssistDB.mobMarks[zoneName][mobName] = "SKIP"
+    else
+        -- Preserve existing fields if not provided.
+        -- Pass false to explicitly clear a field; nil means "keep existing".
+        local existing = AutoMarkAssistDB.mobMarks[zoneName][mobName]
+        if type(existing) == "table" then
+            if creatureType == nil and existing.creatureType then
+                creatureType = existing.creatureType
+            end
+            if ccImmune == nil and existing.ccImmune then
+                ccImmune = existing.ccImmune
+            end
+        end
+        -- Normalise false back to nil for storage.
+        if creatureType == false then creatureType = nil end
+        if ccImmune == false then ccImmune = false end
+        AutoMarkAssistDB.mobMarks[zoneName][mobName] = {
+            mark = markIdx,
+            creatureType = creatureType or nil,
+            ccImmune = ccImmune or false,
+        }
+    end
 end
 
 --- Clear all player overrides for a zone.
@@ -108,7 +150,7 @@ function AMA.ClearPlayerMobMarks(zoneName)
 end
 
 --- Get the merged mob DB for a zone (for UI display).
---- Returns: { { name, mark, isOverride }, ... } sorted by name.
+--- Returns: { { name, mark, creatureType, isOverride }, ... } sorted by name.
 function AMA.GetZoneMobList(zoneName)
     if not zoneName or zoneName == "" then return {} end
 
@@ -118,19 +160,29 @@ function AMA.GetZoneMobList(zoneName)
 
     local byName = {}
     if baseMobs then
-        for mob, mark in pairs(baseMobs) do
-            byName[mob] = { mark = mark, isOverride = false }
+        for mob, raw in pairs(baseMobs) do
+            local entry = NormaliseMobEntry(raw)
+            if entry and entry ~= "SKIP" then
+                byName[mob] = { mark = entry.mark, creatureType = entry.creatureType, isOverride = false }
+            elseif entry == "SKIP" then
+                byName[mob] = { mark = "SKIP", creatureType = nil, isOverride = false }
+            end
         end
     end
     if playerMobs then
-        for mob, mark in pairs(playerMobs) do
-            byName[mob] = { mark = mark, isOverride = true }
+        for mob, raw in pairs(playerMobs) do
+            local entry = NormaliseMobEntry(raw)
+            if entry and entry ~= "SKIP" then
+                byName[mob] = { mark = entry.mark, creatureType = entry.creatureType, isOverride = true }
+            elseif entry == "SKIP" then
+                byName[mob] = { mark = "SKIP", creatureType = nil, isOverride = true }
+            end
         end
     end
 
     local list = {}
     for mob, info in pairs(byName) do
-        list[#list + 1] = { name = mob, mark = info.mark, isOverride = info.isOverride }
+        list[#list + 1] = { name = mob, mark = info.mark, creatureType = info.creatureType, isOverride = info.isOverride }
     end
     table.sort(list, function(a, b) return a.name < b.name end)
     return list
@@ -151,6 +203,7 @@ local function IsMarkableTarget(unitToken)
 
     local pref = AMA.LookupMobMark(name)
     if pref == "SKIP" then return false end
+    if type(pref) == "table" and pref.mark == "SKIP" then return false end
 
     return true, name
 end
@@ -182,7 +235,9 @@ local function IsMarkSlotFree(markIdx)
 end
 
 --- Find a CC mark for a creature type based on group composition.
-local function FindCCMark(creatureType)
+--- Returns nil if the mob is CC-immune.
+local function FindCCMark(creatureType, ccImmune)
+    if ccImmune then return nil end
     if not creatureType or creatureType == "" then return nil end
     local reserved = AMA.GetReservedCCMarks()
     for markIdx, ability in pairs(reserved) do
@@ -193,40 +248,59 @@ local function FindCCMark(creatureType)
     return nil
 end
 
---- Core allocation: DB preference → kill marks → CC by creature type → any.
+--- Core allocation: assigns marks based on dungeon difficulty and group
+--- composition.  CC marks are ONLY assigned when the CC ability can
+--- actually work on the mob's creature type.  No spill.
+---
+--- Normal:  DB pref → Skull → Cross → CC (creature type)
+--- Heroic:  DB pref → Skull → CC (creature type) → Cross
 local function AllocateMark(unitToken, mobName)
-    -- 1. DB preference: if the mob has a preferred mark, try it.
-    local preferred = AMA.LookupMobMark(mobName)
-    if type(preferred) == "number" and preferred >= 1 and preferred <= 8 then
-        if AMA.IsMarkEnabled(preferred) and IsMarkSlotFree(preferred) then
-            return preferred
-        end
-        -- Preferred mark unavailable; fall through to FCFS.
-    end
+    local reserved = AMA.GetReservedCCMarks()
+    local heroic = AMA.IsHeroicDifficulty()
 
-    -- 2. Kill marks (Skull → Cross) — first come, first served.
-    for _, m in ipairs(AMA.KILL_MARKS) do
-        if AMA.IsMarkEnabled(m) and IsMarkSlotFree(m) then
-            return m
-        end
-    end
-
-    -- 3. CC by creature type + group composition.
+    -- Resolve creature type: prefer live data, fall back to stored DB entry.
     local ctype = unitToken and UnitCreatureType and UnitCreatureType(unitToken)
-    local ccMark = FindCCMark(ctype)
+    local dbEntry = AMA.LookupMobMark(mobName)
+    local storedCtype = type(dbEntry) == "table" and dbEntry.creatureType or nil
+    local ccImmune = type(dbEntry) == "table" and dbEntry.ccImmune or false
+    local effectiveCtype = ctype or storedCtype
+
+    -- 1. DB preference: if the mob has a preferred mark, try it.
+    --    For CC marks, validate the creature type is compatible and mob is not CC-immune.
+    local preferred = type(dbEntry) == "table" and dbEntry.mark or nil
+    if type(preferred) == "number" and preferred >= 1 and preferred <= 8 then
+        if AMA.IsMarkAvailable(preferred, reserved) and IsMarkSlotFree(preferred) then
+            local ccAbility = reserved[preferred]
+            if not ccAbility then
+                -- Kill mark — always valid.
+                return preferred
+            elseif not ccImmune and effectiveCtype and ccAbility.creatureTypes[effectiveCtype] then
+                return preferred
+            end
+        end
+    end
+
+    -- 2. Skull is always first.
+    if AMA.IsMarkEnabled(MARK_SKULL) and IsMarkSlotFree(MARK_SKULL) then
+        return MARK_SKULL
+    end
+
+    -- 3. Normal: Cross before CC.  Heroic: CC before Cross.
+    if not heroic then
+        if AMA.IsMarkEnabled(MARK_CROSS) and IsMarkSlotFree(MARK_CROSS) then
+            return MARK_CROSS
+        end
+    end
+
+    -- 4. CC by creature type + group composition (skip if CC-immune).
+    local ccMark = FindCCMark(effectiveCtype, ccImmune)
     if ccMark then return ccMark end
 
-    -- 4. Any remaining enabled mark (ordered: kill, then CC, then rest).
-    local reserved = AMA.GetReservedCCMarks()
-    for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
-        if AMA.IsMarkEnabled(m) and not reserved[m] and IsMarkSlotFree(m) then
-            return m
+    -- 5. Heroic: Cross comes last.
+    if heroic then
+        if AMA.IsMarkEnabled(MARK_CROSS) and IsMarkSlotFree(MARK_CROSS) then
+            return MARK_CROSS
         end
-    end
-
-    -- 5. Spill into reserved CC marks if all non-CC marks are taken.
-    for markIdx in pairs(reserved) do
-        if IsMarkSlotFree(markIdx) then return markIdx end
     end
 
     return nil
@@ -324,10 +398,69 @@ function AMA.AssignMark(unitToken, force, source)
     end
 
     AMA.RecordMark(guid, markIdx, unitToken)
+
+    -- Runtime capture: enrich the player overlay DB with creature type if
+    -- the static/player DB is missing it.
+    local inInstance = IsInInstance and IsInInstance()
+    local zone = AMA.currentZoneName
+    if inInstance and zone and zone ~= "" and mobName then
+        local liveCtype = UnitCreatureType and UnitCreatureType(unitToken)
+        if liveCtype then
+            local dbEntry = AMA.LookupMobMark(mobName)
+            local storedCtype = type(dbEntry) == "table" and dbEntry.creatureType or nil
+            if not storedCtype then
+                local storedMark = type(dbEntry) == "table" and dbEntry.mark or markIdx
+                AMA.SetPlayerMobMark(zone, mobName, storedMark, liveCtype)
+                AMA.currentZoneMobDB = AMA.BuildZoneMobDB(zone)
+            end
+        end
+    end
+
     AMA.VPrint(string.format("Marked %s -> %s (%s)",
         mobName or "?",
         AMA.MARK_NAMES[markIdx] or tostring(markIdx),
         source or "auto"))
+end
+
+-- ============================================================
+-- RUNTIME CC IMMUNITY DETECTION
+-- Called from the combat log handler when a CC spell is IMMUNE.
+-- ============================================================
+
+-- Spell IDs of CC abilities we track for immunity detection.
+AMA.CC_SPELL_IDS = {
+    -- Polymorph variants
+    [118]   = true, [12824] = true, [12825] = true, [12826] = true,
+    [28271] = true, [28272] = true, [61305] = true, [61025] = true,
+    [61721] = true, [61780] = true,
+    -- Sap
+    [6770]  = true, [2070]  = true, [11297] = true,
+    -- Banish
+    [710]   = true, [18647] = true,
+    -- Shackle Undead
+    [9484]  = true, [9485]  = true, [10955] = true,
+    -- Hibernate
+    [2637]  = true, [18657] = true, [18658] = true,
+    -- Freezing Trap
+    [3355]  = true, [14308] = true, [14309] = true,
+}
+
+function AMA.HandleCCImmune(destName)
+    if not destName or destName == "" then return end
+    local zone = AMA.currentZoneName
+    if not zone or zone == "" then return end
+    local inInstance = IsInInstance and IsInInstance()
+    if not inInstance then return end
+
+    local dbEntry = AMA.LookupMobMark(destName)
+    local alreadyImmune = type(dbEntry) == "table" and dbEntry.ccImmune
+    if alreadyImmune then return end
+
+    local storedMark = type(dbEntry) == "table" and dbEntry.mark or 8
+    local storedCtype = type(dbEntry) == "table" and dbEntry.creatureType or nil
+    AMA.SetPlayerMobMark(zone, destName, storedMark, storedCtype, true)
+    AMA.currentZoneMobDB = AMA.BuildZoneMobDB(zone)
+    AMA.VPrint(string.format("Detected CC immunity: %s (saved to DB)", destName))
 end
 
 -- ============================================================
@@ -388,11 +521,33 @@ function AMA.CascadeMarksAfterDeath()
     if AMA.GetMarkingMode() == "manual" then return end
     if AMA.IsCombatMarkLockActive() then return end
 
+    -- Refresh token mappings so we work with live data after a death.
+    AMA.SyncVisibleMarks()
+
+    -- Helper: find the highest-priority living CC-marked mob to promote.
+    local function FindBestCCPromotion()
+        for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
+            if m ~= MARK_SKULL and m ~= MARK_CROSS then
+                local ownerGuid = AMA.markOwners[m]
+                if ownerGuid then
+                    local token = ResolveToken(ownerGuid, AMA.markTokens[m])
+                    if token then
+                        return m, ownerGuid, token
+                    else
+                        AMA.ForgetMark(ownerGuid)
+                    end
+                end
+            end
+        end
+        return nil, nil, nil
+    end
+
+    -- === Skull died: always promote Cross → Skull ===
+    -- CC'd mobs are locked down; the kill target (Cross) becomes the new Skull.
     if AMA.IsMarkEnabled(MARK_SKULL) and IsMarkSlotFree(MARK_SKULL) then
-        if AMA.IsMarkEnabled(MARK_CROSS) and AMA.markOwners[MARK_CROSS] then
+        if AMA.markOwners[MARK_CROSS] then
             local crossGuid = AMA.markOwners[MARK_CROSS]
             local crossToken = ResolveToken(crossGuid, AMA.markTokens[MARK_CROSS])
-
             if crossToken then
                 AMA.ForgetMark(crossGuid)
                 local applied = AMA.TrySetRaidTarget(crossToken, MARK_SKULL)
@@ -406,31 +561,17 @@ function AMA.CascadeMarksAfterDeath()
         end
     end
 
+    -- === Cross is now free (died or promoted away): promote best CC → Cross ===
     if AMA.IsMarkEnabled(MARK_CROSS) and IsMarkSlotFree(MARK_CROSS) then
-        local bestMark, bestGuid, bestToken = nil, nil, nil
-
-        for m = 1, 6 do
-            local ownerGuid = AMA.markOwners[m]
-            if ownerGuid then
-                local token = ResolveToken(ownerGuid, AMA.markTokens[m])
-                if token then
-                    bestMark = m
-                    bestGuid = ownerGuid
-                    bestToken = token
-                    break
-                else
-                    AMA.ForgetMark(ownerGuid)
-                end
-            end
-        end
-
-        if bestMark and bestToken then
-            local oldMarkName = AMA.MARK_NAMES[bestMark] or tostring(bestMark)
-            AMA.ForgetMark(bestGuid)
-            local applied = AMA.TrySetRaidTarget(bestToken, MARK_CROSS)
+        local _, ccGuid, ccToken = FindBestCCPromotion()
+        if ccGuid and ccToken then
+            local oldMark = AMA.markedGUIDs[ccGuid]
+            local oldName = oldMark and AMA.MARK_NAMES[oldMark] or "?"
+            AMA.ForgetMark(ccGuid)
+            local applied = AMA.TrySetRaidTarget(ccToken, MARK_CROSS)
             if applied then
-                AMA.RecordMark(bestGuid, MARK_CROSS, bestToken)
-                AMA.VPrint("Promoted " .. oldMarkName .. " to Cross: " .. (UnitName(bestToken) or "?"))
+                AMA.RecordMark(ccGuid, MARK_CROSS, ccToken)
+                AMA.VPrint("Promoted " .. oldName .. " to Cross: " .. (UnitName(ccToken) or "?"))
             end
         end
     end

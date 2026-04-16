@@ -129,16 +129,19 @@ CommitPendingManualMark = function(reason)
 
     AMA.RecordMark(guid, selectedMark, token)
 
-    -- Learn: save the player's mark choice to the DB when inside an instance.
+    -- Learn: save the player's mark choice + creature type to the DB when inside an instance.
     local inInstance = IsInInstance and IsInInstance()
     local zone = AMA.currentZoneName
     if inInstance and zone and zone ~= "" and name and AMA.SetPlayerMobMark then
+        local mobCtype = token and UnitCreatureType and UnitCreatureType(token) or nil
         local existing = AMA.LookupMobMark and AMA.LookupMobMark(name)
-        if existing ~= selectedMark then
-            AMA.SetPlayerMobMark(zone, name, selectedMark)
+        local existingMark = type(existing) == "table" and existing.mark or existing
+        if existingMark ~= selectedMark then
+            AMA.SetPlayerMobMark(zone, name, selectedMark, mobCtype)
             AMA.currentZoneMobDB = AMA.BuildZoneMobDB(zone)
-            AMA.VPrint(string.format("Learned: %s = %s in %s",
-                name, AMA.MARK_NAMES[selectedMark] or tostring(selectedMark), zone))
+            AMA.VPrint(string.format("Learned: %s = %s (%s) in %s",
+                name, AMA.MARK_NAMES[selectedMark] or tostring(selectedMark),
+                mobCtype or "unknown type", zone))
         end
     end
 

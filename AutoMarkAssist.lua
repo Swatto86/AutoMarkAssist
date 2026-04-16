@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.2.1"
+AMA.VERSION    = "3.3.0"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -59,14 +59,43 @@ AMA.CC_ASSIGNMENTS = {
     WARLOCK = { mark = 4, label = "Banish",     creatureTypes = { Demon = true, Elemental = true } },
     PRIEST  = { mark = 1, label = "Shackle",    creatureTypes = { Undead = true } },
     DRUID   = { mark = 2, label = "Hibernate",  creatureTypes = { Beast = true, Dragonkin = true } },
-    HUNTER  = { mark = 6, label = "Trap",       creatureTypes = { Beast = true } },
+    HUNTER  = { mark = 6, label = "Trap",       creatureTypes = { Humanoid = true, Beast = true, Demon = true, Dragonkin = true, Giant = true, Undead = true } },
 }
 
 -- Ordered list for predictable iteration.
 AMA.CC_CLASS_ORDER = { "MAGE", "ROGUE", "WARLOCK", "PRIEST", "DRUID", "HUNTER" }
 
+-- Reverse lookup: mark index → class tag (e.g. 5 → "MAGE").
+AMA.CC_MARK_TO_CLASS = {}
+for classTag, cc in pairs(AMA.CC_ASSIGNMENTS) do
+    AMA.CC_MARK_TO_CLASS[cc.mark] = classTag
+end
+
 -- Kill marks are always Skull first, Cross second.
 AMA.KILL_MARKS = { 8, 7 }
+
+-- ============================================================
+-- DIFFICULTY DETECTION
+-- Heroic dungeons prioritise CC over Cross.
+-- ============================================================
+
+AMA.isHeroicInstance = false
+
+function AMA.RefreshDifficulty()
+    local inInstance, instanceType = IsInInstance()
+    if not inInstance then
+        AMA.isHeroicInstance = false
+        return
+    end
+    -- difficultyID: 2 = 5-man Heroic, 174 = Heroic (timewalking)
+    local _, _, difficultyID = GetInstanceInfo()
+    AMA.isHeroicInstance = (difficultyID == 2 or difficultyID == 174)
+    AMA.VPrint("Difficulty: " .. tostring(difficultyID) .. (AMA.isHeroicInstance and " (heroic)" or " (normal)"))
+end
+
+function AMA.IsHeroicDifficulty()
+    return AMA.isHeroicInstance
+end
 
 -- Fixed human-readable descriptions for each mark.
 AMA.MARK_DESCRIPTIONS = {
@@ -190,6 +219,20 @@ function AMA.IsMarkEnabled(markIdx)
         return true
     end
     return AutoMarkAssistDB.enabledMarks[markIdx] ~= false
+end
+
+-- Returns true if a mark is both user-enabled AND available given the current
+-- group composition.  Kill marks (Skull, Cross) are always available when
+-- enabled.  CC marks are only available when the corresponding CC class is
+-- present in the group.
+function AMA.IsMarkAvailable(markIdx, reservedCCMarks)
+    if not AMA.IsMarkEnabled(markIdx) then return false end
+    local ccClass = AMA.CC_MARK_TO_CLASS[markIdx]
+    if not ccClass then return true end -- not a CC mark
+    if not reservedCCMarks then
+        reservedCCMarks = AMA.GetReservedCCMarks()
+    end
+    return reservedCCMarks[markIdx] ~= nil
 end
 
 -- Returns a list of CC abilities available in the current group.

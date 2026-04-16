@@ -54,9 +54,10 @@ AutoMarkAssist_MobDB = {
     },
 
     ["The Stockade"] = {
-        ["Defias Prisoner"]             = 5,     -- humanoid, CC-able
-        ["Defias Insurgent"]            = 8,   -- rallying cry buffs nearby
-        ["Riverpaw Mystic"]             = 8,   -- caster; lightning bolt
+        ["Defias Captive"]              = { mark = 7, creatureType = "Humanoid" },
+        ["Defias Prisoner"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Insurgent"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Riverpaw Mystic"]             = { mark = 8, creatureType = "Humanoid" },
     },
 
     ["Blackfathom Deeps"] = {

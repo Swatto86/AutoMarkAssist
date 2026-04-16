@@ -1,5 +1,27 @@
 # AutoMarkAssist Changelog
 
+## 3.3.0
+
+### New Features
+- **Creature Type Awareness:** The TBC database now stores creature types for every mob across all 16 dungeons and 9 raids. CC marks are validated against the mob's creature type at allocation time — Polymorph won't be assigned to a Demon, Sap won't be assigned to an Elemental.
+- **Difficulty-Based Priority:** Mark allocation now adapts to dungeon difficulty. Normal dungeons prioritise kill marks (Skull → Cross → CC). Heroic dungeons prioritise crowd control (Skull → CC → Cross), keeping dangerous mobs locked down first.
+- **CC Immunity Detection:** The addon monitors the combat log for CC spells that are resisted with IMMUNE. When detected, the mob is permanently flagged as CC-immune in your personal database, preventing future CC mark assignments on that mob.
+- **Runtime Creature Type Capture:** When the addon marks a mob whose database entry lacks a creature type, it reads the live creature type from the game and saves it to your personal overlay database. The database enriches itself over time as you play.
+- **CC Immunity Database Field:** Mob database entries now support an optional `ccImmune` flag. Mobs flagged as CC-immune (e.g., Void Traveler in Shadow Labyrinth) will never receive CC marks regardless of group composition.
+- **Database Type Column:** The Database tab now displays a creature type column for each mob. A small "Edit" checkbox next to the Type header unlocks creature type editing — click a mob's type to cycle through all creature types.
+
+### Changes
+- **TBC Database Enriched:** All TBC dungeon and raid entries upgraded from plain mark numbers to the enriched format with creature types. Key corrections from Wowhead research: Underbog Shambler is Elemental (not Undead), Shattered Hand Savage is Humanoid (not Beast), all Black Morass Infinite mobs are Dragonkin.
+- **Group Composition Filtering:** Proximity and Mouseover modes now only assign CC marks when the corresponding CC class is present in the group. Manual mode still shows all marks for full player control.
+- **Cascade on Death Improved:** The rebalance-after-death system now syncs visible marks from live nameplates before cascading, fixing stale token issues that could prevent promotions.
+- **Stockade Database Enriched:** The Stockade dungeon entries now include creature types and a missing mob (Defias Captive).
+
+### Bug Fixes
+- **CC on Wrong Creature Type:** Fixed Sap being assigned to Undead mobs in Sethekk Halls. Sap is now correctly restricted to Humanoids only.
+- **Hunter Trap Creature Types:** Expanded Freezing Trap compatibility to Humanoid, Beast, Demon, Dragonkin, Giant, and Undead (everything except Elemental, which is frost-immune).
+- **Fear Spells in CC Tracking:** Removed Fear and Howl of Terror from the CC immunity spell list. A mob immune to Fear should not be flagged as immune to all crowd control.
+- **Duplicate Code Block:** Removed an orphaned duplicate of the AllocateMark function that was left behind after a previous refactor.
+
 ## 3.2.1
 
 ### Bug Fixes

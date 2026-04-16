@@ -1,6 +1,11 @@
 -- AutoMarkAssist_DB_TBC.lua
 -- The Burning Crusade dungeon and raid entries.  Loaded AFTER AutoMarkAssist_DB_Classic.lua.
 -- Merges TBC dungeon and raid zones into the shared database tables.
+--
+-- Format:  mobName = { mark = N, creatureType = "Type" }
+--   mark 8 = kill priority (Skull/Cross),  mark 1-6 = CC preference
+--   "SKIP" = ignore this mob entirely
+--   ccImmune = true for mobs immune to CC despite matching creature type
 
 local db      = AutoMarkAssist_MobDB
 local aliases = AutoMarkAssist_ZoneAliases
@@ -13,201 +18,201 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- --- Hellfire Citadel ---------------------------------
 
 db["Hellfire Ramparts"] = {
-    ["Hellfire Channeler"]          = 8,   -- channels empowerment on bosses
-    ["Bonechewer Beastmaster"]      = 8,   -- has a pet; pet dies when master dies
-    ["Bonechewer Blood Drinker"]    = 8,   -- life-drain caster
-    ["Hellfire Watcher"]            = 5,     -- ranged, can be crowd-controlled
-    ["Hellfire Watchtower"]         = 5,
-    ["Bonechewer Hungerer"]         = "SKIP",   -- Beastmaster pet filler
+    ["Hellfire Channeler"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Bonechewer Beastmaster"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Bonechewer Blood Drinker"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Hellfire Watcher"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Hellfire Watchtower"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Bonechewer Hungerer"]         = "SKIP",
 }
 
 db["The Blood Furnace"] = {
-    ["Bleeding Hollow Scryer"]      = 8,   -- healer/caster
-    ["Laughing Skull Warden"]       = 8,   -- healer
-    ["Laughing Skull Rogue"]        = 8,   -- stealths, opens with heavy burst
-    ["Fel Orc Convert"]             = 5,
-    ["Bleeding Hollow Torturer"]    = 8,   -- interruption-worthy pain spells
-    ["Bleeding Hollow Skulker"]     = 8,   -- stealth + ambush
-    ["Fel Orc Neophyte"]            = "SKIP",   -- cage event filler
+    ["Bleeding Hollow Scryer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Laughing Skull Warden"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Laughing Skull Rogue"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Fel Orc Convert"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Bleeding Hollow Torturer"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Bleeding Hollow Skulker"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Fel Orc Neophyte"]            = "SKIP",
 }
 
 db["The Shattered Halls"] = {
-    ["Shattered Hand Zealot"]       = 8,   -- executes low-HP players (Gloat)
-    ["Shattered Hand Assassin"]     = 8,   -- stealths, Garrote + burst
-    ["Shattered Hand Heathen"]      = 8,   -- Blood Surge heal on self
-    ["Shattered Hand Reaver"]       = 5,
-    ["Shattered Hand Savage"]       = 5,     -- beast, trappable
-    ["Shattered Hand Berserker"]    = 8,   -- Enrage + whirlwind
-    ["Shattered Hand Warhound"]     = "SKIP",   -- handler dog pack filler
+    ["Shattered Hand Zealot"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Assassin"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Heathen"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Reaver"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Shattered Hand Savage"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Shattered Hand Berserker"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Warhound"]     = "SKIP",
 }
 
 -- --- Coilfang Reservoir ---------------------------------
 
 db["The Slave Pens"] = {
-    ["Coilfang Collaborator"]       = 8,   -- healer, top priority
-    ["Coilfang Observer"]           = 8,   -- caster, Chain Lightning
-    ["Coilfang Slavehandler"]       = 8,   -- has enslaved adds
-    ["Coilfang Water Elemental"]    = 5,     -- banishable
-    ["Underbat"]                    = 5,     -- beast, trappable
-    ["Wastewalker Slave"]           = "SKIP",   -- Slavehandler pack filler
+    ["Coilfang Collaborator"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Observer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Slavehandler"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Water Elemental"]    = { mark = 5, creatureType = "Elemental" },
+    ["Underbat"]                    = { mark = 5, creatureType = "Beast" },
+    ["Wastewalker Slave"]           = "SKIP",
 }
 
 db["The Underbog"] = {
-    ["Lykul Bloodseeker"]           = 8,   -- fast-hitting, dangerous burst
-    ["Underbog Colossus"]           = 8,   -- Stomp AoE stun
-    ["Underbog Shambler"]           = 5,     -- undead, shackleable
-    ["Lykul Wasp"]                  = 5,     -- beast, trappable
-    ["Spore Bat"]                   = 5,
-    ["Black Stalker Spawn"]         = 5,
+    ["Lykul Bloodseeker"]           = { mark = 8, creatureType = "Beast" },
+    ["Underbog Colossus"]           = { mark = 8, creatureType = "Giant" },
+    ["Underbog Shambler"]           = { mark = 5, creatureType = "Elemental" },
+    ["Lykul Wasp"]                  = { mark = 5, creatureType = "Beast" },
+    ["Spore Bat"]                   = { mark = 5, creatureType = "Beast" },
+    ["Black Stalker Spawn"]         = { mark = 5, creatureType = "Beast" },
 }
 
 db["The Steamvault"] = {
-    ["Coilfang Oracle"]             = 8,   -- healer; must die first
-    ["Coilfang Technician"]         = 8,   -- repairs mechanical adds mid-fight
-    ["Coilfang Engineer"]           = 8,   -- AoE chain-pull abilities
-    ["Coilfang Myrmidon"]           = 5,
-    ["Spore Bat"]                   = 8,   -- Steamvault opener should use kill-order, not CC marks
-    ["Steam Surger"]                = 8,   -- ranged lightning; kill before Thespia
-    ["Tidal Surger"]                = 8,   -- kill before Thespia
-    ["Steamrigger Mechanic"]        = 8,   -- repairs Mekgineer; must die ASAP
-    ["Coilfang Leper"]              = "SKIP",   -- gnome slave filler
+    ["Coilfang Oracle"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Technician"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Engineer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Myrmidon"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Spore Bat"]                   = { mark = 8, creatureType = "Beast" },
+    ["Steam Surger"]                = { mark = 8, creatureType = "Elemental" },
+    ["Tidal Surger"]                = { mark = 8, creatureType = "Elemental" },
+    ["Steamrigger Mechanic"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Leper"]              = "SKIP",
 }
 
 -- --- Auchindoun ---------------------------------
 
 db["Mana-Tombs"] = {
-    ["Ethereal Theurgist"]          = 8,   -- caster, dangerous spells
-    ["Ethereal Darkcaster"]         = 8,   -- Shadow Bolt Volley
-    ["Ethereal Sorcerer"]           = 8,   -- Mana Burn
-    ["Ethereal Spellbinder"]        = 8,   -- binds random party member
-    ["Haunt"]                       = 5,     -- undead, shackleable
-    ["Mana Leech"]                  = 8,   -- drains mana aggressively
-    ["Nexus Stalker"]               = 5,     -- can be trapped
-    ["Ethereal Priest"]             = 8,   -- healer
-    ["Ethereal Assassin"]           = 8,   -- stealth + burst
-    ["Ethereal Summoned Warrior"]   = "SKIP",   -- summoned filler
+    ["Ethereal Theurgist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Darkcaster"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Sorcerer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Spellbinder"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Haunt"]                       = { mark = 5, creatureType = "Undead" },
+    ["Mana Leech"]                  = { mark = 8, creatureType = "Beast" },
+    ["Nexus Stalker"]               = { mark = 5, creatureType = "Humanoid" },
+    ["Ethereal Priest"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Assassin"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Summoned Warrior"]   = "SKIP",
 }
 
 db["Auchenai Crypts"] = {
-    ["Auchenai Monk"]               = 8,   -- healer
-    ["Auchenai Soulpriest"]         = 8,   -- fear + shadow damage caster
-    ["Ghostly Philanthropist"]      = 5,     -- undead, shackleable
-    ["Worshipper of Eternos"]       = 5,
-    ["Cultist Shard Watcher"]       = 8,   -- spawns shards
-    ["Death's Head Cultist"]        = 8,   -- shadow damage caster
-    ["Angered Skeleton"]            = "SKIP",   -- mass skeleton filler
+    ["Auchenai Monk"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Auchenai Soulpriest"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Ghostly Philanthropist"]      = { mark = 5, creatureType = "Undead" },
+    ["Worshipper of Eternos"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Cultist Shard Watcher"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Death's Head Cultist"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Angered Skeleton"]            = "SKIP",
 }
 
 db["Sethekk Halls"] = {
-    ["Arakkoa Diviner"]             = 8,   -- healer + fear caster
-    ["Time-Lost Controller"]        = 8,   -- mind controls party members
-    ["Time-Lost Scryer"]            = 8,   -- dangerous AoE arcane
-    ["Cobalt Serpent"]              = 5,     -- beast, trappable
-    ["Avian Darkhawk"]              = 5,     -- beast, trappable
-    ["Avian Warhawk"]               = 8,   -- bleeds + fast attack speed
-    ["Sethekk Oracle"]              = 8,   -- healer
-    ["Sethekk Ravenguard"]          = 8,
-    ["Avian Flitter"]               = "SKIP",   -- flock filler
-    ["Raven Hatchling"]             = "SKIP",   -- hatchling filler
+    ["Arakkoa Diviner"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Lost Controller"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Lost Scryer"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Cobalt Serpent"]              = { mark = 5, creatureType = "Beast" },
+    ["Avian Darkhawk"]              = { mark = 5, creatureType = "Beast" },
+    ["Avian Warhawk"]               = { mark = 8, creatureType = "Beast" },
+    ["Sethekk Oracle"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Sethekk Ravenguard"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Avian Flitter"]               = "SKIP",
+    ["Raven Hatchling"]             = "SKIP",
 }
 
 db["Shadow Labyrinth"] = {
-    ["Cabal Shadow Priest"]         = 8,   -- top priority: Mind Blast, heals self
-    ["Cabal Hexer"]                 = 8,   -- polymorph + powerful hexes
-    ["Cabal Cultist"]               = 8,   -- dangerous caster
-    ["Cabal Soldier"]               = 5,
-    ["Cabal Assassin"]              = 8,   -- stealth + heavy burst
-    ["Cabal Rogue"]                 = 8,   -- stealth + cheap shot
-    ["Cabal Warlock"]               = 8,   -- DoTs + summons demons
-    ["Cabal Deathsworn"]            = 8,   -- execute-range finishers
-    ["Fel Overseer"]                = 8,   -- whirlwind + charge
-    ["Void Traveler"]               = 8,   -- walks to Vorpil; heals him on contact
-    ["Shadow Imp"]                  = "SKIP",   -- spawned by Cabal Warlock; filler
+    ["Cabal Shadow Priest"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Hexer"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Cultist"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Soldier"]               = { mark = 5, creatureType = "Humanoid" },
+    ["Cabal Assassin"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Rogue"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Warlock"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Cabal Deathsworn"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Fel Overseer"]                = { mark = 8, creatureType = "Demon" },
+    ["Void Traveler"]               = { mark = 8, creatureType = "Demon", ccImmune = true },
+    ["Shadow Imp"]                  = "SKIP",
 }
 
 -- --- Tempest Keep ---------------------------------
 
 db["The Botanica"] = {
-    ["Bloodwarder Mender"]          = 8,   -- healer; skull always
-    ["Bloodwarder Physician"]       = 8,   -- healer
-    ["Sunseeker Chemist"]           = 8,   -- toxic flasks; very high tank damage
-    ["Sunseeker Researcher"]        = 8,   -- polymorphs + casts
-    ["Sunseeker Botanist"]          = 5,     -- humanoid, sheepable
-    ["Bloodwarder Protector"]       = 5,
-    ["Sunseeker Gene-Splicer"]      = 8,   -- mutates adds mid-fight
-    ["Vicious Thornshoots"]         = 5,     -- plant, incapacitateable
-    ["Treant"]                      = 5,
-    ["Sunseeker Bloodhawk"]         = "SKIP",   -- bird flock filler
-    ["Bloodpetal Lasher"]           = "SKIP",   -- plant filler
-    ["Bloodpetal Flayer"]           = "SKIP",   -- plant filler
-    ["Bloodpetal Thorn"]            = "SKIP",   -- plant filler
-    ["Mutant Bloodpetal"]           = "SKIP",   -- mutated plant filler
-    ["Nether Tendril"]              = "SKIP",   -- tendril filler
+    ["Bloodwarder Mender"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Bloodwarder Physician"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Chemist"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Researcher"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Botanist"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Bloodwarder Protector"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Sunseeker Gene-Splicer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Vicious Thornshoots"]         = { mark = 5, creatureType = "Elemental" },
+    ["Treant"]                      = { mark = 5, creatureType = "Elemental" },
+    ["Sunseeker Bloodhawk"]         = "SKIP",
+    ["Bloodpetal Lasher"]           = "SKIP",
+    ["Bloodpetal Flayer"]           = "SKIP",
+    ["Bloodpetal Thorn"]            = "SKIP",
+    ["Mutant Bloodpetal"]           = "SKIP",
+    ["Nether Tendril"]              = "SKIP",
 }
 
 db["The Arcatraz"] = {
-    ["Eredar Deathbringer"]         = 8,   -- shadow damage + AoE silence
-    ["Eredar Soul Eater"]           = 8,   -- soul drain on party
-    ["Blazing Trickster"]           = 8,   -- AoE fire; interrupt priority
-    ["Entrapped Berserker"]         = 8,   -- Enrage + AoE slam
-    ["Neg'Jin Shackler"]            = 8,   -- shackles party members
-    ["Arcatraz Warder"]             = 5,     -- humanoid, sheepable
-    ["Protean Horror"]              = 5,     -- can be feared/banished
-    ["Dalliah's Devotee"]           = 8,
-    ["Void Spawner"]                = "SKIP",   -- spawned filler
-    ["Soul Fragment"]               = "SKIP",   -- soul fragment filler
+    ["Eredar Deathbringer"]         = { mark = 8, creatureType = "Demon" },
+    ["Eredar Soul Eater"]           = { mark = 8, creatureType = "Demon" },
+    ["Blazing Trickster"]           = { mark = 8, creatureType = "Demon" },
+    ["Entrapped Berserker"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Neg'Jin Shackler"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Arcatraz Warder"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Protean Horror"]              = { mark = 5, creatureType = "Aberration" },
+    ["Dalliah's Devotee"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Void Spawner"]                = "SKIP",
+    ["Soul Fragment"]               = "SKIP",
 }
 
 db["The Mechanar"] = {
-    ["Sunseeker Astromage"]         = 8,   -- AoE Arcane Explosion
-    ["Sunseeker Netherbinder"]      = 8,   -- healer + silence
-    ["Sunseeker Gene-Splicer"]      = 8,   -- dangerous caster
-    ["Blood Elf Reclaimer"]         = 8,   -- reclaims constructs mid-fight
-    ["Blood Elf Surveyor"]          = 5,     -- humanoid, sheepable
-    ["Nether Wraith"]               = 8,   -- banishable but dangerous if not
-    ["Mechanar Tinkerer"]           = 8,   -- repairs other mobs
-    ["Sunseeker Overseer"]          = 8,   -- buffs nearby mobs
-    ["Tempest-Forge Destroyer"]     = 8,   -- AoE shock + stun
-    ["Nether Spark"]                = "SKIP",   -- arcane filler
-    ["Arcane Bomb"]                 = "SKIP",   -- bomb filler
+    ["Sunseeker Astromage"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Netherbinder"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Gene-Splicer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Blood Elf Reclaimer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Blood Elf Surveyor"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Nether Wraith"]               = { mark = 8, creatureType = "Undead" },
+    ["Mechanar Tinkerer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Sunseeker Overseer"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Tempest-Forge Destroyer"]     = { mark = 8, creatureType = "Mechanical" },
+    ["Nether Spark"]                = "SKIP",
+    ["Arcane Bomb"]                 = "SKIP",
 }
 
 -- --- Caverns of Time ---------------------------------
 
 db["Old Hillsbrad Foothills"] = {
-    ["Syndicate Assassin"]          = 8,   -- stealth + burst on healer
-    ["Syndicate Watchman"]          = 8,   -- calls for backup
-    ["Syndicate Shadow-Mage"]       = 8,   -- AoE shadow
-    ["Hillsbrad Watchman"]          = 5,     -- humanoid, sheepable
-    ["Durnholde Veteran"]           = 8,   -- veteran melee burst
-    ["Durnholde Tracking Hound"]    = 5,     -- beast, trappable
-    ["Durnholde War Horse"]         = "SKIP",   -- riderless mount filler
+    ["Syndicate Assassin"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Syndicate Watchman"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Syndicate Shadow-Mage"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Hillsbrad Watchman"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Durnholde Veteran"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Durnholde Tracking Hound"]    = { mark = 5, creatureType = "Beast" },
+    ["Durnholde War Horse"]         = "SKIP",
 }
 
 db["The Black Morass"] = {
-    ["Rift Keeper"]                 = 8,   -- healer for Rift Lord; kill first
-    ["Rift Lord"]                   = 8,   -- extremely dangerous melee
-    ["Infinite Assassin"]           = 5,     -- targets Medivh directly
-    ["Infinite Executioner"]        = 5,     -- executes low-HP units
-    ["Infinite Saboteur"]           = 5,     -- disables defensive cooldowns
-    ["Infinite Chrono-Sentinel"]    = 5,     -- interrupts Medivh's shield
-    ["Rift Spawner"]                = "SKIP",   -- between-wave filler
+    ["Rift Keeper"]                 = { mark = 8, creatureType = "Dragonkin" },
+    ["Rift Lord"]                   = { mark = 8, creatureType = "Dragonkin" },
+    ["Infinite Assassin"]           = { mark = 5, creatureType = "Dragonkin" },
+    ["Infinite Executioner"]        = { mark = 5, creatureType = "Dragonkin" },
+    ["Infinite Saboteur"]           = { mark = 5, creatureType = "Dragonkin" },
+    ["Infinite Chrono-Sentinel"]    = { mark = 5, creatureType = "Dragonkin" },
+    ["Rift Spawner"]                = "SKIP",
 }
 
 -- --- Isle of Quel'Danas ---------------------------------
 
 db["Magisters' Terrace"] = {
-    ["Sunblade Physician"]          = 8,   -- healer; skull always
-    ["Sunblade Blood Knight"]       = 8,   -- holy healer with bubble
-    ["Sunblade Arch Mage"]          = 8,   -- AoE arcane + polymorph
-    ["Sunblade Magister"]           = 8,   -- pyroblast spam caster
-    ["Sunblade Warlock"]            = 8,   -- DoTs + summons felguard
-    ["Sunblade Imp Handler"]        = 8,   -- kill to despawn imp packs
-    ["Sunblade Imp"]                = 5,     -- banishable; dangerous in numbers
-    ["Felguard Legionnaire"]        = 5,     -- banishable demon
-    ["Sunblade Vindicator"]         = 8,   -- self-heals; must be interrupted
-    ["Sunblade Imp Swarm"]          = "SKIP",   -- swarm filler
-    ["Mana Tap Imp"]                = "SKIP",   -- mana-drain imp filler
+    ["Sunblade Physician"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Blood Knight"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Arch Mage"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Magister"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Warlock"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Imp Handler"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Imp"]                = { mark = 5, creatureType = "Demon" },
+    ["Felguard Legionnaire"]        = { mark = 5, creatureType = "Demon" },
+    ["Sunblade Vindicator"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Imp Swarm"]          = "SKIP",
+    ["Mana Tap Imp"]                = "SKIP",
 }
 
 -- ============================================================
@@ -215,195 +220,195 @@ db["Magisters' Terrace"] = {
 -- ============================================================
 
 db["Karazhan"] = {
-    ["Arcane Anomaly"]              = 8,
-    ["Astral Flare"]                = 8,
-    ["Chaotic Sentience"]           = 8,
-    ["Conjured Water Elemental"]    = 8,
-    ["Doomguard"]                   = 8,
-    ["Ethereal Spellfilcher"]       = 8,
-    ["Ethereal Thief"]              = 8,
-    ["Ghastly Haunt"]               = 8,
-    ["Human Cleric"]                = 8,
-    ["Human Conjurer"]              = 8,
-    ["Kil'rek"]                     = 8,
-    ["Mana Warp"]                   = 8,
-    ["Orc Necrolyte"]               = 8,
-    ["Orc Warlock"]                 = 8,
-    ["Sorcerous Shade"]             = 8,
-    ["Spell Shade"]                 = 8,
-    ["Spectral Apprentice"]         = 8,
-    ["Spectral Servant"]            = 8,
-    ["Zealous Consort"]             = 8,
-    ["Zealous Paramour"]            = 8,
-    ["Coldmist Stalker"]            = 5,
-    ["Coldmist Widow"]              = 5,
-    ["Mana Feeder"]                 = 5,
-    ["Phase Hound"]                 = 5,
-    ["Shadowbat"]                   = 5,
-    ["Vampiric Shadowbat"]          = 5,
+    ["Arcane Anomaly"]              = { mark = 8, creatureType = "Elemental" },
+    ["Astral Flare"]                = { mark = 8, creatureType = "Elemental" },
+    ["Chaotic Sentience"]           = { mark = 8, creatureType = "Demon" },
+    ["Conjured Water Elemental"]    = { mark = 8, creatureType = "Elemental" },
+    ["Doomguard"]                   = { mark = 8, creatureType = "Demon" },
+    ["Ethereal Spellfilcher"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Ethereal Thief"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Ghastly Haunt"]               = { mark = 8, creatureType = "Undead" },
+    ["Human Cleric"]                = { mark = 8, creatureType = "Humanoid" },
+    ["Human Conjurer"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Kil'rek"]                     = { mark = 8, creatureType = "Demon" },
+    ["Mana Warp"]                   = { mark = 8, creatureType = "Elemental" },
+    ["Orc Necrolyte"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Orc Warlock"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Sorcerous Shade"]             = { mark = 8, creatureType = "Undead" },
+    ["Spell Shade"]                 = { mark = 8, creatureType = "Undead" },
+    ["Spectral Apprentice"]         = { mark = 8, creatureType = "Undead" },
+    ["Spectral Servant"]            = { mark = 8, creatureType = "Undead" },
+    ["Zealous Consort"]             = { mark = 8, creatureType = "Undead" },
+    ["Zealous Paramour"]            = { mark = 8, creatureType = "Undead" },
+    ["Coldmist Stalker"]            = { mark = 5, creatureType = "Undead" },
+    ["Coldmist Widow"]              = { mark = 5, creatureType = "Beast" },
+    ["Mana Feeder"]                 = { mark = 5, creatureType = "Elemental" },
+    ["Phase Hound"]                 = { mark = 5, creatureType = "Beast" },
+    ["Shadowbat"]                   = { mark = 5, creatureType = "Beast" },
+    ["Vampiric Shadowbat"]          = { mark = 5, creatureType = "Beast" },
     ["Dancing Flames"]              = "SKIP",
     ["Rat"]                         = "SKIP",
     ["Spider"]                      = "SKIP",
 }
 
 db["Gruul's Lair"] = {
-    ["Blindeye the Seer"]           = 8,
-    ["Kiggler the Crazed"]          = 8,
-    ["Krosh Firehand"]              = 8,
-    ["Olm the Summoner"]            = 8,
-    ["Gronn-Priest"]                = 8,
-    ["Wild Fel Stalker"]            = 5,
+    ["Blindeye the Seer"]           = { mark = 8, creatureType = "Giant" },
+    ["Kiggler the Crazed"]          = { mark = 8, creatureType = "Giant" },
+    ["Krosh Firehand"]              = { mark = 8, creatureType = "Giant" },
+    ["Olm the Summoner"]            = { mark = 8, creatureType = "Giant" },
+    ["Gronn-Priest"]                = { mark = 8, creatureType = "Humanoid" },
+    ["Wild Fel Stalker"]            = { mark = 5, creatureType = "Demon" },
 }
 
 db["Magtheridon's Lair"] = {
-    ["Hellfire Channeler"]          = 8,
-    ["Burning Abyssal"]             = 5,
+    ["Hellfire Channeler"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Burning Abyssal"]             = { mark = 5, creatureType = "Elemental" },
 }
 
 db["Serpentshrine Cavern"] = {
-    ["Coilfang Ambusher"]           = 8,
-    ["Coilfang Beast-Tamer"]        = 8,
-    ["Coilfang Fathom-Witch"]       = 8,
-    ["Coilfang Hate-Screamer"]      = 8,
-    ["Coilfang Priestess"]          = 8,
-    ["Fathom-Guard Caribdis"]       = 8,
-    ["Fathom-Guard Sharkkis"]       = 8,
-    ["Fathom-Guard Tidalvess"]      = 8,
-    ["Greyheart Nether-Mage"]       = 8,
-    ["Greyheart Spellbinder"]       = 8,
-    ["Greyheart Technician"]        = 8,
-    ["Greyheart Tidecaller"]        = 8,
-    ["Serpentshrine Tidecaller"]    = 8,
-    ["Tainted Elemental"]           = 8,
-    ["Tainted Water Elemental"]     = 8,
-    ["Tidewalker Depth-Seer"]       = 8,
-    ["Tidewalker Hydromancer"]      = 8,
-    ["Tidewalker Shaman"]           = 8,
-    ["Coilfang Frenzy"]             = 5,
-    ["Coilfang Strider"]            = 5,
-    ["Fathom Sporebat"]             = 5,
-    ["Serpentshrine Sporebat"]      = 5,
+    ["Coilfang Ambusher"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Beast-Tamer"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Fathom-Witch"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Hate-Screamer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Priestess"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Fathom-Guard Caribdis"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Fathom-Guard Sharkkis"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Fathom-Guard Tidalvess"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Greyheart Nether-Mage"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Greyheart Spellbinder"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Greyheart Technician"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Greyheart Tidecaller"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Serpentshrine Tidecaller"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Tainted Elemental"]           = { mark = 8, creatureType = "Elemental" },
+    ["Tainted Water Elemental"]     = { mark = 8, creatureType = "Elemental" },
+    ["Tidewalker Depth-Seer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Tidewalker Hydromancer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Tidewalker Shaman"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Frenzy"]             = { mark = 5, creatureType = "Beast" },
+    ["Coilfang Strider"]            = { mark = 5, creatureType = "Beast" },
+    ["Fathom Sporebat"]             = { mark = 5, creatureType = "Beast" },
+    ["Serpentshrine Sporebat"]      = { mark = 5, creatureType = "Beast" },
 }
 
 db["The Eye"] = {
-    ["Astromancer"]                 = 8,
-    ["Astromancer Lord"]            = 8,
-    ["Bloodwarder Vindicator"]      = 8,
-    ["Cosmic Infuser"]              = 8,
-    ["Crimson Hand Battle Mage"]    = 8,
-    ["Crimson Hand Blood Knight"]   = 8,
-    ["Crimson Hand Inquisitor"]     = 8,
-    ["Crystalcore Mechanic"]        = 8,
-    ["Grand Astromancer Capernian"] = 8,
-    ["Infinity Blade"]              = 8,   -- Kael weapon phase add
-    ["Master Engineer Telonicus"]   = 8,
-    ["Nether Scryer"]               = 8,
-    ["Netherstrand Longbow"]        = 8,   -- Kael weapon phase add
-    ["Novice Astromancer"]          = 8,
-    ["Phaseshift Bulwark"]          = 8,
-    ["Phoenix Egg"]                 = 8,   -- must die promptly during Kael/Al'ar style phoenix cycles
-    ["Solarium Priest"]             = 8,
-    ["Staff of Disintegration"]     = 8,   -- Kael weapon phase add
-    ["Star Scryer"]                 = 8,
-    ["Tempest Falconer"]            = 8,
-    ["Tempest-Smith"]               = 8,
-    ["Thaladred the Darkener"]      = 8,
-    ["Warp Slicer"]                 = 8,   -- Kael weapon phase add
-    ["Phoenix-Hawk"]                = 5,
-    ["Phoenix-Hawk Hatchling"]      = 5,
+    ["Astromancer"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Astromancer Lord"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Bloodwarder Vindicator"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Cosmic Infuser"]              = { mark = 8, creatureType = "Mechanical" },
+    ["Crimson Hand Battle Mage"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Crimson Hand Blood Knight"]   = { mark = 8, creatureType = "Humanoid" },
+    ["Crimson Hand Inquisitor"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Crystalcore Mechanic"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Grand Astromancer Capernian"] = { mark = 8, creatureType = "Humanoid" },
+    ["Infinity Blade"]              = { mark = 8, creatureType = "Mechanical" },
+    ["Master Engineer Telonicus"]   = { mark = 8, creatureType = "Humanoid" },
+    ["Nether Scryer"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Netherstrand Longbow"]        = { mark = 8, creatureType = "Mechanical" },
+    ["Novice Astromancer"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Phaseshift Bulwark"]          = { mark = 8, creatureType = "Mechanical" },
+    ["Phoenix Egg"]                 = { mark = 8, creatureType = "Elemental" },
+    ["Solarium Priest"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Staff of Disintegration"]     = { mark = 8, creatureType = "Mechanical" },
+    ["Star Scryer"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Tempest Falconer"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Tempest-Smith"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Thaladred the Darkener"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Warp Slicer"]                 = { mark = 8, creatureType = "Mechanical" },
+    ["Phoenix-Hawk"]                = { mark = 5, creatureType = "Beast" },
+    ["Phoenix-Hawk Hatchling"]      = { mark = 5, creatureType = "Beast" },
 }
 
 db["Hyjal Summit"] = {
-    ["Banshee"]                     = 8,
-    ["Frost Wyrm"]                  = 8,
-    ["Giant Infernal"]              = 8,
-    ["Lesser Doomguard"]            = 8,
-    ["Necromancer"]                 = 8,
+    ["Banshee"]                     = { mark = 8, creatureType = "Undead" },
+    ["Frost Wyrm"]                  = { mark = 8, creatureType = "Undead" },
+    ["Giant Infernal"]              = { mark = 8, creatureType = "Demon" },
+    ["Lesser Doomguard"]            = { mark = 8, creatureType = "Demon" },
+    ["Necromancer"]                 = { mark = 8, creatureType = "Undead" },
 }
 
 db["Black Temple"] = {
-    ["Ashtongue Elementalist"]      = 8,
-    ["Ashtongue Mystic"]            = 8,
-    ["Ashtongue Primalist"]         = 8,
-    ["Ashtongue Sorcerer"]          = 8,
-    ["Ashtongue Spiritbinder"]      = 8,
-    ["Ashtongue Stormcaller"]       = 8,
-    ["Bonechewer Blood Prophet"]    = 8,
-    ["Bonechewer Taskmaster"]       = 8,
-    ["Coilskar Sea-Caller"]         = 8,
-    ["Coilskar Soothsayer"]         = 8,
-    ["Dragonmaw Wyrmcaller"]        = 8,
-    ["Flame of Azzinoth"]           = 8,   -- Illidan phase add that should keep a strong control/kill mark
-    ["Hand of Gorefiend"]           = 8,
-    ["Illidari Archon"]             = 8,
-    ["Illidari Assassin"]           = 8,
-    ["Illidari Battle-mage"]        = 8,
-    ["Illidari Blood Lord"]         = 8,
-    ["Illidari Fearbringer"]        = 8,
-    ["Illidari Nightlord"]          = 8,
-    ["Shadowmoon Blood Mage"]       = 8,
-    ["Shadowmoon Deathshaper"]      = 8,
-    ["Shadowmoon Houndmaster"]      = 8,
-    ["Temple Acolyte"]              = 8,
-    ["Aqueous Spawn"]               = 5,
-    ["Aqueous Surger"]              = 5,
-    ["Leviathan"]                   = 5,
-    ["Mutant War Hound"]            = 5,
-    ["Shadowmoon Riding Hound"]     = 5,
-    ["Storm Fury"]                  = 5,
+    ["Ashtongue Elementalist"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Ashtongue Mystic"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Ashtongue Primalist"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Ashtongue Sorcerer"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Ashtongue Spiritbinder"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Ashtongue Stormcaller"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Bonechewer Blood Prophet"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Bonechewer Taskmaster"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Coilskar Sea-Caller"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Coilskar Soothsayer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Dragonmaw Wyrmcaller"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Flame of Azzinoth"]           = { mark = 8, creatureType = "Demon" },
+    ["Hand of Gorefiend"]           = { mark = 8, creatureType = "Undead" },
+    ["Illidari Archon"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Illidari Assassin"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Illidari Battle-mage"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Illidari Blood Lord"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Illidari Fearbringer"]        = { mark = 8, creatureType = "Demon" },
+    ["Illidari Nightlord"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowmoon Blood Mage"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowmoon Deathshaper"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowmoon Houndmaster"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Temple Acolyte"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Aqueous Spawn"]               = { mark = 5, creatureType = "Elemental" },
+    ["Aqueous Surger"]              = { mark = 5, creatureType = "Elemental" },
+    ["Leviathan"]                   = { mark = 5, creatureType = "Beast" },
+    ["Mutant War Hound"]            = { mark = 5, creatureType = "Beast" },
+    ["Shadowmoon Riding Hound"]     = { mark = 5, creatureType = "Beast" },
+    ["Storm Fury"]                  = { mark = 5, creatureType = "Elemental" },
 }
 
 db["Zul'Aman"] = {
-    ["Amani Healing Ward"]          = 8,
-    ["Amani Protective Ward"]       = 8,
-    ["Amani'shi Beast Tamer"]       = 8,
-    ["Amani'shi Flame Caster"]      = 8,
-    ["Amani'shi Handler"]           = 8,
-    ["Amani'shi Hatcher"]           = 8,
-    ["Amani'shi Medicine Man"]      = 8,
-    ["Amani'shi Scout"]             = 8,
-    ["Amani'shi Tempest"]           = 8,
-    ["Amani'shi Warbringer"]        = 8,
-    ["Amani'shi Wind Walker"]       = 8,
-    ["Darkheart"]                   = 8,
-    ["Gazakroth"]                   = 8,
-    ["Koragg"]                      = 8,
-    ["Lord Raadan"]                 = 8,
-    ["Amani Bear"]                  = 5,
-    ["Amani Bear Mount"]            = 5,
-    ["Amani Dragonhawk"]            = 5,
-    ["Amani Elder Lynx"]            = 5,
-    ["Amani Lynx"]                  = 5,
-    ["Slither"]                     = 5,
-    ["Soaring Eagle"]               = 5,
+    ["Amani Healing Ward"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Amani Protective Ward"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Beast Tamer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Flame Caster"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Handler"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Hatcher"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Medicine Man"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Scout"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Tempest"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Warbringer"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Wind Walker"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Darkheart"]                   = { mark = 8, creatureType = "Beast" },
+    ["Gazakroth"]                   = { mark = 8, creatureType = "Demon" },
+    ["Koragg"]                      = { mark = 8, creatureType = "Humanoid" },
+    ["Lord Raadan"]                 = { mark = 8, creatureType = "Beast" },
+    ["Amani Bear"]                  = { mark = 5, creatureType = "Beast" },
+    ["Amani Bear Mount"]            = { mark = 5, creatureType = "Beast" },
+    ["Amani Dragonhawk"]            = { mark = 5, creatureType = "Beast" },
+    ["Amani Elder Lynx"]            = { mark = 5, creatureType = "Beast" },
+    ["Amani Lynx"]                  = { mark = 5, creatureType = "Beast" },
+    ["Slither"]                     = { mark = 5, creatureType = "Beast" },
+    ["Soaring Eagle"]               = { mark = 5, creatureType = "Beast" },
     ["Forest Frog"]                 = "SKIP",
 }
 
 db["Sunwell Plateau"] = {
-    ["Apocalypse Guard"]            = 8,
-    ["Chaos Gazer"]                 = 8,
-    ["Doomfire Destroyer"]          = 8,
-    ["Hand of the Deceiver"]        = 8,
-    ["Oblivion Mage"]               = 8,
-    ["Painbringer"]                 = 8,
-    ["Priestess of Torment"]        = 8,
-    ["Shield Orb"]                  = 8,
-    ["Shadowsword Assassin"]        = 8,
-    ["Shadowsword Deathbringer"]    = 8,
-    ["Shadowsword Fury Mage"]       = 8,
-    ["Shadowsword Lifeshaper"]      = 8,
-    ["Shadowsword Manafiend"]       = 8,
-    ["Shadowsword Soulbinder"]      = 8,
-    ["Sinister Reflection"]         = 8,
-    ["Sunblade Arch Mage"]          = 8,
-    ["Sunblade Cabalist"]           = 8,
-    ["Sunblade Dawn Priest"]        = 8,
-    ["Sunblade Dusk Priest"]        = 8,
-    ["Sunblade Scout"]              = 8,
-    ["Sunblade Vindicator"]         = 8,
-    ["Void Sentinel"]               = 8,
-    ["Cataclysm Hound"]             = 5,
-    ["Sunblade Dragonhawk"]         = 5,
+    ["Apocalypse Guard"]            = { mark = 8, creatureType = "Demon" },
+    ["Chaos Gazer"]                 = { mark = 8, creatureType = "Demon" },
+    ["Doomfire Destroyer"]          = { mark = 8, creatureType = "Demon" },
+    ["Hand of the Deceiver"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Oblivion Mage"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Painbringer"]                 = { mark = 8, creatureType = "Demon" },
+    ["Priestess of Torment"]        = { mark = 8, creatureType = "Demon" },
+    ["Shield Orb"]                  = { mark = 8, creatureType = "Demon" },
+    ["Shadowsword Assassin"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowsword Deathbringer"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowsword Fury Mage"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowsword Lifeshaper"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowsword Manafiend"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Shadowsword Soulbinder"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Sinister Reflection"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Arch Mage"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Cabalist"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Dawn Priest"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Dusk Priest"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Scout"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Sunblade Vindicator"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Void Sentinel"]               = { mark = 8, creatureType = "Demon" },
+    ["Cataclysm Hound"]             = { mark = 5, creatureType = "Demon" },
+    ["Sunblade Dragonhawk"]         = { mark = 5, creatureType = "Beast" },
     ["Dancing Flames"]              = "SKIP",
 }
 

@@ -47,6 +47,17 @@ local MARK_LABEL = {
 
 local SKIP_LABEL = "|cFFFF4444SKIP|r"
 
+-- Creature type cycle for editing.
+local CREATURE_TYPES = {
+    "Humanoid", "Beast", "Demon", "Dragonkin", "Elemental",
+    "Giant", "Mechanical", "Undead", "Aberration",
+}
+local CTYPE_INDEX = {}
+for i, t in ipairs(CREATURE_TYPES) do CTYPE_INDEX[t] = i end
+
+-- Edit-types toggle (off by default).
+local editTypesEnabled = false
+
 -- ============================================================
 -- STATE
 -- ============================================================
@@ -179,7 +190,20 @@ local function GetMobRow(parent, index)
         end
     end)
 
-    nameFS:SetPoint("RIGHT", markBtn, "LEFT", -24, 0)
+    local typeBtn = CreateFrame("Button", nil, row)
+    typeBtn:SetPoint("RIGHT", markBtn, "LEFT", -4, 0)
+    typeBtn:SetSize(80, ROW_HEIGHT - 2)
+    typeBtn:RegisterForClicks("LeftButtonUp")
+
+    local typeFS = typeBtn:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    typeFS:SetPoint("RIGHT", typeBtn, "RIGHT", 0, 0)
+    typeFS:SetWidth(80)
+    typeFS:SetJustifyH("RIGHT")
+    typeFS:SetWordWrap(false)
+    row._typeBtn = typeBtn
+    row._typeFS = typeFS
+
+    nameFS:SetPoint("RIGHT", typeBtn, "LEFT", -6, 0)
 
     row._markBtn = markBtn
     mobRowPool[index] = row
@@ -318,6 +342,42 @@ local function RefreshMobList()
         row._nameFS:SetText(entry.name)
         row._overrideFS:SetText(entry.isOverride and "*" or "")
 
+        local ctypeText
+        if entry.creatureType then
+            if editTypesEnabled then
+                ctypeText = "|cFFFFD700" .. entry.creatureType .. "|r"
+            else
+                ctypeText = "|cFF999999" .. entry.creatureType .. "|r"
+            end
+        elseif editTypesEnabled then
+            ctypeText = "|cFF555555(click)|r"
+        else
+            ctypeText = ""
+        end
+        row._typeFS:SetText(ctypeText)
+
+        -- Type button: only interactive when edit toggle is on.
+        row._typeBtn:SetScript("OnClick", function()
+            if not editTypesEnabled then return end
+            if zone == "" then return end
+            local cur = entry.creatureType
+            local idx = cur and CTYPE_INDEX[cur] or 0
+            idx = idx + 1
+            if idx > #CREATURE_TYPES then idx = 0 end
+            local newType = idx > 0 and CREATURE_TYPES[idx] or false
+            local curMark = (entry.mark == "SKIP") and "SKIP"
+                or (type(entry.mark) == "number" and entry.mark or 8)
+            if curMark == "SKIP" then
+                -- Can't set type on SKIP entries.
+                return
+            end
+            AMA.SetPlayerMobMark(zone, entry.name, curMark, newType)
+            if zone == AMA.currentZoneName then
+                AMA.currentZoneMobDB = AMA.BuildZoneMobDB(zone)
+            end
+            RefreshMobList()
+        end)
+
         local markVal = entry.mark
         row._markBtn._fs:SetText(MarkDisplayText(markVal))
 
@@ -433,6 +493,37 @@ function AMA.BuildDBTab(parent)
     local hdrName = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     hdrName:SetPoint("TOPLEFT", rightPanel, "TOPLEFT", 8, -22)
     hdrName:SetText("|cFF888888Mob Name|r")
+
+    local hdrType = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    hdrType:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT", -134, -22)
+    hdrType:SetText("|cFF888888Type|r")
+
+    -- "Edit Types" checkbox — unlocks creature type cycling.
+    local editTypesCB = CreateFrame("CheckButton", nil, rightPanel, "UICheckButtonTemplate")
+    editTypesCB:SetSize(18, 18)
+    editTypesCB:SetPoint("LEFT", hdrType, "RIGHT", 2, 0)
+    editTypesCB:SetChecked(false)
+
+    local editTypesLabel = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    editTypesLabel:SetPoint("LEFT", editTypesCB, "RIGHT", 0, 0)
+    editTypesLabel:SetText("|cFF666666Edit|r")
+
+    editTypesCB:SetScript("OnClick", function(self)
+        editTypesEnabled = self:GetChecked() and true or false
+        if editTypesEnabled then
+            editTypesLabel:SetText("|cFFFFD700Edit|r")
+        else
+            editTypesLabel:SetText("|cFF666666Edit|r")
+        end
+        RefreshMobList()
+    end)
+    editTypesCB:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText("Edit Creature Types")
+        GameTooltip:AddLine("When enabled, click the Type column to cycle through creature types. Changes are saved as player overrides.", 1, 1, 1, true)
+        GameTooltip:Show()
+    end)
+    editTypesCB:SetScript("OnLeave", function() GameTooltip:Hide() end)
 
     local hdrMark = rightPanel:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     hdrMark:SetPoint("TOPRIGHT", rightPanel, "TOPRIGHT", -8, -22)

@@ -17,14 +17,19 @@ Skull and Cross are always kill targets. CC marks activate only when the matchin
 
 ## Per-Mob Mark Database
 
-The addon includes a built-in database covering Classic, TBC, WotLK, Cata, and MoP dungeons and raids. Each mob has a preferred mark (e.g., Skull for high-threat targets, Moon for polymorphable humanoids). The allocation priority is:
+The addon includes a built-in database covering Classic, TBC, WotLK, Cata, and MoP dungeons and raids. The TBC database is fully enriched with creature types for every mob, enabling precise CC validation. Each mob entry stores a preferred mark, creature type, and optional CC immunity flag.
 
-1. **Database preference** — If the mob has a stored mark and it's available, use it.
-2. **Kill marks (FCFS)** — Skull first, then Cross.
-3. **CC by creature type** — Match the mob's creature type to your group's CC abilities.
-4. **Any remaining enabled mark** — Fill non-CC marks first, then spill into CC marks if needed.
+The allocation priority adapts to dungeon difficulty:
 
-You can customise per-mob marks in the **Database tab** of the config panel. The tab features a full zone browser organised by expansion and instance type (Dungeons / Raids), so you can browse and edit marks for any zone without being inside it. Manual mode also learns your preferences inside instances.
+**Normal dungeons:** DB preference → Skull → Cross → CC by creature type  
+**Heroic dungeons:** DB preference → Skull → CC by creature type → Cross
+
+CC marks are only assigned when:
+- The corresponding CC class is in your group
+- The mob's creature type is compatible with the CC ability
+- The mob is not flagged as CC-immune
+
+You can customise per-mob marks in the **Database tab** of the config panel. The tab features a full zone browser organised by expansion and instance type (Dungeons / Raids), so you can browse and edit marks for any zone without being inside it. A **Type** column shows each mob's creature type, and enabling the **Edit** checkbox lets you cycle types manually. Manual mode also learns your preferences inside instances.
 
 ## Three Marking Modes
 
@@ -38,14 +43,22 @@ Only one mode is active at a time.
 
 The addon reads your group roster and activates CC marks for present classes:
 
-- Mage → Polymorph (Moon)
-- Rogue → Sap (Diamond)
-- Warlock → Banish (Triangle)
-- Priest → Shackle (Star)
-- Druid → Hibernate (Circle)
-- Hunter → Trap (Square)
+- Mage → Polymorph (Moon) — Humanoid, Beast, Critter
+- Rogue → Sap (Diamond) — Humanoid
+- Warlock → Banish (Triangle) — Demon, Elemental
+- Priest → Shackle (Star) — Undead
+- Druid → Hibernate (Circle) — Beast, Dragonkin
+- Hunter → Trap (Square) — Humanoid, Beast, Demon, Dragonkin, Giant, Undead
 
-Creature type matters — a Mage's Moon mark will only be assigned to Humanoids, Beasts, and Critters, not to Undead or Demons.
+Creature type matters — a Mage's Moon mark will only be assigned to Humanoids, Beasts, and Critters, not to Undead or Demons. Mobs flagged as CC-immune in the database (or detected as immune at runtime via the combat log) will never receive CC marks.
+
+## Self-Learning Database
+
+The addon enriches its database as you play:
+
+- **Creature type capture** — When a mob is marked and its database entry lacks a creature type, the addon reads the live value from the game and saves it.
+- **CC immunity detection** — When a CC spell (Polymorph, Sap, Banish, Shackle, Hibernate, Freezing Trap) is resisted with IMMUNE, the mob is permanently flagged as CC-immune in your personal database.
+- **Manual mode learning** — Marking a mob manually inside an instance saves your preference for future auto-marking.
 
 ## Usage
 

@@ -187,6 +187,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
     elseif event == "PLAYER_ENTERING_WORLD" then
         AMA.currentZoneName = ""
         UpdateZone()
+        AMA.RefreshDifficulty()
         AMA.ResetState()
         if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
         AMA.ApplyResetKeybind()
@@ -195,6 +196,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
     elseif event == "ZONE_CHANGED_NEW_AREA" then
         AMA.currentZoneName = ""
         UpdateZone()
+        AMA.RefreshDifficulty()
         AMA.ResetState()
         if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
         AMA.RefreshAnnounceQueue(1.5)
@@ -228,7 +230,16 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if not AMA.IsAddonEnabled() then return end
-        local _, subevent, _, _, _, _, _, destGUID = CombatLogGetCurrentEventInfo()
+        local _, subevent, _, _, _, _, _, destGUID, destName, _, _, spellId, _, _, missType = CombatLogGetCurrentEventInfo()
+
+        -- Detect CC immunity: if a tracked CC spell was IMMUNE, record it.
+        if subevent == "SPELL_MISSED" and missType == "IMMUNE" then
+            if AMA.CC_SPELL_IDS and AMA.CC_SPELL_IDS[spellId] then
+                AMA.HandleCCImmune(destName)
+            end
+            return
+        end
+
         if subevent ~= "UNIT_DIED" and subevent ~= "UNIT_DESTROYED" and subevent ~= "UNIT_DISSIPATES" then return end
         if not destGUID then return end
         if not AMA.markedGUIDs[destGUID] then return end
