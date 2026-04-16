@@ -11,7 +11,7 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Blackrock Caverns"] = {
-    ["Twilight Flame Caller"]       = 8,   -- fire caster; interrupt
+    ["Twilight Flame Caller"]       = { mark = 8, dangerLevel = 2 },  -- fire caster; interrupt
     ["Twilight Torturer"]           = 8,   -- shadow damage + chains
     ["Twilight Sadist"]             = 8,   -- damage caster
     ["Mad Prisoner"]                = 5,     -- humanoid, CC-able
@@ -21,7 +21,7 @@ db["Blackrock Caverns"] = {
 
 db["Throne of the Tides"] = {
     ["Naz'jar Tempest Witch"]       = 8,   -- frost + lightning caster
-    ["Naz'jar Spiritmender"]        = 8,   -- healer
+    ["Naz'jar Spiritmender"]        = { mark = 8, dangerLevel = 3 },  -- healer
     ["Faceless Watcher"]            = 8,   -- shadow damage + mind flay
     ["Gilgoblin Aquamage"]          = 8,   -- water caster
     ["Gilgoblin Hunter"]            = 5,     -- humanoid, CC-able
@@ -31,7 +31,7 @@ db["Throne of the Tides"] = {
 db["The Stonecore"] = {
     ["Stonecore Earthshaper"]       = 8,   -- earth caster + ground AoE
     ["Stonecore Magmalord"]         = 8,   -- fire caster; interrupt
-    ["Stonecore Rift Conjurer"]     = 8,   -- summons voidwalkers
+    ["Stonecore Rift Conjurer"]     = { mark = 8, dangerLevel = 3 },  -- summons voidwalkers
     ["Millhouse Manastorm"]         = 8,   -- arcane caster (as trash)
     ["IMP"]                         = "SKIP",   -- summoned imp filler
 }
@@ -39,7 +39,7 @@ db["The Stonecore"] = {
 db["The Vortex Pinnacle"] = {
     ["Lurking Tempest"]             = 8,   -- lightning caster
     ["Minister of Air"]             = 8,   -- chain lightning + heal
-    ["Temple Adept"]                = 8,   -- healer
+    ["Temple Adept"]                = { mark = 8, dangerLevel = 3 },  -- healer
     ["Turbulent Squall"]            = 8,   -- lightning caster
     ["Wild Vortex"]                 = 5,     -- elemental, banishable
     ["Young Storm Dragon"]          = 5,     -- dragonkin, CC-able
@@ -55,31 +55,31 @@ db["Lost City of the Tol'vir"] = {
 }
 
 db["Halls of Origination"] = {
-    ["Temple Runecaster"]           = 8,   -- rune caster; interrupt
+    ["Temple Runecaster"]           = { mark = 8, dangerLevel = 2 },  -- rune caster; interrupt
     ["Temple Shadowlancer"]         = 8,   -- stealth + shadow damage
     ["Temple Fireshaper"]           = 8,   -- fire caster
     ["Temple Swiftstalker"]         = 8,   -- ranged + rapid shot
     ["Air Warden"]                  = 5,     -- elemental, banishable
     ["Flame Warden"]                = 5,     -- elemental, banishable
-    ["Water Warden"]                = 8,   -- healer elemental
+    ["Water Warden"]                = { mark = 8, dangerLevel = 3 },  -- healer elemental
 }
 
 db["Grim Batol"] = {
-    ["Twilight Beguiler"]           = 8,   -- mind control + shadow
+    ["Twilight Beguiler"]           = { mark = 8, dangerLevel = 2 },  -- mind control + shadow
     ["Twilight Earthcaller"]        = 8,   -- earth caster; summons
     ["Twilight Firecatcher"]        = 8,   -- fire caster
     ["Twilight Shadow Weaver"]      = 8,   -- shadow bolt volley
     ["Twilight Stormbreaker"]       = 8,   -- chain lightning
     ["Twilight Thundercaller"]      = 8,   -- lightning + storm caster
     ["Twilight War-Mage"]           = 8,   -- polymorph + fireball
-    ["Twilight Wyrmcaller"]         = 8,   -- calls drake adds
+    ["Twilight Wyrmcaller"]         = { mark = 8, dangerLevel = 3 },  -- calls drake adds
     ["Azureborne Seer"]             = 8,   -- twilight caster
 }
 
 db["Zul'Aman"] = {
     ["Amani'shi Flame Caster"]      = 8,   -- fire caster
-    ["Amani'shi Medicine Man"]      = 8,   -- healer + hex
-    ["Amani'shi Scout"]             = 8,   -- calls reinforcements
+    ["Amani'shi Medicine Man"]      = { mark = 8, dangerLevel = 3 },  -- healer + hex
+    ["Amani'shi Scout"]             = { mark = 8, dangerLevel = 3 },  -- calls reinforcements
     ["Amani'shi Beast Tamer"]       = 8,   -- beast caller
     ["Amani'shi Guardian"]          = 5,     -- humanoid, CC-able
     ["Amani Lynx"]                  = 5,     -- beast, trappable
@@ -99,14 +99,14 @@ db["Zul'Gurub"] = {
 db["End Time"] = {
     ["Time-Twisted Geist"]          = 5,     -- undead, shackleable
     ["Time-Twisted Nightsaber"]     = 5,     -- beast, trappable
-    ["Time-Twisted Priest"]         = 8,   -- healer
+    ["Time-Twisted Priest"]         = { mark = 8, dangerLevel = 3 },  -- healer
     ["Time-Twisted Rifleman"]       = 8,   -- ranged; multishot
     ["Time-Twisted Seer"]           = 8,   -- arcane caster
     ["Time-Twisted Sorceress"]      = 8,   -- frost + fire caster
 }
 
 db["Well of Eternity"] = {
-    ["Dreadlord Defender"]          = 8,   -- shadow damage + fear
+    ["Dreadlord Defender"]          = { mark = 8, dangerLevel = 2 },  -- shadow damage + fear
     ["Enchanted Highmistress"]      = 8,   -- arcane caster
     ["Eye of the Legion"]           = 8,   -- shadow beam
     ["Fel Crystal"]                 = "SKIP",   -- crystal filler
@@ -140,8 +140,8 @@ db["Blackwing Descent"] = {
 
 db["The Bastion of Twilight"] = {
     ["Chosen Seer"]                 = 8,   -- healer/caster trash
-    ["Twilight Dark Mender"]        = 8,   -- healer
-    ["Twilight Shadow Mender"]      = 8,   -- healer
+    ["Twilight Dark Mender"]        = { mark = 8, dangerLevel = 3 },  -- healer
+    ["Twilight Shadow Mender"]      = { mark = 8, dangerLevel = 3 },  -- healer
     ["Twilight Elementalist"]       = 8,   -- dangerous caster trash
     ["Twilight Soul Blade"]         = 8,   -- dangerous melee burst
     ["Faceless Guardian"]           = 8,
@@ -163,7 +163,7 @@ db["Baradin Hold"] = {
 }
 
 db["Firelands"] = {
-    ["Flamewaker Cauterizer"]       = 8,   -- healer
+    ["Flamewaker Cauterizer"]       = { mark = 8, dangerLevel = 3 },  -- healer
     ["Flamewaker Subjugator"]       = 8,   -- dangerous caster
     ["Flamewaker Pathfinder"]       = 8,
     ["Flamewaker Beast Handler"]    = 8,

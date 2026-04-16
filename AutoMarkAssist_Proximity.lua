@@ -33,11 +33,5 @@ frame:SetScript("OnUpdate", function(self, elapsed)
 
     if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
 
-    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS) do
-        if UnitExists(token) and UnitCanAttack("player", token) then
-            if not (UnitIsDead and UnitIsDead(token)) then
-                AMA.AssignMark(token, false, "proximity")
-            end
-        end
-    end
+    if AMA.HolisticScanAndMark then AMA.HolisticScanAndMark() end
 end)

@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.3.0"
+AMA.VERSION    = "3.4.0"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -73,6 +73,15 @@ end
 
 -- Kill marks are always Skull first, Cross second.
 AMA.KILL_MARKS = { 8, 7 }
+
+-- Danger levels stored in DB entries to refine holistic mark priority.
+-- Mobs with higher dangerLevel receive marks before equally-tiered mobs.
+AMA.DANGER_LEVEL = {
+    CRITICAL = 3,  -- Healer, summoner, mass-fear caster: kill or CC first
+    HIGH     = 2,  -- Dangerous caster, interrupt priority, AoE, fear effect
+    NORMAL   = 1,  -- Explicit kill/CC target with no special role signal
+    -- 0 = unset (default; sorts equal to other unset mobs within the same tier)
+}
 
 -- ============================================================
 -- DIFFICULTY DETECTION
@@ -151,7 +160,7 @@ AMA.DB_DEFAULTS = {
         [4] = true,   -- Triangle: Banish
         [1] = true,   -- Star: Shackle
         [2] = true,   -- Circle: Hibernate
-        [6] = false,  -- Square: Trap (disabled by default)
+        [6] = true,   -- Square: Trap
     },
     announceChannel    = "PARTY",
     announcePrefixText = "AutoMarkAssist",

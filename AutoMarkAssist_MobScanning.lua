@@ -16,6 +16,10 @@ local MARK_NONE     = 0
 local MARK_SOURCE_LOCAL    = "local"
 local MARK_SOURCE_OBSERVED = "observed"
 
+-- Soft-reserved mark slots used during holistic context building for
+-- mouseover mode.  Populated inside AssignMarkHolistic, cleared after.
+local softReservedMarks = {}
+
 -- ============================================================
 -- RANGE CHECKS
 -- ============================================================
@@ -45,19 +49,20 @@ function AMA.ResolveZoneName(rawZone)
     return rawZone
 end
 
---- Normalise a mob DB entry to { mark, creatureType, ccImmune } or "SKIP".
---- Handles plain-number entries (static DB, legacy player overrides)
---- and the new table format.
+--- Normalise a mob DB entry to { mark, creatureType, ccImmune, dangerLevel }
+--- or "SKIP".  Handles plain-number entries (static DB, legacy player
+--- overrides) and the table format.
 local function NormaliseMobEntry(entry)
     if entry == "SKIP" then return "SKIP" end
     if type(entry) == "number" then
-        return { mark = entry, creatureType = nil, ccImmune = false }
+        return { mark = entry, creatureType = nil, ccImmune = false, dangerLevel = 0 }
     end
     if type(entry) == "table" and entry.mark then
         return {
-            mark = entry.mark,
+            mark        = entry.mark,
             creatureType = entry.creatureType or nil,
-            ccImmune = entry.ccImmune or false,
+            ccImmune    = entry.ccImmune or false,
+            dangerLevel = entry.dangerLevel or 0,
         }
     end
     return nil
@@ -79,7 +84,18 @@ function AMA.BuildZoneMobDB(zoneName)
         for mob, entry in pairs(baseMobs) do merged[mob] = NormaliseMobEntry(entry) end
     end
     if playerMobs then
-        for mob, entry in pairs(playerMobs) do merged[mob] = NormaliseMobEntry(entry) end
+        for mob, entry in pairs(playerMobs) do
+            local normalized = NormaliseMobEntry(entry)
+            -- dangerLevel is an authoritative classification from the static DB.
+            -- Preserve it when a player override doesn't supply its own value.
+            if normalized and normalized ~= "SKIP" and normalized.dangerLevel == 0 then
+                local base = merged[mob]
+                if type(base) == "table" then
+                    normalized.dangerLevel = base.dangerLevel or 0
+                end
+            end
+            merged[mob] = normalized
+        end
     end
 
     if next(merged) == nil then return nil end
@@ -224,6 +240,7 @@ local function ValidateOwner(guid)
 end
 
 local function IsMarkSlotFree(markIdx)
+    if softReservedMarks[markIdx] then return false end
     local ownerGuid = AMA.markOwners[markIdx]
     if not ownerGuid then return true end
     local token = ValidateOwner(ownerGuid)
@@ -234,18 +251,68 @@ local function IsMarkSlotFree(markIdx)
     return false
 end
 
+--- Compute a numeric priority score for holistic pack allocation.
+--- Higher score = higher priority = receives marks first.
+---   Kill-tagged mobs (DB mark 7-8): 1000 + dangerLevel*100
+---   CC-tagged mobs  (DB mark 1-6):   500 + dangerLevel*100
+---   Unknown elite:                   400
+---   Unknown normal:                  100
+local function ScoreMob(mobName, unitToken)
+    local dbEntry   = AMA.LookupMobMark(mobName)
+    local preferred = type(dbEntry) == "table" and dbEntry.mark or nil
+    local danger    = type(dbEntry) == "table" and (dbEntry.dangerLevel or 0) or 0
+
+    local score
+    if preferred == 8 or preferred == 7 then
+        score = 1000 + danger * 100
+    elseif preferred and preferred >= 1 and preferred <= 6 then
+        score = 500 + danger * 100
+    else
+        local classification = UnitClassification and UnitClassification(unitToken)
+        if classification == "worldboss" or classification == "rareelite" then
+            score = 800
+        elseif classification == "elite" then
+            score = 400
+        elseif classification == "rare" then
+            score = 350
+        else
+            score = 100
+        end
+    end
+
+    -- Tie-break: nudge the player's current target so ambiguous packs
+    -- break toward what the tank is already on.
+    if UnitIsUnit and UnitIsUnit(unitToken, "target") then score = score + 1 end
+
+    return score
+end
+
 --- Find a CC mark for a creature type based on group composition.
 --- Returns nil if the mob is CC-immune.
+--- Candidates are sorted by specificity: the CC ability that covers the
+--- fewest creature types wins.  This ensures Sap (Humanoid only) is
+--- preferred over Polymorph (Humanoid/Beast/Critter) and both beat
+--- Freezing Trap (six types) when multiple CC classes are present.
 local function FindCCMark(creatureType, ccImmune)
     if ccImmune then return nil end
     if not creatureType or creatureType == "" then return nil end
     local reserved = AMA.GetReservedCCMarks()
+
+    -- Collect every ability that can CC this creature type and has a free slot.
+    local candidates = {}
     for markIdx, ability in pairs(reserved) do
         if ability.creatureTypes[creatureType] and IsMarkSlotFree(markIdx) then
-            return markIdx
+            local count = 0
+            for _ in pairs(ability.creatureTypes) do count = count + 1 end
+            candidates[#candidates + 1] = { markIdx = markIdx, typeCount = count }
         end
     end
-    return nil
+
+    if #candidates == 0 then return nil end
+
+    -- Most specific (narrowest coverage) first.
+    table.sort(candidates, function(a, b) return a.typeCount < b.typeCount end)
+    return candidates[1].markIdx
 end
 
 --- Core allocation: assigns marks based on dungeon difficulty and group
@@ -423,6 +490,76 @@ function AMA.AssignMark(unitToken, force, source)
 end
 
 -- ============================================================
+-- HOLISTIC PACK SCAN
+-- Collects all visible hostile mobs, scores them by danger, and
+-- assigns marks in priority order.  Used by proximity mode and as
+-- context-building for mouseover mode.
+-- ============================================================
+
+--- Collect all visible, hostile, alive, markable mobs sorted by danger score
+--- (highest first).  proximityOnly filters to within the configured range.
+local function CollectSortedPack(proximityOnly)
+    local candidates = {}
+    local seenGuids  = {}
+    local rangeIdx = AutoMarkAssistDB and AutoMarkAssistDB.proximityRange or 4
+    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+        if UnitExists(token)
+        and UnitCanAttack("player", token)
+        and not (UnitIsDead and UnitIsDead(token)) then
+            if (not proximityOnly) or IsUnitInRange(token, rangeIdx) then
+                local isValid, name = IsMarkableTarget(token)
+                if isValid then
+                    local guid = UnitGUID and UnitGUID(token)
+                    if guid and not seenGuids[guid] then
+                        seenGuids[guid] = true
+                        candidates[#candidates + 1] = {
+                            token = token,
+                            guid  = guid,
+                            name  = name,
+                            score = ScoreMob(name, token),
+                        }
+                    end
+                end
+            end
+        end
+    end
+    table.sort(candidates, function(a, b) return a.score > b.score end)
+    return candidates
+end
+
+--- Proximity mode: scan all in-range mobs, sort by danger score, then apply
+--- marks in that order so the most dangerous mob always receives Skull.
+function AMA.HolisticScanAndMark()
+    local sorted = CollectSortedPack(true)
+    for _, candidate in ipairs(sorted) do
+        AMA.AssignMark(candidate.token, false, "proximity")
+    end
+end
+
+--- Mouseover mode: assign the hovered mob the mark it deserves based on its
+--- rank among ALL currently visible mobs.  Higher-priority unassigned mobs
+--- soft-reserve their mark slots so the hovered mob receives the correct
+--- mark rather than whichever slot happens to be free.
+function AMA.AssignMarkHolistic(unitToken)
+    local sorted     = CollectSortedPack(false)
+    local targetGuid = UnitGUID and UnitGUID(unitToken)
+
+    -- Dry-run: soft-reserve slots for every unassigned mob ranked above target.
+    for _, candidate in ipairs(sorted) do
+        if candidate.guid == targetGuid then break end
+        if not AMA.markedGUIDs[candidate.guid] then
+            local markIdx = AllocateMark(candidate.token, candidate.name)
+            if markIdx then
+                softReservedMarks[markIdx] = true
+            end
+        end
+    end
+
+    AMA.AssignMark(unitToken, false, "mouseover")
+    wipe(softReservedMarks)
+end
+
+-- ============================================================
 -- RUNTIME CC IMMUNITY DETECTION
 -- Called from the combat log handler when a CC spell is IMMUNE.
 -- ============================================================
@@ -468,27 +605,43 @@ end
 -- ============================================================
 
 function AMA.ResetState(forceAll)
-    local marksToClear = {}
-    for markIdx, ownerGuid in pairs(AMA.markOwners) do
-        if forceAll or AMA.guidMarkSource[ownerGuid] == MARK_SOURCE_LOCAL then
-            marksToClear[markIdx] = true
+    if forceAll then
+        -- Nuclear: bounce every mark through the player to clear it from
+        -- whatever mob holds it, regardless of visibility or proximity.
+        for i = 1, 8 do
+            pcall(SetRaidTarget, "player", i)
+            pcall(SetRaidTarget, "player", 0)
         end
-    end
+    else
+        -- Selective: only clear marks this addon applied.
+        local marksToClear = {}
+        for markIdx, ownerGuid in pairs(AMA.markOwners) do
+            if AMA.guidMarkSource[ownerGuid] == MARK_SOURCE_LOCAL then
+                marksToClear[markIdx] = true
+            end
+        end
 
-    local clearedMarks = {}
-    for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
-        if UnitExists(token) then
-            local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
-            if visibleMark > 0 and marksToClear[visibleMark] and not clearedMarks[visibleMark] then
-                pcall(SetRaidTarget, token, 0)
-                clearedMarks[visibleMark] = true
+        -- Try via visible unit tokens first (avoids the brief player-icon flash).
+        local clearedMarks = {}
+        for _, token in ipairs(AMA.SCAN_UNIT_TOKENS or {}) do
+            if UnitExists(token) then
+                local visibleMark = GetRaidTargetIndex and GetRaidTargetIndex(token) or 0
+                if visibleMark > 0 and marksToClear[visibleMark] and not clearedMarks[visibleMark] then
+                    pcall(SetRaidTarget, token, 0)
+                    clearedMarks[visibleMark] = true
+                end
+            end
+        end
+
+        -- Fallback: bounce any remaining marks through the player so marks
+        -- on out-of-range or off-nameplate mobs are still cleared.
+        for markIdx in pairs(marksToClear) do
+            if not clearedMarks[markIdx] then
+                pcall(SetRaidTarget, "player", markIdx)
+                pcall(SetRaidTarget, "player", 0)
             end
         end
     end
-
-    -- Skip the player-bounce fallback: if we can't find the token the mob is
-    -- likely dead anyway, and bouncing would nuke marks set by other players
-    -- on mobs we can't currently see.
 
     wipe(AMA.markedGUIDs)
     wipe(AMA.markOwners)
@@ -524,22 +677,26 @@ function AMA.CascadeMarksAfterDeath()
     -- Refresh token mappings so we work with live data after a death.
     AMA.SyncVisibleMarks()
 
-    -- Helper: find the highest-priority living CC-marked mob to promote.
+    -- Helper: find the highest-score living CC-marked mob to promote.
     local function FindBestCCPromotion()
+        local bestMark, bestGuid, bestToken, bestScore = nil, nil, nil, -1
         for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
             if m ~= MARK_SKULL and m ~= MARK_CROSS then
                 local ownerGuid = AMA.markOwners[m]
                 if ownerGuid then
                     local token = ResolveToken(ownerGuid, AMA.markTokens[m])
                     if token then
-                        return m, ownerGuid, token
+                        local score = ScoreMob(UnitName(token) or "", token)
+                        if score > bestScore then
+                            bestMark, bestGuid, bestToken, bestScore = m, ownerGuid, token, score
+                        end
                     else
                         AMA.ForgetMark(ownerGuid)
                     end
                 end
             end
         end
-        return nil, nil, nil
+        return bestMark, bestGuid, bestToken
     end
 
     -- === Skull died: always promote Cross → Skull ===

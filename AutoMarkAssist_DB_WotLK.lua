@@ -11,8 +11,8 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Utgarde Keep"] = {
-    ["Dragonflayer Runecaster"]     = 8,   -- rune caster; interrupt
-    ["Dragonflayer Spiritualist"]   = 8,   -- healer
+    ["Dragonflayer Runecaster"]     = { mark = 8, dangerLevel = 2 },  -- rune caster; interrupt
+    ["Dragonflayer Spiritualist"]   = { mark = 8, dangerLevel = 3 },  -- healer
     ["Dragonflayer Heartsplitter"]  = 8,   -- ranged; multishot
     ["Dragonflayer Strategist"]     = 8,   -- rallies nearby vrykul
     ["Tunneling Ghoul"]             = 5,     -- undead, shackleable
@@ -38,7 +38,7 @@ db["Azjol-Nerub"] = {
 }
 
 db["Ahn'kahet: The Old Kingdom"] = {
-    ["Twilight Apostle"]            = 8,   -- healer + shadow mend
+    ["Twilight Apostle"]            = { mark = 8, dangerLevel = 3 },  -- healer + shadow mend
     ["Twilight Darkcaster"]         = 8,   -- shadow bolt volley
     ["Twilight Necromancer"]        = 8,   -- raises undead adds
     ["Twilight Worshipper"]         = 5,     -- humanoid, CC-able
@@ -47,9 +47,8 @@ db["Ahn'kahet: The Old Kingdom"] = {
 }
 
 db["Drak'Tharon Keep"] = {
-    ["Drakkari Shaman"]             = 8,   -- healer + lightning bolt
-    ["Drakkari Medicine Man"]       = 8,   -- healer
-    ["Drakkari Commander"]          = 8,   -- battle shout + whirlwind
+    ["Drakkari Shaman"]             = { mark = 8, dangerLevel = 3 },  -- healer + lightning bolt
+    ["Drakkari Medicine Man"]       = { mark = 8, dangerLevel = 3 },  -- healer
     ["Risen Shadowcaster"]          = 8,   -- shadow caster
     ["Fetid Troll Corpse"]          = 5,     -- undead, shackleable
     ["Drakkari Bat"]                = 5,     -- beast, trappable
@@ -67,24 +66,24 @@ db["The Violet Hold"] = {
 
 db["Gundrak"] = {
     ["Drakkari Elemental"]          = 5,     -- elemental, banishable
-    ["Drakkari Medicine Man"]       = 8,   -- healer
+    ["Drakkari Medicine Man"]       = { mark = 8, dangerLevel = 3 },  -- healer
     ["Living Mojo"]                 = 5,     -- elemental, banishable
     ["Drakkari Fire Weaver"]        = 8,   -- fire caster
     ["Spitting Cobra"]              = 5,     -- beast, trappable
-    ["Drakkari Earthshaker"]        = 8,   -- AoE stomp caster
+    ["Drakkari Earthshaker"]        = { mark = 8, dangerLevel = 2 },  -- AoE stomp caster
 }
 
 db["Halls of Stone"] = {
     ["Dark Rune Theurgist"]         = 8,   -- lightning bolt caster
     ["Dark Rune Stormcaller"]       = 8,   -- chain lightning
     ["Dark Rune Scholar"]           = 8,   -- shadow caster
-    ["Dark Rune Elementalist"]      = 8,   -- summons elementals
+    ["Dark Rune Elementalist"]      = { mark = 8, dangerLevel = 3 },  -- summons elementals
     ["Dark Rune Protector"]         = 5,     -- humanoid, CC-able
 }
 
 db["Halls of Lightning"] = {
     ["Stormforged Tactician"]       = 8,   -- tactical strike + charge
-    ["Stormforged Mender"]          = 8,   -- healer; top priority
+    ["Stormforged Mender"]          = { mark = 8, dangerLevel = 3 },  -- healer; top priority
     ["Stormfury Revenant"]          = 8,   -- lightning caster
     ["Slag"]                        = 5,     -- elemental, banishable
     ["Hardened Steel Berserker"]     = 8,   -- Enrage + whirlwind
@@ -98,18 +97,18 @@ db["The Oculus"] = {
 }
 
 db["Culling of Stratholme"] = {
-    ["Dark Necromancer"]            = 8,   -- raises undead
+    ["Dark Necromancer"]            = { mark = 8, dangerLevel = 3 },  -- raises undead
     ["Enraged Ghoul"]               = 5,     -- undead, shackleable
     ["Acolyte"]                     = 8,   -- caster + shadow
-    ["Master Necromancer"]          = 8,   -- raises undead; interrupt
+    ["Master Necromancer"]          = { mark = 8, dangerLevel = 3 },  -- raises undead; interrupt
     ["Infinite Corruptor Agent"]    = 8,   -- optional timed boss add
     ["Ghoul"]                       = "SKIP",   -- mass zombie filler
     ["Risen Zombie"]                = "SKIP",   -- mass zombie filler
 }
 
 db["Utgarde Pinnacle"] = {
-    ["Dragonflayer Seer"]           = 8,   -- healer + lightning
-    ["Ymirjar Witch Doctor"]        = 8,   -- healer + shadow bolt
+    ["Dragonflayer Seer"]           = { mark = 8, dangerLevel = 3 },  -- healer + lightning
+    ["Ymirjar Witch Doctor"]        = { mark = 8, dangerLevel = 3 },  -- healer + shadow bolt
     ["Ymirjar Berserker"]           = 8,   -- Enrage + heavy melee
     ["Ymirjar Harpooner"]           = 8,   -- ranged; harpoon pull
     ["Savage Worg"]                 = 5,     -- beast, trappable
@@ -118,9 +117,9 @@ db["Utgarde Pinnacle"] = {
 }
 
 db["Trial of the Champion"] = {
-    ["Argent Confessor"]            = 8,   -- healer
+    ["Argent Confessor"]            = { mark = 8, dangerLevel = 3 },  -- healer
     ["Argent Lightwielder"]         = 8,   -- holy caster + heal
-    ["Argent Priestess"]            = 8,   -- healer
+    ["Argent Priestess"]            = { mark = 8, dangerLevel = 3 },  -- healer
     ["Black Knight's Ghoul"]        = "SKIP",   -- summoned filler
 }
 
@@ -133,7 +132,7 @@ db["The Forge of Souls"] = {
 }
 
 db["Pit of Saron"] = {
-    ["Deathwhisper Necrolyte"]      = 8,   -- healer + shadow
+    ["Deathwhisper Necrolyte"]      = { mark = 8, dangerLevel = 3 },  -- healer + shadow
     ["Deathwhisper Shadowcaster"]   = 8,   -- shadow bolt volley
     ["Deathwhisper Torturer"]       = 8,   -- curse + pain caster
     ["Ymirjar Skycaller"]           = 8,   -- frost + lightning caster
@@ -145,7 +144,7 @@ db["Halls of Reflection"] = {
     ["Phantom Mage"]                = 8,   -- fireball + flamestrike
     ["Tortured Rifleman"]           = 8,   -- ranged; shoot + curse
     ["Shadowy Mercenary"]           = 8,   -- stealth + backstab
-    ["Ghostly Priest"]              = 8,   -- healer
+    ["Ghostly Priest"]              = { mark = 8, dangerLevel = 3 },  -- healer
     ["Dark Ranger"]                 = 8,   -- ranged + magic
 }
 
@@ -174,12 +173,12 @@ db["The Eye of Eternity"] = {
 }
 
 db["Ulduar"] = {
-    ["Dark Rune Acolyte"]           = 8,   -- healer trash
+    ["Dark Rune Acolyte"]           = { mark = 8, dangerLevel = 3 },  -- healer trash
     ["Dark Rune Champion"]          = 8,   -- dangerous melee + whirlwind
     ["Dark Rune Evoker"]            = 8,   -- caster trash
     ["Dark Rune Thunderer"]         = 8,   -- chain lightning trash
     ["Dark Rune Watcher"]           = 8,   -- dangerous ranged trash
-    ["Iron Mender"]                 = 8,   -- healer support on the gauntlet
+    ["Iron Mender"]                 = { mark = 8, dangerLevel = 3 },  -- healer support on the gauntlet
     ["Lightning Charged Iron Dwarf"] = 8,  -- dangerous caster add
     ["Forge Construct"]             = 8,   -- dangerous forge trash
     ["Ancient Conservator"]         = 8,   -- silence aura; kill quickly

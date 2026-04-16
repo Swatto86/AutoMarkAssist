@@ -18,5 +18,5 @@ function AMA.HandleMouseoverMark()
     if not canMark then return end
 
     if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
-    AMA.AssignMark("mouseover", false, "mouseover")
+    AMA.AssignMarkHolistic("mouseover")
 end

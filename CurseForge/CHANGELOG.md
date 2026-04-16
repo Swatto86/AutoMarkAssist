@@ -1,5 +1,24 @@
 # AutoMarkAssist Changelog
 
+## 3.4.0
+
+### New Features
+- **Holistic Pack Scanning:** Proximity and mouseover modes now evaluate the entire visible pack before assigning any marks. All mobs are scored by danger level, sorted highest-to-lowest, and marks are allocated in priority order. The most dangerous mob always receives Skull, regardless of encounter order.
+- **Danger Level Classification:** The mob database now carries a `dangerLevel` field. Healers, summoners, and reinforcement callers are classified as Critical (3); AoE casters, fear mobs, and interrupt-priority targets as High (2). All five expansion databases (Classic, TBC, WotLK, Cata, MoP) are enriched with danger classifications.
+- **Mouseover Context Awareness:** Mouseover mode now dry-runs all higher-priority mobs before marking the hovered target, soft-reserving their mark slots. Hovering a low-priority mob no longer accidentally gives it Skull just because the pack hasn't been marked yet.
+- **Nuclear Reset:** The reset function (`/ama reset`, keybind) now clears all 8 marks regardless of who set them, whether the marked mobs are visible, in range, or on screen. Works by bouncing each mark through the player frame. After reset, all tracking state is wiped and the next scan re-evaluates from scratch.
+- **Target Tie-Breaking:** When multiple mobs have identical scores (e.g. an unknown pack), the player's current target receives a small score bonus so Skull naturally lands on whatever the tank is targeting.
+
+### Changes
+- **CC Mark Specificity:** When multiple CC classes can handle the same creature type, the most specific ability now wins. Sap (Humanoid only) beats Polymorph (Humanoid/Beast/Critter) beats Freezing Trap (six types).
+- **Score-Based Cascade Promotion:** When a marked mob dies and a CC-marked mob is promoted to Cross, the addon now picks the highest-scoring CC mob rather than whichever happened to hold the lowest mark index.
+- **Square (Hunter Trap) Enabled by Default:** Square is now enabled for new installs. The CC specificity fix ensures Trap no longer steals marks from more precise abilities like Sap or Polymorph.
+- **Selective Reset Fallback:** Auto-reset on leaving combat tries visible unit tokens first (no visual flash), then falls back to the player-bounce method for any marks on out-of-range mobs.
+
+### Bug Fixes
+- **GUID Deduplication:** Fixed a bug where the same mob appearing under multiple unit tokens (target, nameplate, party target) could consume multiple mark slots during mouseover dry-run scoring.
+- **Description and README Updated:** Rewrote addon description to accurately document holistic scanning, manual mode behaviour, danger classification, and the reset mechanism.
+
 ## 3.3.0
 
 ### New Features

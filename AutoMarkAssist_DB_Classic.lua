@@ -25,20 +25,20 @@ AutoMarkAssist_MobDB = {
     -- ============================================================
 
     ["Ragefire Chasm"] = {
-        ["Corrupted Houndmaster"]       = 8,   -- calls beasts; kill first
+        ["Corrupted Houndmaster"]       = { mark = 8, dangerLevel = 3 },  -- calls beasts; kill first
         ["Dark Shaman Acolyte"]         = 8,   -- flame shock caster
         ["Molten Elemental"]            = 5,     -- elemental, banishable
     },
 
     ["Wailing Caverns"] = {
-        ["Druid of the Fang"]           = 8,   -- healer + lightning bolt caster
+        ["Druid of the Fang"]           = { mark = 8, dangerLevel = 3 },  -- healer + lightning bolt caster
         ["Deviate Viper"]               = 5,     -- beast, trappable
         ["Deviate Adder"]               = 5,     -- beast, trappable
         ["Serpentbloom Snake"]          = "SKIP",   -- ambient filler
     },
 
     ["The Deadmines"] = {
-        ["Defias Blood Wizard"]         = 8,   -- fire caster; interrupt priority
+        ["Defias Blood Wizard"]         = { mark = 8, dangerLevel = 2 },  -- fire caster; interrupt priority
         ["Defias Squallshaper"]         = 8,   -- frost caster + heal
         ["Defias Envoker"]              = 8,   -- holy fire caster
         ["Defias Pirate"]               = 5,     -- humanoid, CC-able
@@ -47,7 +47,7 @@ AutoMarkAssist_MobDB = {
 
     ["Shadowfang Keep"] = {
         ["Tormented Officer"]           = 8,   -- forsaken caster
-        ["Wailing Guardsman"]           = 8,   -- screaming strikes + fear
+        ["Wailing Guardsman"]           = { mark = 8, dangerLevel = 2 },  -- screaming strikes + fear
         ["Unstable Ravager"]            = 8,   -- volatile damage
         ["Dark Creeper"]                = 5,     -- stealth mob, CC-able
         ["Corpse Eater"]                = 5,     -- beast, trappable
@@ -63,58 +63,58 @@ AutoMarkAssist_MobDB = {
     ["Blackfathom Deeps"] = {
         ["Twilight Aquamancer"]         = 8,   -- frost caster
         ["Twilight Shadowmage"]         = 8,   -- shadow bolt volley
-        ["Blackfathom Tide Priestess"]  = 8,   -- healer
+        ["Blackfathom Tide Priestess"]  = { mark = 8, dangerLevel = 3 },  -- healer
         ["Murkshallow Snapclaw"]        = 5,     -- beast, trappable
         ["Fallenroot Rogue"]            = 5,     -- stealth, humanoid CC-able
     },
 
     ["Gnomeregan"] = {
-        ["Arcane Nullifier X-21"]       = 8,   -- silences and counterspells
+        ["Arcane Nullifier X-21"]       = { mark = 8, dangerLevel = 2 },  -- silences and counterspells
         ["Leprous Technician"]          = 8,   -- disease caster
         ["Leprous Gnome"]               = 5,     -- humanoid, CC-able
         ["Caverndeep Burrower"]         = 5,     -- beast, trappable
-        ["Mobile Alert System"]         = 8,   -- calls reinforcements
+        ["Mobile Alert System"]         = { mark = 8, dangerLevel = 3 },  -- calls reinforcements
         ["Dark Iron Agent"]             = 8,   -- stealth + sabotage
     },
 
     ["Razorfen Kraul"] = {
-        ["Razorfen Dustweaver"]         = 8,   -- lightning + heal
+        ["Razorfen Dustweaver"]         = { mark = 8, dangerLevel = 2 },  -- lightning + heal
         ["Razorfen Geomancer"]          = 8,   -- earth caster
         ["Death's Head Seer"]           = 8,   -- shadow bolt volley
         ["Death's Head Cultist"]        = 8,   -- shadow caster
         ["Razorfen Servitor"]           = 5,     -- humanoid, CC-able
-        ["Razorfen Beastmaster"]        = 8,   -- beast caller
+        ["Razorfen Beastmaster"]        = { mark = 8, dangerLevel = 3 },  -- beast caller
         ["Kraul Bat"]                   = "SKIP",   -- ambient beast filler
     },
 
     ["Razorfen Downs"] = {
-        ["Death's Head Necromancer"]    = 8,   -- raises undead
-        ["Death's Head Sage"]           = 8,   -- shadow caster + heal
+        ["Death's Head Necromancer"]    = { mark = 8, dangerLevel = 3 },  -- raises undead
+        ["Death's Head Sage"]           = { mark = 8, dangerLevel = 2 },  -- shadow caster + heal
         ["Withered Quilguard"]          = 5,     -- can be CC'd
         ["Frozen Soul"]                 = 5,     -- undead, shackleable
     },
 
     ["Scarlet Halls"] = {
         ["Scarlet Evoker"]              = 8,   -- fire caster; flamestrike
-        ["Scarlet Treasurer"]           = 8,   -- healer
+        ["Scarlet Treasurer"]           = { mark = 8, dangerLevel = 3 },  -- healer
         ["Scarlet Scholar"]             = 8,   -- arcane caster
         ["Scarlet Cannoneer"]           = 8,   -- ranged; interrupt priority
-        ["Master Dog Trainer"]          = 8,   -- beast caller
+        ["Master Dog Trainer"]          = { mark = 8, dangerLevel = 3 },  -- beast caller
         ["Scarlet Evangelist"]          = 5,     -- humanoid, CC-able
         ["Hound"]                       = "SKIP",   -- pet filler; kill trainer
     },
 
     ["Scarlet Monastery"] = {
         ["Scarlet Zealot"]              = 8,   -- fanatical self-buffer
-        ["Scarlet Chaplain"]            = 8,   -- healer; must die first
+        ["Scarlet Chaplain"]            = { mark = 8, dangerLevel = 3 },  -- healer; must die first
         ["Scarlet Judicator"]           = 8,   -- holy caster + judgement
         ["Scarlet Fanatic"]             = 5,     -- humanoid, CC-able
-        ["Scarlet Friar"]               = 8,   -- healer
+        ["Scarlet Friar"]               = { mark = 8, dangerLevel = 3 },  -- healer
         ["Scarlet Purifier"]            = 8,   -- consecration + holy fire
     },
 
     ["Zul'Farrak"] = {
-        ["Sandfury Witch Doctor"]       = 8,   -- healer + hex
+        ["Sandfury Witch Doctor"]       = { mark = 8, dangerLevel = 3 },  -- healer + hex
         ["Sandfury Shadowcaster"]       = 8,   -- shadow bolt volley
         ["Sandfury Firecaller"]         = 8,   -- fire nova + fireball
         ["Sandfury Blood Drinker"]      = 8,   -- life drain caster
@@ -125,14 +125,14 @@ AutoMarkAssist_MobDB = {
     ["Maraudon"] = {
         ["Celebras Elementalist"]       = 8,   -- nature caster
         ["Barbed Lasher"]               = 5,     -- plant, incapacitateable
-        ["Putrid Shrieker"]             = 8,   -- fear + disease
+        ["Putrid Shrieker"]             = { mark = 8, dangerLevel = 2 },  -- fear + disease
         ["Vile Larva"]                  = "SKIP",   -- swarm filler
         ["Centaur Pariah"]              = 8,   -- caster
     },
 
     ["Dire Maul"] = {
         ["Gordok Ogre-Mage"]            = 8,   -- arcane caster
-        ["Gordok Warlock"]              = 8,   -- shadow bolt + summons
+        ["Gordok Warlock"]              = { mark = 8, dangerLevel = 3 },  -- shadow bolt + summons
         ["Gordok Mage-Lord"]            = 8,   -- polymorph + blizzard
         ["Gordok Bushwacker"]           = 5,     -- humanoid, CC-able
         ["Wildspawn Imp"]               = 5,     -- demon, banishable
@@ -144,11 +144,11 @@ AutoMarkAssist_MobDB = {
 
     ["Stratholme"] = {
         ["Risen Sorcerer"]              = 8,   -- shadow caster
-        ["Risen Priest"]                = 8,   -- healer
+        ["Risen Priest"]                = { mark = 8, dangerLevel = 3 },  -- healer
         ["Crimson Sorcerer"]            = 8,   -- fire mage caster
-        ["Crimson Priest"]              = 8,   -- healer
+        ["Crimson Priest"]              = { mark = 8, dangerLevel = 3 },  -- healer
         ["Crimson Gallant"]             = 5,     -- humanoid, CC-able
-        ["Thuzadin Necromancer"]        = 8,   -- raises undead
+        ["Thuzadin Necromancer"]        = { mark = 8, dangerLevel = 3 },  -- raises undead
         ["Thuzadin Shadowcaster"]       = 8,   -- shadow caster
         ["Mindless Skeleton"]           = "SKIP",   -- mass undead filler
         ["Plagued Rat"]                 = "SKIP",   -- ambient filler
@@ -156,7 +156,7 @@ AutoMarkAssist_MobDB = {
 
     ["Scholomance"] = {
         ["Scholomance Acolyte"]         = 8,   -- shadow caster
-        ["Scholomance Necrolyte"]       = 8,   -- healer + raises adds
+        ["Scholomance Necrolyte"]       = { mark = 8, dangerLevel = 3 },  -- healer + raises adds
         ["Scholomance Neophyte"]        = 5,     -- humanoid, CC-able
         ["Boneweaver"]                  = 8,   -- bone caster
         ["Candlestick Mage"]            = 8,   -- fire caster
@@ -165,7 +165,7 @@ AutoMarkAssist_MobDB = {
 
     ["The Temple of Atal'Hakkar"] = {
         ["Atal'ai Deathwalker"]         = 8,   -- shadow damage caster
-        ["Atal'ai Priest"]              = 8,   -- healer
+        ["Atal'ai Priest"]              = { mark = 8, dangerLevel = 3 },  -- healer
         ["Atal'ai Witch Doctor"]        = 8,   -- hex + heal
         ["Atal'ai Slave"]               = 5,     -- humanoid, CC-able
         ["Gaseous Lurker"]              = 5,     -- elemental, banishable
@@ -176,20 +176,20 @@ AutoMarkAssist_MobDB = {
         ["Shadowforge Surveyor"]        = 8,   -- ranged caster
         ["Shadowforge Flame Keeper"]    = 8,   -- fire damage + buff
         ["Shadowforge Sharpshooter"]    = 8,   -- ranged multishot
-        ["Dark Iron Medic"]             = 8,   -- healer
+        ["Dark Iron Medic"]             = { mark = 8, dangerLevel = 3 },  -- healer
         ["Shadowforge Senator"]         = 8,   -- fireball + flamestrike
         ["Dark Iron Tastetester"]       = 5,     -- humanoid, CC-able
-        ["Anvilrage Officer"]           = 8,   -- rallies nearby mobs
+        ["Anvilrage Officer"]           = { mark = 8, dangerLevel = 3 },  -- rallies nearby mobs
     },
 
     ["Lower Blackrock Spire"] = {
-        ["Blackhand Summoner"]          = 8,   -- fire caster + demon summons
+        ["Blackhand Summoner"]          = { mark = 8, dangerLevel = 3 },  -- fire caster + demon summons
         ["Blackhand Incarcerator"]      = 8,   -- stuns party members
-        ["Smolderthorn Shadow Priest"]  = 8,   -- healer + shadow damage
-        ["Smolderthorn Witch Doctor"]   = 8,   -- healer + hex
+        ["Smolderthorn Shadow Priest"]  = { mark = 8, dangerLevel = 3 },  -- healer + shadow damage
+        ["Smolderthorn Witch Doctor"]   = { mark = 8, dangerLevel = 3 },  -- healer + hex
         ["Smolderthorn Seer"]           = 8,   -- lightning bolt caster
         ["Smolderthorn Headhunter"]     = 5,     -- humanoid, CC-able
-        ["Scarshield Warlock"]          = 8,   -- demon summoner
+        ["Scarshield Warlock"]          = { mark = 8, dangerLevel = 3 },  -- demon summoner
         ["Scarshield Spellbinder"]      = 8,   -- counterspell + arcane
         ["Spirestone Mystic"]           = 8,   -- caster
         ["Spirestone Ogre Magus"]       = 8,   -- frostbolt + polymorph
@@ -202,8 +202,8 @@ AutoMarkAssist_MobDB = {
 
     ["Molten Core"] = {
         ["Firelord"]                    = 8,
-        ["Flamewaker Healer"]          = 8,
-        ["Flamewaker Priest"]          = 8,
+        ["Flamewaker Healer"]          = { mark = 8, dangerLevel = 3 },
+        ["Flamewaker Priest"]          = { mark = 8, dangerLevel = 3 },
         ["Firesworn"]                  = 8,
         ["Son of Flame"]               = 8,
         ["Ancient Core Hound"]         = 5,

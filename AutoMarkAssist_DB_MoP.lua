@@ -11,9 +11,9 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Temple of the Jade Serpent"] = {
-    ["Fallen Waterspeaker"]         = 8,   -- healer + water caster
-    ["Haunting Sha"]                = 8,   -- shadow damage + fear
-    ["Depraved Mistweaver"]         = 8,   -- healer
+    ["Fallen Waterspeaker"]         = { mark = 8, dangerLevel = 3 },  -- healer + water caster
+    ["Haunting Sha"]                = { mark = 8, dangerLevel = 2 },  -- shadow damage + fear
+    ["Depraved Mistweaver"]         = { mark = 8, dangerLevel = 3 },  -- healer
     ["Minion of Doubt"]             = 5,     -- sha spawn, CC-able
     ["Shambling Infester"]          = 5,     -- undead-type, CC-able
     ["Corrupted Scroll"]            = "SKIP",   -- scroll filler
@@ -59,7 +59,7 @@ db["Siege of Niuzao Temple"] = {
 
 db["Mogu'shan Palace"] = {
     ["Glintrok Skulker"]            = 8,   -- stealth + backstab
-    ["Glintrok Oracle"]             = 8,   -- healer
+    ["Glintrok Oracle"]             = { mark = 8, dangerLevel = 3 },  -- healer
     ["Glintrok Hexxer"]             = 8,   -- hex + shadow damage
     ["Kargesh Grunt"]               = 5,     -- humanoid, CC-able
     ["Quilen Guardian"]             = 5,     -- beast, CC-able
@@ -97,7 +97,7 @@ db["Heart of Fear"] = {
     ["Kor'thik Warsinger"]          = 8,
     ["Sra'thik Ambercaller"]        = 8,
     ["Sra'thik Amber-Trapper"]      = 8,
-    ["Zar'thik Battle-Mender"]      = 8,   -- healer
+    ["Zar'thik Battle-Mender"]      = { mark = 8, dangerLevel = 3 },  -- healer
     ["Zar'thik Augurer"]            = 8,
     ["Set'thik Gale-Slicer"]        = 8,
     ["Set'thik Tempest"]            = 8,
