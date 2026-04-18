@@ -25,175 +25,397 @@ AutoMarkAssist_MobDB = {
     -- ============================================================
 
     ["Ragefire Chasm"] = {
-        ["Corrupted Houndmaster"]       = { mark = 8, dangerLevel = 3 },  -- calls beasts; kill first
-        ["Dark Shaman Acolyte"]         = 8,   -- flame shock caster
-        ["Molten Elemental"]            = 5,     -- elemental, banishable
+        ["Searing Blade Cultist"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Searing Blade Enforcer"]      = { mark = 5, creatureType = "Humanoid" },
+        ["Searing Blade Warlock"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- shadow caster
+        ["Corrupted Houndmaster"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- calls beasts
+        ["Dark Shaman Acolyte"]         = { mark = 8, creatureType = "Humanoid" },  -- flame shock caster
+        ["Molten Elemental"]            = { mark = 5, creatureType = "Elemental" },
+        ["Ragefire Shaman"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Ragefire Trogg"]              = { mark = 5, creatureType = "Humanoid" },
     },
 
     ["Wailing Caverns"] = {
-        ["Druid of the Fang"]           = { mark = 8, dangerLevel = 3 },  -- healer + lightning bolt caster
-        ["Deviate Viper"]               = 5,     -- beast, trappable
-        ["Deviate Adder"]               = 5,     -- beast, trappable
-        ["Serpentbloom Snake"]          = "SKIP",   -- ambient filler
+        ["Druid of the Fang"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer + lightning
+        ["Deviate Viper"]               = { mark = 5, creatureType = "Beast" },
+        ["Deviate Adder"]               = { mark = 5, creatureType = "Beast" },
+        ["Deviate Raptor"]              = { mark = 5, creatureType = "Beast" },
+        ["Deviate Ravager"]             = { mark = 5, creatureType = "Beast" },
+        ["Deviate Shambler"]            = { mark = 8, creatureType = "Beast" },
+        ["Deviate Stinglash"]           = { mark = 5, creatureType = "Beast" },
+        ["Serpentbloom Snake"]          = "SKIP",
+        ["Deviate Moccasin"]            = { mark = 5, creatureType = "Beast" },
     },
 
     ["The Deadmines"] = {
-        ["Defias Blood Wizard"]         = { mark = 8, dangerLevel = 2 },  -- fire caster; interrupt priority
-        ["Defias Squallshaper"]         = 8,   -- frost caster + heal
-        ["Defias Envoker"]              = 8,   -- holy fire caster
-        ["Defias Pirate"]               = 5,     -- humanoid, CC-able
-        ["Defias Taskmaster"]           = 8,   -- buffs nearby adds
+        ["Defias Blood Wizard"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- fire caster
+        ["Defias Squallshaper"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- frost caster + heal
+        ["Defias Envoker"]              = { mark = 8, creatureType = "Humanoid" },  -- holy fire caster
+        ["Defias Pirate"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Taskmaster"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- buffs allies
+        ["Defias Overseer"]             = { mark = 8, creatureType = "Humanoid" },
+        ["Defias Evoker"]               = { mark = 8, creatureType = "Humanoid" },
+        ["Defias Cannoneer"]             = { mark = 8, creatureType = "Humanoid" },
+        ["Defias Watcher"]              = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Strip Miner"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Goblin Woodcarver"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Goblin Engineer"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Goblin Shipbuilder"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Miner"]                = { mark = 5, creatureType = "Humanoid" },
     },
 
     ["Shadowfang Keep"] = {
-        ["Tormented Officer"]           = 8,   -- forsaken caster
-        ["Wailing Guardsman"]           = { mark = 8, dangerLevel = 2 },  -- screaming strikes + fear
-        ["Unstable Ravager"]            = 8,   -- volatile damage
-        ["Dark Creeper"]                = 5,     -- stealth mob, CC-able
-        ["Corpse Eater"]                = 5,     -- beast, trappable
+        ["Tormented Officer"]           = { mark = 8, creatureType = "Undead" },
+        ["Wailing Guardsman"]           = { mark = 8, creatureType = "Undead", dangerLevel = 2 },  -- fear
+        ["Unstable Ravager"]            = { mark = 8, creatureType = "Beast" },
+        ["Shadowfang Darksoul"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowfang Glutton"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowfang Moonwalker"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowfang Ragetooth"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowfang Whitescalp"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowfang Wolfguard"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Creeper"]                = { mark = 5, creatureType = "Humanoid" },  -- stealth
+        ["Corpse Eater"]                = { mark = 5, creatureType = "Beast" },
+        ["Bleak Worg"]                  = { mark = 5, creatureType = "Beast" },
+        ["Slavering Worg"]              = { mark = 5, creatureType = "Beast" },
+        ["Lupine Horror"]               = { mark = 8, creatureType = "Beast" },
+        ["Lupine Delusion"]             = { mark = 5, creatureType = "Beast" },
+        ["Fel Steed"]                   = { mark = 5, creatureType = "Demon" },
+        ["Vile Bat"]                    = { mark = 5, creatureType = "Beast" },
     },
 
     ["The Stockade"] = {
         ["Defias Captive"]              = { mark = 7, creatureType = "Humanoid" },
         ["Defias Prisoner"]             = { mark = 5, creatureType = "Humanoid" },
         ["Defias Insurgent"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Defias Convict"]              = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Inmate"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Defias Wizard"]               = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
         ["Riverpaw Mystic"]             = { mark = 8, creatureType = "Humanoid" },
+        ["Riverpaw Overseer"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Riverpaw Herbalist"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Riverpaw Brute"]              = { mark = 5, creatureType = "Humanoid" },
     },
 
     ["Blackfathom Deeps"] = {
-        ["Twilight Aquamancer"]         = 8,   -- frost caster
-        ["Twilight Shadowmage"]         = 8,   -- shadow bolt volley
-        ["Blackfathom Tide Priestess"]  = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Murkshallow Snapclaw"]        = 5,     -- beast, trappable
-        ["Fallenroot Rogue"]            = 5,     -- stealth, humanoid CC-able
+        ["Twilight Aquamancer"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- frost caster
+        ["Twilight Shadowmage"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Twilight Loreseeker"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Twilight Acolyte"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Twilight Thug"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Blackfathom Tide Priestess"]  = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
+        ["Murkshallow Snapclaw"]        = { mark = 5, creatureType = "Beast" },
+        ["Fallenroot Rogue"]            = { mark = 5, creatureType = "Demon" },  -- Satyr are Demon
+        ["Fallenroot Shaman"]           = { mark = 8, creatureType = "Demon" },
+        ["Fallenroot Satyr"]            = { mark = 5, creatureType = "Demon" },
+        ["Barbed Crustacean"]           = { mark = 5, creatureType = "Beast" },
+        ["Aku'mai Servant"]             = { mark = 5, creatureType = "Beast" },
+        ["Aku'mai Snapjaw"]             = { mark = 5, creatureType = "Beast" },
     },
 
     ["Gnomeregan"] = {
-        ["Arcane Nullifier X-21"]       = { mark = 8, dangerLevel = 2 },  -- silences and counterspells
-        ["Leprous Technician"]          = 8,   -- disease caster
-        ["Leprous Gnome"]               = 5,     -- humanoid, CC-able
-        ["Caverndeep Burrower"]         = 5,     -- beast, trappable
-        ["Mobile Alert System"]         = { mark = 8, dangerLevel = 3 },  -- calls reinforcements
-        ["Dark Iron Agent"]             = 8,   -- stealth + sabotage
+        ["Arcane Nullifier X-21"]       = { mark = 8, creatureType = "Mechanical", dangerLevel = 2, ccImmune = true },
+        ["Leprous Technician"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Leprous Machinesmith"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Leprous Gnome"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Leprous Assistant"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Caverndeep Burrower"]         = { mark = 5, creatureType = "Humanoid" },  -- Troggs are Humanoid
+        ["Caverndeep Ambusher"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Caverndeep Looter"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Caverndeep Trapper"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Mobile Alert System"]         = { mark = 8, creatureType = "Mechanical", dangerLevel = 3, ccImmune = true },
+        ["Dark Iron Agent"]             = { mark = 8, creatureType = "Humanoid" },  -- stealth
+        ["Dark Iron Ambassador"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Crowd Pummeler 9-60"]         = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+        ["Peacekeeper Security Suit"]   = { mark = 5, creatureType = "Mechanical", ccImmune = true },
+        ["Alarm-a-bomb 2600"]           = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+        ["Security Golem"]              = { mark = 5, creatureType = "Mechanical", ccImmune = true },
+        ["Walking Bomb"]                = "SKIP",
     },
 
     ["Razorfen Kraul"] = {
-        ["Razorfen Dustweaver"]         = { mark = 8, dangerLevel = 2 },  -- lightning + heal
-        ["Razorfen Geomancer"]          = 8,   -- earth caster
-        ["Death's Head Seer"]           = 8,   -- shadow bolt volley
-        ["Death's Head Cultist"]        = 8,   -- shadow caster
-        ["Razorfen Servitor"]           = 5,     -- humanoid, CC-able
-        ["Razorfen Beastmaster"]        = { mark = 8, dangerLevel = 3 },  -- beast caller
-        ["Kraul Bat"]                   = "SKIP",   -- ambient beast filler
+        ["Razorfen Dustweaver"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- lightning + heal
+        ["Razorfen Geomancer"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Razorfen Warden"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Razorfen Defender"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Razorfen Battleguard"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Death's Head Seer"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Death's Head Cultist"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Death's Head Adept"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Razorfen Servitor"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Razorfen Beastmaster"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- beast caller
+        ["Razorfen Handler"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Greater Kraul Bat"]           = { mark = 5, creatureType = "Beast" },
+        ["Kraul Bat"]                   = "SKIP",
+        ["Agile Kraul"]                 = { mark = 5, creatureType = "Beast" },
     },
 
     ["Razorfen Downs"] = {
-        ["Death's Head Necromancer"]    = { mark = 8, dangerLevel = 3 },  -- raises undead
-        ["Death's Head Sage"]           = { mark = 8, dangerLevel = 2 },  -- shadow caster + heal
-        ["Withered Quilguard"]          = 5,     -- can be CC'd
-        ["Frozen Soul"]                 = 5,     -- undead, shackleable
+        ["Death's Head Necromancer"]    = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- raises undead
+        ["Death's Head Sage"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Death's Head Priest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Death's Head Ward Keeper"]    = { mark = 8, creatureType = "Humanoid" },
+        ["Withered Quilguard"]          = { mark = 5, creatureType = "Undead" },
+        ["Withered Battle Boar"]        = { mark = 5, creatureType = "Undead" },
+        ["Withered Reaver"]             = { mark = 5, creatureType = "Undead" },
+        ["Withered Spearhide"]          = { mark = 5, creatureType = "Undead" },
+        ["Frozen Soul"]                 = { mark = 5, creatureType = "Undead" },
+        ["Plaguemaw the Rotting"]       = { mark = 8, creatureType = "Undead" },
+        ["Tomb Fiend"]                  = { mark = 5, creatureType = "Undead" },
+        ["Tomb Reaver"]                 = { mark = 5, creatureType = "Undead" },
     },
 
     ["Scarlet Halls"] = {
-        ["Scarlet Evoker"]              = 8,   -- fire caster; flamestrike
-        ["Scarlet Treasurer"]           = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Scarlet Scholar"]             = 8,   -- arcane caster
-        ["Scarlet Cannoneer"]           = 8,   -- ranged; interrupt priority
-        ["Master Dog Trainer"]          = { mark = 8, dangerLevel = 3 },  -- beast caller
-        ["Scarlet Evangelist"]          = 5,     -- humanoid, CC-able
-        ["Hound"]                       = "SKIP",   -- pet filler; kill trainer
+        ["Scarlet Evoker"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Treasurer"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
+        ["Scarlet Scholar"]             = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Cannoneer"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Master Dog Trainer"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- beast caller
+        ["Scarlet Evangelist"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Scarlet Myrmidon"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Scarlet Defender"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Hound"]                       = "SKIP",
     },
 
     ["Scarlet Monastery"] = {
-        ["Scarlet Zealot"]              = 8,   -- fanatical self-buffer
-        ["Scarlet Chaplain"]            = { mark = 8, dangerLevel = 3 },  -- healer; must die first
-        ["Scarlet Judicator"]           = 8,   -- holy caster + judgement
-        ["Scarlet Fanatic"]             = 5,     -- humanoid, CC-able
-        ["Scarlet Friar"]               = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Scarlet Purifier"]            = 8,   -- consecration + holy fire
+        ["Scarlet Zealot"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Chaplain"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
+        ["Scarlet Judicator"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Fanatic"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Scarlet Friar"]               = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
+        ["Scarlet Purifier"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Centurion"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Scarlet Torturer"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Interrogator"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Scarlet Wizard"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Scarlet Abbot"]               = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Scarlet Monk"]                = { mark = 5, creatureType = "Humanoid" },
+        ["Scarlet Sorcerer"]            = { mark = 8, creatureType = "Humanoid" },
     },
 
     ["Zul'Farrak"] = {
-        ["Sandfury Witch Doctor"]       = { mark = 8, dangerLevel = 3 },  -- healer + hex
-        ["Sandfury Shadowcaster"]       = 8,   -- shadow bolt volley
-        ["Sandfury Firecaller"]         = 8,   -- fire nova + fireball
-        ["Sandfury Blood Drinker"]      = 8,   -- life drain caster
-        ["Sandfury Zealot"]             = 5,     -- humanoid, CC-able
-        ["Troll Totem"]                 = "SKIP",   -- totem filler
+        ["Sandfury Witch Doctor"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer + hex
+        ["Sandfury Shadowcaster"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Sandfury Firecaller"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Sandfury Blood Drinker"]      = { mark = 8, creatureType = "Humanoid" },
+        ["Sandfury Zealot"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Sandfury Axe Thrower"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Sandfury Drudge"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Sandfury Guardian"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Sandfury Hideskinner"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Sandfury Soul Eater"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Sandfury Executioner"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Sul'lithuz Warder"]           = { mark = 5, creatureType = "Beast" },
+        ["Sul'lithuz Broodling"]        = { mark = 5, creatureType = "Beast" },
+        ["Troll Totem"]                 = "SKIP",
     },
 
     ["Maraudon"] = {
-        ["Celebras Elementalist"]       = 8,   -- nature caster
-        ["Barbed Lasher"]               = 5,     -- plant, incapacitateable
-        ["Putrid Shrieker"]             = { mark = 8, dangerLevel = 2 },  -- fear + disease
-        ["Vile Larva"]                  = "SKIP",   -- swarm filler
-        ["Centaur Pariah"]              = 8,   -- caster
+        ["Celebras Elementalist"]       = { mark = 8, creatureType = "Elemental" },
+        ["Barbed Lasher"]               = { mark = 5, creatureType = "Elemental" },  -- plants
+        ["Putrid Shrieker"]             = { mark = 8, creatureType = "Elemental", dangerLevel = 2 },  -- fear
+        ["Vile Larva"]                  = "SKIP",
+        ["Centaur Pariah"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Maraudine Bonepaw"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Maraudine Stormer"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Maraudine Scout"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Maraudine Khan Advisor"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Maraudine Wrangler"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Meshlok the Harvester"]       = { mark = 8, creatureType = "Elemental" },
+        ["Theradrim Guardian"]          = { mark = 8, creatureType = "Elemental" },
+        ["Theradrim Shardling"]         = { mark = 5, creatureType = "Elemental" },
+        ["Thessala Hydra"]              = { mark = 8, creatureType = "Beast", ccImmune = true },
+        ["Noxxion's Spawn"]             = "SKIP",
+        ["Poison Sprite"]               = { mark = 5, creatureType = "Elemental" },
+        ["Spewed Larva"]                = "SKIP",
     },
 
     ["Dire Maul"] = {
-        ["Gordok Ogre-Mage"]            = 8,   -- arcane caster
-        ["Gordok Warlock"]              = { mark = 8, dangerLevel = 3 },  -- shadow bolt + summons
-        ["Gordok Mage-Lord"]            = 8,   -- polymorph + blizzard
-        ["Gordok Bushwacker"]           = 5,     -- humanoid, CC-able
-        ["Wildspawn Imp"]               = 5,     -- demon, banishable
-        ["Wildspawn Shadowstalker"]     = 8,   -- stealth + backstab
-        ["Wildspawn Felsworn"]          = 8,   -- fel caster
-        ["Warpwood Treant"]             = 5,     -- nature mob, incapacitateable
-        ["Felvine Shard"]               = "SKIP",   -- environmental filler
+        ["Gordok Ogre-Mage"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Gordok Warlock"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- demon summoner
+        ["Gordok Mage-Lord"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Gordok Bushwacker"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Gordok Brute"]                = { mark = 5, creatureType = "Humanoid" },
+        ["Gordok Enforcer"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Gordok Reaver"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Gordok Mastiff"]              = { mark = 5, creatureType = "Beast" },
+        ["Gordok Captain"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Gordok Mauler"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Wildspawn Imp"]               = { mark = 4, creatureType = "Demon" },  -- banish
+        ["Wildspawn Shadowstalker"]     = { mark = 8, creatureType = "Demon" },
+        ["Wildspawn Felsworn"]          = { mark = 8, creatureType = "Demon" },
+        ["Wildspawn Rogue"]             = { mark = 5, creatureType = "Demon" },
+        ["Wildspawn Satyr"]             = { mark = 5, creatureType = "Demon" },
+        ["Wildspawn Betrayer"]          = { mark = 5, creatureType = "Demon" },
+        ["Warpwood Treant"]             = { mark = 5, creatureType = "Elemental" },
+        ["Warpwood Stomper"]            = { mark = 5, creatureType = "Elemental" },
+        ["Warpwood Guardian"]           = { mark = 5, creatureType = "Elemental" },
+        ["Warpwood Moss Flayer"]        = { mark = 5, creatureType = "Elemental" },
+        ["Warpwood Shredder"]           = { mark = 5, creatureType = "Elemental" },
+        ["Felvine Shard"]               = "SKIP",
+        ["Lethtendris"]                 = { mark = 8, creatureType = "Humanoid" },
+        ["Hydrospawn"]                  = { mark = 8, creatureType = "Elemental" },
+        ["Mushgog"]                     = { mark = 8, creatureType = "Elemental" },
+        ["Isalien"]                     = { mark = 8, creatureType = "Humanoid" },
+        ["Zevrim Thornhoof"]            = { mark = 8, creatureType = "Demon" },
     },
 
     ["Stratholme"] = {
-        ["Risen Sorcerer"]              = 8,   -- shadow caster
-        ["Risen Priest"]                = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Crimson Sorcerer"]            = 8,   -- fire mage caster
-        ["Crimson Priest"]              = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Crimson Gallant"]             = 5,     -- humanoid, CC-able
-        ["Thuzadin Necromancer"]        = { mark = 8, dangerLevel = 3 },  -- raises undead
-        ["Thuzadin Shadowcaster"]       = 8,   -- shadow caster
-        ["Mindless Skeleton"]           = "SKIP",   -- mass undead filler
-        ["Plagued Rat"]                 = "SKIP",   -- ambient filler
+        ["Risen Sorcerer"]              = { mark = 8, creatureType = "Undead" },
+        ["Risen Priest"]                = { mark = 8, creatureType = "Undead", dangerLevel = 3 },  -- healer
+        ["Risen Lackey"]                = { mark = 5, creatureType = "Undead" },
+        ["Risen Bonewarder"]            = { mark = 5, creatureType = "Undead" },
+        ["Risen Warlord"]               = { mark = 8, creatureType = "Undead" },
+        ["Risen Guard"]                 = { mark = 5, creatureType = "Undead" },
+        ["Risen Constable"]             = { mark = 5, creatureType = "Undead" },
+        ["Risen Hammersmith"]           = { mark = 5, creatureType = "Undead" },
+        ["Risen Deathsworn"]            = { mark = 8, creatureType = "Undead" },
+        ["Crimson Sorcerer"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Crimson Priest"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Crimson Gallant"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Crimson Inquisitor"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Crimson Conjurer"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Crimson Initiate"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Crimson Defender"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Crimson Battle Mage"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Crimson Monk"]                = { mark = 5, creatureType = "Humanoid" },
+        ["Thuzadin Necromancer"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Thuzadin Shadowcaster"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Thuzadin Acolyte"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Eye of Naxxramas"]            = { mark = 8, creatureType = "Undead", dangerLevel = 2 },
+        ["Ash'ari Crystal"]             = "SKIP",
+        ["Skeletal Sorcerer"]           = { mark = 8, creatureType = "Undead" },
+        ["Skeletal Guardian"]           = { mark = 5, creatureType = "Undead" },
+        ["Skeletal Berserker"]          = { mark = 5, creatureType = "Undead" },
+        ["Mindless Skeleton"]           = "SKIP",
+        ["Mindless Zombie"]             = "SKIP",
+        ["Plagued Rat"]                 = "SKIP",
+        ["Plagued Maggot"]              = "SKIP",
+        ["Plagued Gargoyle"]            = { mark = 5, creatureType = "Undead" },
+        ["Plagued Ghoul"]               = { mark = 5, creatureType = "Undead" },
+        ["Patchwork Horror"]            = { mark = 5, creatureType = "Undead" },
+        ["Ghostly Citizen"]             = { mark = 5, creatureType = "Undead" },
+        ["Spectral Citizen"]            = { mark = 5, creatureType = "Undead" },
+        ["Cannibal Ghoul"]              = { mark = 5, creatureType = "Undead" },
+        ["Crypt Crawler"]               = { mark = 5, creatureType = "Beast" },
+        ["Crypt Beast"]                 = { mark = 5, creatureType = "Beast" },
+        ["Crypt Slayer"]                = { mark = 5, creatureType = "Beast" },
+        ["Crypt Fiend"]                 = { mark = 8, creatureType = "Undead" },
+        ["Venom Belcher"]               = { mark = 5, creatureType = "Beast" },
     },
 
     ["Scholomance"] = {
-        ["Scholomance Acolyte"]         = 8,   -- shadow caster
-        ["Scholomance Necrolyte"]       = { mark = 8, dangerLevel = 3 },  -- healer + raises adds
-        ["Scholomance Neophyte"]        = 5,     -- humanoid, CC-able
-        ["Boneweaver"]                  = 8,   -- bone caster
-        ["Candlestick Mage"]            = 8,   -- fire caster
-        ["Reanimated Corpse"]           = "SKIP",   -- mass raise filler
+        ["Scholomance Acolyte"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Scholomance Necrolyte"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Scholomance Neophyte"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Scholomance Student"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Scholomance Adept"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Scholomance Dark Summoner"]   = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Scholomance Occultist"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Boneweaver"]                  = { mark = 8, creatureType = "Undead" },
+        ["Candlestick Mage"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Reanimated Corpse"]           = "SKIP",
+        ["Risen Construct"]             = { mark = 5, creatureType = "Undead" },
+        ["Risen Abomination"]           = { mark = 5, creatureType = "Undead" },
+        ["Risen Protector"]             = { mark = 5, creatureType = "Undead" },
+        ["Risen Guardsman"]             = { mark = 5, creatureType = "Undead" },
+        ["Unstable Corpse"]             = { mark = 5, creatureType = "Undead" },
+        ["Wailing Death"]               = { mark = 8, creatureType = "Undead", dangerLevel = 2 },
+        ["Diseased Ghoul"]              = { mark = 5, creatureType = "Undead" },
     },
 
     ["The Temple of Atal'Hakkar"] = {
-        ["Atal'ai Deathwalker"]         = 8,   -- shadow damage caster
-        ["Atal'ai Priest"]              = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Atal'ai Witch Doctor"]        = 8,   -- hex + heal
-        ["Atal'ai Slave"]               = 5,     -- humanoid, CC-able
-        ["Gaseous Lurker"]              = 5,     -- elemental, banishable
-        ["Jade Ooze"]                   = "SKIP",   -- environmental filler
+        ["Atal'ai Deathwalker"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Atal'ai Priest"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Atal'ai Witch Doctor"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Atal'ai Slave"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Atal'ai Warrior"]              = { mark = 5, creatureType = "Humanoid" },
+        ["Atal'ai High Priest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Gaseous Lurker"]              = { mark = 4, creatureType = "Elemental" },
+        ["Suppressor"]                  = { mark = 5, creatureType = "Elemental" },
+        ["Murk Spawn"]                  = { mark = 5, creatureType = "Elemental" },
+        ["Temple Interior Guardian"]    = { mark = 5, creatureType = "Humanoid" },
+        ["Hakkari Bloodkeeper"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Hakkari Frostwing"]           = { mark = 5, creatureType = "Dragonkin" },
+        ["Hakkari Minion"]              = { mark = 5, creatureType = "Humanoid" },
+        ["Hakkari Oracle"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Hakkari Shadowcaster"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Jade Ooze"]                   = "SKIP",
+        ["Jade Sludge"]                 = "SKIP",
+        ["Spawn of Hakkar"]             = { mark = 5, creatureType = "Dragonkin" },
     },
 
     ["Blackrock Depths"] = {
-        ["Shadowforge Surveyor"]        = 8,   -- ranged caster
-        ["Shadowforge Flame Keeper"]    = 8,   -- fire damage + buff
-        ["Shadowforge Sharpshooter"]    = 8,   -- ranged multishot
-        ["Dark Iron Medic"]             = { mark = 8, dangerLevel = 3 },  -- healer
-        ["Shadowforge Senator"]         = 8,   -- fireball + flamestrike
-        ["Dark Iron Tastetester"]       = 5,     -- humanoid, CC-able
-        ["Anvilrage Officer"]           = { mark = 8, dangerLevel = 3 },  -- rallies nearby mobs
+        ["Shadowforge Surveyor"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowforge Flame Keeper"]    = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowforge Sharpshooter"]    = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowforge Senator"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Shadowforge Citizen"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowforge Warder"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Shadowforge Darkweaver"]      = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowforge Darkcaster"]      = { mark = 8, creatureType = "Humanoid" },
+        ["Shadowforge Peasant"]         = "SKIP",
+        ["Shadowforge Chanter"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Dark Iron Medic"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Dark Iron Tastetester"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Iron Slaver"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Iron Lookout"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Iron Raider"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Iron Watchman"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Dark Iron Steamsmith"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Anvilrage Officer"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- rallies
+        ["Anvilrage Guardsman"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Anvilrage Warden"]            = { mark = 5, creatureType = "Humanoid" },
+        ["Anvilrage Soldier"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Anvilrage Footman"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Anvilrage Marshal"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Anvilrage Medic"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Anvilrage Reservist"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Ragereaver Golem"]            = { mark = 8, creatureType = "Elemental" },
+        ["Wrath Hammer Construct"]      = { mark = 8, creatureType = "Elemental" },
+        ["Molten War Golem"]            = { mark = 8, creatureType = "Elemental" },
+        ["Core Rager"]                  = { mark = 8, creatureType = "Elemental" },
+        ["Bael'Gar"]                    = { mark = 8, creatureType = "Elemental" },
+        ["Fireguard"]                   = { mark = 5, creatureType = "Elemental" },
+        ["Twilight's Hammer Torturer"]  = { mark = 8, creatureType = "Humanoid" },
+        ["Twilight's Hammer Ambassador"] = { mark = 8, creatureType = "Humanoid" },
+        ["Weapon Technician"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Ironhand Guardian"]           = { mark = 8, creatureType = "Elemental", ccImmune = true },
     },
 
     ["Lower Blackrock Spire"] = {
-        ["Blackhand Summoner"]          = { mark = 8, dangerLevel = 3 },  -- fire caster + demon summons
-        ["Blackhand Incarcerator"]      = 8,   -- stuns party members
-        ["Smolderthorn Shadow Priest"]  = { mark = 8, dangerLevel = 3 },  -- healer + shadow damage
-        ["Smolderthorn Witch Doctor"]   = { mark = 8, dangerLevel = 3 },  -- healer + hex
-        ["Smolderthorn Seer"]           = 8,   -- lightning bolt caster
-        ["Smolderthorn Headhunter"]     = 5,     -- humanoid, CC-able
-        ["Scarshield Warlock"]          = { mark = 8, dangerLevel = 3 },  -- demon summoner
-        ["Scarshield Spellbinder"]      = 8,   -- counterspell + arcane
-        ["Spirestone Mystic"]           = 8,   -- caster
-        ["Spirestone Ogre Magus"]       = 8,   -- frostbolt + polymorph
-        ["Spirestone Battle Mage"]      = 5,     -- humanoid, CC-able
+        ["Blackhand Summoner"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Blackhand Incarcerator"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- stuns
+        ["Blackhand Dragon Handler"]    = { mark = 8, creatureType = "Humanoid" },
+        ["Blackhand Iron Guard"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Blackhand Veteran"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Blackhand Assassin"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Smolderthorn Shadow Priest"]  = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Smolderthorn Witch Doctor"]   = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Smolderthorn Seer"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Smolderthorn Headhunter"]     = { mark = 5, creatureType = "Humanoid" },
+        ["Smolderthorn Berserker"]      = { mark = 5, creatureType = "Humanoid" },
+        ["Smolderthorn Axe Thrower"]    = { mark = 5, creatureType = "Humanoid" },
+        ["Smolderthorn Mystic"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Scarshield Warlock"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Scarshield Spellbinder"]      = { mark = 8, creatureType = "Humanoid" },
+        ["Scarshield Quartermaster"]    = { mark = 5, creatureType = "Humanoid" },
+        ["Scarshield Legionnaire"]      = { mark = 5, creatureType = "Humanoid" },
+        ["Spirestone Mystic"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Spirestone Ogre Magus"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Spirestone Battle Mage"]      = { mark = 5, creatureType = "Humanoid" },
+        ["Spirestone Lord Magus"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Spirestone Warlord"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Spirestone Butcher"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Spirestone Enforcer"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Rage Talon Dragonspawn"]      = { mark = 5, creatureType = "Dragonkin" },
+        ["Rage Talon Flamescale"]       = { mark = 5, creatureType = "Dragonkin" },
+        ["Rage Talon Fire Tongue"]      = { mark = 5, creatureType = "Dragonkin" },
+        ["Rage Talon Captain"]          = { mark = 8, creatureType = "Dragonkin" },
+        ["Firebrand Grunt"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Firebrand Legionnaire"]       = { mark = 5, creatureType = "Humanoid" },
+        ["War Hound"]                   = { mark = 5, creatureType = "Beast" },
+        ["Shadowforge Spirit"]          = { mark = 5, creatureType = "Undead" },
     },
 
     -- ============================================================
@@ -201,159 +423,207 @@ AutoMarkAssist_MobDB = {
     -- ============================================================
 
     ["Molten Core"] = {
-        ["Firelord"]                    = 8,
-        ["Flamewaker Healer"]          = { mark = 8, dangerLevel = 3 },
-        ["Flamewaker Priest"]          = { mark = 8, dangerLevel = 3 },
-        ["Firesworn"]                  = 8,
-        ["Son of Flame"]               = 8,
-        ["Ancient Core Hound"]         = 5,
-        ["Core Hound"]                 = 5,
-        ["Lava Elemental"]             = 5,
-        ["Lava Surger"]                = 5,
-        ["Primal Flame Elemental"]     = 5,
-        ["Flame Imp"]                  = "SKIP",
-        ["Lava Spawn"]                 = "SKIP",
+        ["Firelord"]                    = { mark = 8, creatureType = "Elemental", dangerLevel = 2 },  -- summons Sons of Flame
+        ["Flamewaker"]                  = { mark = 5, creatureType = "Elemental" },
+        ["Flamewaker Elite"]            = { mark = 5, creatureType = "Elemental" },
+        ["Flamewaker Healer"]           = { mark = 8, creatureType = "Elemental", dangerLevel = 3 },
+        ["Flamewaker Priest"]           = { mark = 8, creatureType = "Elemental", dangerLevel = 3 },
+        ["Flamewaker Protector"]        = { mark = 5, creatureType = "Elemental" },
+        ["Firesworn"]                   = { mark = 8, creatureType = "Elemental", dangerLevel = 2 },  -- explodes on death
+        ["Son of Flame"]                = { mark = 8, creatureType = "Elemental" },
+        ["Ancient Core Hound"]          = { mark = 5, creatureType = "Beast" },
+        ["Core Hound"]                  = { mark = 5, creatureType = "Beast" },
+        ["Lava Elemental"]              = { mark = 5, creatureType = "Elemental" },
+        ["Lava Surger"]                 = { mark = 5, creatureType = "Elemental" },
+        ["Lava Annihilator"]            = { mark = 8, creatureType = "Elemental" },
+        ["Lava Reaver"]                 = { mark = 5, creatureType = "Elemental" },
+        ["Primal Flame Elemental"]      = { mark = 5, creatureType = "Elemental" },
+        ["Molten Giant"]                = { mark = 5, creatureType = "Giant" },
+        ["Molten Destroyer"]            = { mark = 5, creatureType = "Giant" },
+        ["Flame Imp"]                   = "SKIP",
+        ["Lava Spawn"]                  = "SKIP",
     },
 
     ["Onyxia's Lair"] = {
-        ["Onyxian Warder"]             = 8,
+        ["Onyxian Warder"]              = { mark = 8, creatureType = "Dragonkin" },
+        ["Onyxian Whelp"]                = "SKIP",
+        ["Onyxian Lair Guard"]          = { mark = 8, creatureType = "Dragonkin" },
     },
 
     ["Blackwing Lair"] = {
-        ["Grethok the Controller"]     = 8,
-        ["Blackwing Mage"]             = 8,
-        ["Blackwing Spellbinder"]      = 8,
-        ["Blackwing Taskmaster"]       = 8,
-        ["Blackwing Warlock"]          = 8,
-        ["Death Talon Captain"]        = 8,
-        ["Death Talon Flamescale"]     = 8,
-        ["Death Talon Hatcher"]        = 8,
-        ["Death Talon Overseer"]       = 8,
-        ["Master Elemental Shaper Krixix"] = 8,
-        ["Enraged Felguard"]           = 5,
-        ["Black Whelp"]                = "SKIP",
-        ["Blue Whelp"]                 = "SKIP",
-        ["Bronze Whelp"]               = "SKIP",
-        ["Corrupted Blue Whelp"]       = "SKIP",
-        ["Corrupted Bronze Whelp"]     = "SKIP",
-        ["Corrupted Green Whelp"]      = "SKIP",
-        ["Corrupted Red Whelp"]        = "SKIP",
-        ["Green Whelp"]                = "SKIP",
-        ["Red Whelp"]                  = "SKIP",
+        ["Grethok the Controller"]     = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Blackwing Mage"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Blackwing Spellbinder"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Blackwing Taskmaster"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Blackwing Warlock"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Blackwing Guardsman"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Blackwing Legionnaire"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Blackwing Technician"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Death Talon Captain"]         = { mark = 8, creatureType = "Dragonkin" },
+        ["Death Talon Flamescale"]      = { mark = 5, creatureType = "Dragonkin" },
+        ["Death Talon Hatcher"]         = { mark = 8, creatureType = "Dragonkin", dangerLevel = 3 },
+        ["Death Talon Overseer"]        = { mark = 5, creatureType = "Dragonkin" },
+        ["Death Talon Seether"]         = { mark = 5, creatureType = "Dragonkin" },
+        ["Death Talon Dragonspawn"]     = { mark = 5, creatureType = "Dragonkin" },
+        ["Death Talon Wyrmkin"]         = { mark = 5, creatureType = "Dragonkin" },
+        ["Death Talon Wyrmguard"]       = { mark = 5, creatureType = "Dragonkin" },
+        ["Master Elemental Shaper Krixix"] = { mark = 8, creatureType = "Humanoid" },
+        ["Enraged Felguard"]            = { mark = 5, creatureType = "Demon" },
+        ["Black Whelp"]                 = "SKIP",
+        ["Blue Whelp"]                  = "SKIP",
+        ["Bronze Whelp"]                = "SKIP",
+        ["Corrupted Blue Whelp"]        = "SKIP",
+        ["Corrupted Bronze Whelp"]      = "SKIP",
+        ["Corrupted Green Whelp"]       = "SKIP",
+        ["Corrupted Red Whelp"]         = "SKIP",
+        ["Green Whelp"]                 = "SKIP",
+        ["Red Whelp"]                   = "SKIP",
     },
 
     ["Zul'Gurub"] = {
-        ["Gurubashi Bat Rider"]        = 8,
-        ["Gurubashi Blood Drinker"]    = 8,
-        ["Hakkari Blood Priest"]       = 8,
-        ["Hakkari Priest"]             = 8,
-        ["Hakkari Shadow Hunter"]      = 8,
-        ["Hakkari Shadowcaster"]       = 8,
-        ["Hakkari Witch Doctor"]       = 8,
-        ["Mad Servant"]                = 8,
-        ["Ohgan"]                      = 8,
-        ["Powerful Healing Ward"]      = 8,
-        ["Son of Hakkar"]              = 8,
-        ["Zanza the Restless"]         = 8,
-        ["Zealot Lor'Khan"]            = 8,
-        ["Mad Voidwalker"]             = 5,
-        ["Razzashi Adder"]             = 5,
-        ["Razzashi Cobra"]             = 5,
-        ["Razzashi Raptor"]            = 5,
-        ["Razzashi Serpent"]           = 5,
-        ["Razzashi Venombrood"]        = 5,
-        ["Zulian Guardian"]            = 5,
-        ["Zulian Panther"]             = 5,
-        ["Zulian Stalker"]             = 5,
-        ["Zulian Tiger"]               = 5,
-        ["Frog"]                       = "SKIP",
-        ["Jungle Toad"]                = "SKIP",
-        ["Parasitic Serpent"]          = "SKIP",
-        ["Snake"]                      = "SKIP",
-        ["Spider"]                     = "SKIP",
-        ["Toad"]                       = "SKIP",
+        ["Gurubashi Bat Rider"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Gurubashi Blood Drinker"]     = { mark = 8, creatureType = "Humanoid" },
+        ["Gurubashi Berserker"]         = { mark = 5, creatureType = "Humanoid" },
+        ["Gurubashi Headhunter"]        = { mark = 5, creatureType = "Humanoid" },
+        ["Gurubashi Axe Thrower"]       = { mark = 5, creatureType = "Humanoid" },
+        ["Gurubashi Champion"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Gurubashi Warrior"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Hakkari Blood Priest"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Hakkari Priest"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Hakkari Shadow Hunter"]       = { mark = 8, creatureType = "Humanoid" },
+        ["Hakkari Shadowcaster"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Hakkari Witch Doctor"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Mad Servant"]                 = { mark = 8, creatureType = "Humanoid" },
+        ["Ohgan"]                       = { mark = 8, creatureType = "Beast" },
+        ["Powerful Healing Ward"]       = { mark = 8, creatureType = "Elemental", dangerLevel = 3 },
+        ["Son of Hakkar"]               = { mark = 8, creatureType = "Dragonkin" },
+        ["Zanza the Restless"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Zealot Lor'Khan"]             = { mark = 8, creatureType = "Humanoid" },
+        ["Zealot Zath"]                 = { mark = 8, creatureType = "Humanoid" },
+        ["Mad Voidwalker"]              = { mark = 4, creatureType = "Demon" },
+        ["Razzashi Adder"]              = { mark = 5, creatureType = "Beast" },
+        ["Razzashi Cobra"]              = { mark = 5, creatureType = "Beast" },
+        ["Razzashi Raptor"]             = { mark = 5, creatureType = "Beast" },
+        ["Razzashi Serpent"]            = { mark = 5, creatureType = "Beast" },
+        ["Razzashi Venombrood"]         = { mark = 5, creatureType = "Beast" },
+        ["Zulian Guardian"]             = { mark = 5, creatureType = "Beast" },
+        ["Zulian Panther"]              = { mark = 5, creatureType = "Beast" },
+        ["Zulian Stalker"]              = { mark = 5, creatureType = "Beast" },
+        ["Zulian Tiger"]                = { mark = 5, creatureType = "Beast" },
+        ["Zulian Prowler"]              = { mark = 5, creatureType = "Beast" },
+        ["Bloodseeker Bat"]             = { mark = 5, creatureType = "Beast" },
+        ["Frog"]                        = "SKIP",
+        ["Jungle Toad"]                 = "SKIP",
+        ["Parasitic Serpent"]           = "SKIP",
+        ["Snake"]                       = "SKIP",
+        ["Spider"]                      = "SKIP",
+        ["Toad"]                        = "SKIP",
     },
 
     ["Ruins of Ahn'Qiraj"] = {
-        ["Anubisath Guardian"]         = 8,
-        ["Anubisath Swarmguard"]       = 8,
-        ["Colonel Zerran"]             = 8,
-        ["Hive'Zara Hornet"]           = 8,
-        ["Hive'Zara Stinger"]          = 8,
-        ["Mana Fiend"]                 = 8,
-        ["Major Yeggeth"]              = 8,
-        ["Obsidian Destroyer"]         = 8,
-        ["Spitting Scarab"]            = 8,
-        ["Swarmguard Needler"]         = 8,
-        ["Beetle"]                     = "SKIP",
-        ["Buru Egg"]                   = "SKIP",
-        ["Canal Frenzy"]               = "SKIP",
-        ["Hive'Zara Larva"]            = "SKIP",
-        ["Scorpion"]                   = "SKIP",
-        ["Silicate Feeder"]            = "SKIP",
+        ["Anubisath Guardian"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Anubisath Swarmguard"]        = { mark = 8, creatureType = "Humanoid" },
+        ["Anubisath Warder"]            = { mark = 8, creatureType = "Humanoid" },
+        ["Colonel Zerran"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Hive'Zara Hornet"]            = { mark = 5, creatureType = "Beast" },
+        ["Hive'Zara Stinger"]           = { mark = 5, creatureType = "Beast" },
+        ["Hive'Zara Soldier"]           = { mark = 5, creatureType = "Beast" },
+        ["Hive'Zara Wasp"]              = { mark = 5, creatureType = "Beast" },
+        ["Mana Fiend"]                  = { mark = 8, creatureType = "Humanoid" },
+        ["Major Yeggeth"]               = { mark = 8, creatureType = "Humanoid" },
+        ["Major Pakkon"]                = { mark = 8, creatureType = "Humanoid" },
+        ["Captain Drenn"]               = { mark = 8, creatureType = "Humanoid" },
+        ["Captain Qeez"]                = { mark = 8, creatureType = "Humanoid" },
+        ["Captain Tuubid"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Captain Xurrem"]              = { mark = 8, creatureType = "Humanoid" },
+        ["Obsidian Destroyer"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- mana drain
+        ["Spitting Scarab"]             = { mark = 5, creatureType = "Beast" },
+        ["Swarmguard Needler"]          = { mark = 5, creatureType = "Beast" },
+        ["Beetle"]                      = "SKIP",
+        ["Buru Egg"]                    = "SKIP",
+        ["Canal Frenzy"]                = "SKIP",
+        ["Hive'Zara Larva"]             = "SKIP",
+        ["Scorpion"]                    = "SKIP",
+        ["Silicate Feeder"]             = "SKIP",
     },
 
     ["Temple of Ahn'Qiraj"] = {
-        ["Anubisath Defender"]         = 8,
-        ["Anubisath Sentinel"]         = 8,
-        ["Eye Tentacle"]               = 8,
-        ["Giant Eye Tentacle"]         = 8,
-        ["Obsidian Eradicator"]        = 8,
-        ["Obsidian Nullifier"]         = 8,
-        ["Qiraji Brainwasher"]         = 8,
-        ["Qiraji Mindslayer"]          = 8,
-        ["Spawn of Fankriss"]          = 8,
-        ["Vekniss Stinger"]            = 8,
-        ["Vekniss Borer"]              = 5,
-        ["Vekniss Wasp"]               = 5,
-        ["Beetle"]                     = "SKIP",
-        ["Dark Blue Qiraji Battle Tank"] = "SKIP",
-        ["Gilded Scarab"]              = "SKIP",
-        ["Glob of Viscidus"]           = "SKIP",
+        ["Anubisath Defender"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Anubisath Sentinel"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Eye Tentacle"]                = { mark = 8, creatureType = "Aberration", ccImmune = true },
+        ["Giant Eye Tentacle"]          = { mark = 8, creatureType = "Aberration", ccImmune = true },
+        ["Giant Claw Tentacle"]         = { mark = 8, creatureType = "Aberration", ccImmune = true },
+        ["Qiraji Scarab"]               = { mark = 5, creatureType = "Beast" },
+        ["Obsidian Eradicator"]         = { mark = 8, creatureType = "Humanoid" },
+        ["Obsidian Nullifier"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+        ["Qiraji Brainwasher"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- mind control
+        ["Qiraji Mindslayer"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+        ["Qiraji Champion"]             = { mark = 5, creatureType = "Humanoid" },
+        ["Qiraji Slayer"]               = { mark = 5, creatureType = "Humanoid" },
+        ["Qiraji Swarmguard"]           = { mark = 5, creatureType = "Humanoid" },
+        ["Spawn of Fankriss"]           = { mark = 8, creatureType = "Beast" },
+        ["Vekniss Drone"]               = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Guardian"]            = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Hive Crawler"]        = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Soldier"]             = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Stinger"]             = { mark = 8, creatureType = "Beast" },
+        ["Vekniss Warrior"]             = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Borer"]               = { mark = 5, creatureType = "Beast" },
+        ["Vekniss Wasp"]                = { mark = 5, creatureType = "Beast" },
+        ["Beetle"]                      = "SKIP",
+        ["Dark Blue Qiraji Battle Tank"]  = "SKIP",
+        ["Gilded Scarab"]               = "SKIP",
+        ["Glob of Viscidus"]            = "SKIP",
         ["Light Blue Qiraji Battle Tank"] = "SKIP",
         ["Light Green Qiraji Battle Tank"] = "SKIP",
-        ["Orange Qiraji Battle Tank"]  = "SKIP",
-        ["Scorpion"]                   = "SKIP",
+        ["Orange Qiraji Battle Tank"]   = "SKIP",
+        ["Scorpion"]                    = "SKIP",
         ["Twilight Qiraji Battle Tank"] = "SKIP",
     },
 
     ["Naxxramas"] = {
-        ["Bile Retcher"]               = 8,
-        ["Deathknight Captain"]        = 8,
-        ["Deathknight Cavalier"]       = 8,
-        ["Eye Stalk"]                  = 8,
-        ["Mad Scientist"]             = 8,
-        ["Naxxramas Acolyte"]          = 8,
-        ["Naxxramas Cultist"]          = 8,
-        ["Necro Knight"]               = 8,
-        ["Necropolis Acolyte"]         = 8,
-        ["Shade of Naxxramas"]         = 8,
-        ["Skeletal Smith"]             = 8,
-        ["Soul Weaver"]                = 8,
-        ["Spectral Deathknight"]       = 8,
-        ["Spectral Rider"]             = 8,
-        ["Spirit of Naxxramas"]        = 8,
-        ["Stoneskin Gargoyle"]         = 8,
-        ["Surgical Assistant"]         = 8,
-        ["Unholy Staff"]               = 8,
-        ["Unrelenting Deathknight"]    = 8,
-        ["Unrelenting Rider"]          = 8,
-        ["Carrion Spinner"]            = 5,
-        ["Dread Creeper"]              = 5,
-        ["Frenzied Bat"]               = 5,
-        ["Infectious Skitterer"]       = 5,
-        ["Plagued Bat"]                = 5,
-        ["Plagued Deathhound"]         = 5,
-        ["Venom Stalker"]              = 5,
-        ["Bile Sludge"]                = "SKIP",
-        ["Corpse Scarab"]              = "SKIP",
-        ["Larva"]                      = "SKIP",
-        ["Maggot"]                     = "SKIP",
-        ["Plague Slime"]               = "SKIP",
-        ["Rat"]                        = "SKIP",
-        ["Spider"]                     = "SKIP",
-        ["Spore"]                      = "SKIP",
-        ["Web Wrap"]                   = "SKIP",
+        ["Bile Retcher"]                = { mark = 8, creatureType = "Undead" },
+        ["Deathknight Captain"]         = { mark = 8, creatureType = "Undead" },
+        ["Deathknight Cavalier"]        = { mark = 8, creatureType = "Undead" },
+        ["Eye Stalk"]                   = { mark = 8, creatureType = "Aberration", ccImmune = true },
+        ["Mad Scientist"]               = { mark = 8, creatureType = "Humanoid" },
+        ["Living Poison"]               = "SKIP",
+        ["Living Monstrosity"]          = { mark = 8, creatureType = "Undead" },
+        ["Naxxramas Acolyte"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Naxxramas Cultist"]           = { mark = 8, creatureType = "Humanoid" },
+        ["Naxxramas Follower"]          = { mark = 5, creatureType = "Humanoid" },
+        ["Necro Knight"]                = { mark = 8, creatureType = "Undead" },
+        ["Necro Stalker"]               = { mark = 5, creatureType = "Undead" },
+        ["Necropolis Acolyte"]          = { mark = 8, creatureType = "Humanoid" },
+        ["Shade of Naxxramas"]          = { mark = 8, creatureType = "Undead" },
+        ["Skeletal Smith"]              = { mark = 8, creatureType = "Undead" },
+        ["Soul Weaver"]                 = { mark = 8, creatureType = "Undead" },
+        ["Spectral Deathknight"]        = { mark = 8, creatureType = "Undead" },
+        ["Spectral Horseman"]           = { mark = 8, creatureType = "Undead" },
+        ["Spectral Rider"]              = { mark = 8, creatureType = "Undead" },
+        ["Spirit of Naxxramas"]         = { mark = 8, creatureType = "Undead" },
+        ["Stoneskin Gargoyle"]          = { mark = 8, creatureType = "Undead" },
+        ["Surgical Assistant"]          = { mark = 8, creatureType = "Undead" },
+        ["Unholy Staff"]                = { mark = 8, creatureType = "Undead" },
+        ["Unrelenting Deathknight"]     = { mark = 8, creatureType = "Undead" },
+        ["Unrelenting Rider"]           = { mark = 8, creatureType = "Undead" },
+        ["Unrelenting Trainee"]         = { mark = 5, creatureType = "Undead" },
+        ["Carrion Spinner"]             = { mark = 5, creatureType = "Beast" },
+        ["Dread Creeper"]               = { mark = 5, creatureType = "Beast" },
+        ["Frenzied Bat"]                = { mark = 5, creatureType = "Beast" },
+        ["Infectious Skitterer"]        = { mark = 5, creatureType = "Beast" },
+        ["Plagued Bat"]                 = { mark = 5, creatureType = "Beast" },
+        ["Plagued Deathhound"]          = { mark = 5, creatureType = "Beast" },
+        ["Venom Stalker"]               = { mark = 5, creatureType = "Beast" },
+        ["Bile Sludge"]                 = "SKIP",
+        ["Corpse Scarab"]               = "SKIP",
+        ["Larva"]                       = "SKIP",
+        ["Maggot"]                      = "SKIP",
+        ["Plague Slime"]                = "SKIP",
+        ["Rat"]                         = "SKIP",
+        ["Spider"]                      = "SKIP",
+        ["Spore"]                       = "SKIP",
+        ["Web Wrap"]                    = "SKIP",
     },
 }
 

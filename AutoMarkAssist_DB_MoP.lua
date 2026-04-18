@@ -11,59 +11,93 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Temple of the Jade Serpent"] = {
-    ["Fallen Waterspeaker"]         = { mark = 8, dangerLevel = 3 },  -- healer + water caster
-    ["Haunting Sha"]                = { mark = 8, dangerLevel = 2 },  -- shadow damage + fear
-    ["Depraved Mistweaver"]         = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Minion of Doubt"]             = 5,     -- sha spawn, CC-able
-    ["Shambling Infester"]          = 5,     -- undead-type, CC-able
-    ["Corrupted Scroll"]            = "SKIP",   -- scroll filler
+    ["Fallen Waterspeaker"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Haunting Sha"]                = { mark = 8, creatureType = "Elemental", dangerLevel = 2 },
+    ["Depraved Mistweaver"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Minion of Doubt"]             = { mark = 5, creatureType = "Elemental" },
+    ["Shambling Infester"]          = { mark = 5, creatureType = "Aberration" },
+    ["Inky Conjurer"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Reflection of Doubt"]         = { mark = 5, creatureType = "Elemental" },
+    ["Corrupt Living Water"]        = { mark = 5, creatureType = "Elemental" },
+    ["Sha of Doubt"]                = { mark = 8, creatureType = "Elemental" },
+    ["Sha Puddle"]                  = "SKIP",
+    ["Corrupted Scroll"]            = "SKIP",
 }
 
 db["Stormstout Brewery"] = {
-    ["Hozen Party Animal"]          = 5,     -- humanoid, CC-able
-    ["Inflamed Hozen Brawler"]      = 8,   -- fire damage + enrage
-    ["Habanero Brew"]               = "SKIP",   -- environmental filler
-    ["Bubbling Brew Alemental"]     = 8,   -- AoE damage
-    ["Yeasty Brew Alemental"]       = 5,     -- elemental, banishable
-    ["Sudsy Brew Alemental"]        = "SKIP",   -- filler
+    ["Hozen Party Animal"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Hoptallus' Crony"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Hozen Bouncer"]               = { mark = 5, creatureType = "Humanoid" },
+    ["Inflamed Hozen Brawler"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Drunken Hozen Brawler"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Bopper"]                      = { mark = 5, creatureType = "Humanoid" },
+    ["Sprayer"]                     = { mark = 8, creatureType = "Humanoid" },
+    ["Habanero Brew"]               = "SKIP",
+    ["Bubbling Brew Alemental"]     = { mark = 8, creatureType = "Elemental" },
+    ["Yeasty Brew Alemental"]       = { mark = 4, creatureType = "Elemental" },
+    ["Sudsy Brew Alemental"]        = "SKIP",
+    ["Fizzy Brew Alemental"]        = { mark = 5, creatureType = "Elemental" },
+    ["Bloated Brew Alemental"]      = { mark = 5, creatureType = "Elemental" },
 }
 
 db["Gate of the Setting Sun"] = {
-    ["Krik'thik Infiltrator"]       = 8,   -- stealth + sabotage
-    ["Krik'thik Demolisher"]        = 8,   -- siege damage + AoE
-    ["Krik'thik Bombardier"]        = 8,   -- ranged AoE
-    ["Krik'thik Wind Shaper"]       = 8,   -- wind caster
-    ["Krik'thik Swarmer"]           = "SKIP",   -- mass swarm filler
-    ["Krik'thik Saboteur"]          = 8,   -- bomb planter; kill ASAP
+    ["Krik'thik Infiltrator"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Krik'thik Demolisher"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Krik'thik Bombardier"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Krik'thik Wind Shaper"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Krik'thik Warrior"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Krik'thik Pincer"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Krik'thik Swarmer"]           = "SKIP",
+    ["Krik'thik Saboteur"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Krik'thik Mine"]              = "SKIP",
+    ["Shal'Weaver"]                 = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["Shado-Pan Monastery"] = {
-    ["Shado-Pan Archery Target"]    = "SKIP",   -- target filler
-    ["Hateful Essence"]             = 8,   -- shadow caster
-    ["Residual Hatred"]             = 8,   -- shadow damage + stacking
-    ["Consuming Sha"]               = 5,     -- sha spawn, CC-able
-    ["Ethereal Sha"]                = 8,   -- shadow caster
-    ["Shado-Pan Novice"]            = 5,     -- possessed humanoid
-    ["Fragment of Hatred"]          = "SKIP",   -- sha fragment filler
+    ["Shado-Pan Archery Target"]    = "SKIP",
+    ["Hateful Essence"]             = { mark = 8, creatureType = "Elemental" },
+    ["Residual Hatred"]             = { mark = 8, creatureType = "Elemental" },
+    ["Consuming Sha"]               = { mark = 5, creatureType = "Elemental" },
+    ["Ethereal Sha"]                = { mark = 8, creatureType = "Elemental" },
+    ["Shado-Pan Novice"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Shado-Pan Disciple"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Shado-Pan Ambusher"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Shado-Pan Initiate"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Shado-Pan Geomancer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Shado-Pan Monk"]              = { mark = 5, creatureType = "Humanoid" },
+    ["Fragment of Hatred"]          = "SKIP",
+    ["Snow Drift"]                  = "SKIP",
 }
 
 db["Siege of Niuzao Temple"] = {
-    ["Sik'thik Amber Weaver"]       = 8,   -- amber caster; encases allies
-    ["Sik'thik Venomspitter"]       = 8,   -- poison volley
-    ["Krik'thik Infiltrator"]       = 8,   -- stealth + sabotage
-    ["Resin Flake"]                 = "SKIP",   -- amber filler
-    ["Volatile Amber"]              = "SKIP",   -- environmental filler
-    ["Sik'thik Swarmer"]            = "SKIP",   -- mass swarm filler
-    ["Amber Encaser"]               = 8,   -- encases party members
+    ["Sik'thik Amber Weaver"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Sik'thik Venomspitter"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Sik'thik Warrior"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Sik'thik Lancer"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Sik'thik Fieldmender"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Sik'thik Engineer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Sik'thik Oil Slinger"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sik'thik Wind Scythe"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Resin Flake"]                 = "SKIP",
+    ["Volatile Amber"]              = "SKIP",
+    ["Sik'thik Swarmer"]            = "SKIP",
+    ["Amber Encaser"]               = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["Mogu'shan Palace"] = {
-    ["Glintrok Skulker"]            = 8,   -- stealth + backstab
-    ["Glintrok Oracle"]             = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Glintrok Hexxer"]             = 8,   -- hex + shadow damage
-    ["Kargesh Grunt"]               = 5,     -- humanoid, CC-able
-    ["Quilen Guardian"]             = 5,     -- beast, CC-able
-    ["Ming the Cunning"]            = 8,   -- magnetic field + AoE
+    ["Glintrok Skulker"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Glintrok Oracle"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Glintrok Hexxer"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Glintrok Ironhide"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Glintrok Pathfinder"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Kargesh Grunt"]               = { mark = 5, creatureType = "Humanoid" },
+    ["Kargesh Hopebreaker"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Quilen Guardian"]             = { mark = 5, creatureType = "Beast" },
+    ["Mogu Shadow Ritualist"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Trail Hunter"]                = { mark = 5, creatureType = "Humanoid" },
+    ["Ming the Cunning"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Kuai the Brute"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Haiyan the Unstoppable"]      = { mark = 8, creatureType = "Humanoid" },
 }
 
 -- ============================================================
@@ -71,127 +105,146 @@ db["Mogu'shan Palace"] = {
 -- ============================================================
 
 db["Mogu'shan Vaults"] = {
-    ["Mogu'shan Arcanist"]          = 8,   -- caster trash
-    ["Mogu'shan Secret-Keeper"]     = 8,   -- caster trash
-    ["Mogu Archer"]                 = 8,
-    ["Sorcerer Mogu"]               = 8,
-    ["Zandalari Fire-Dancer"]       = 8,
-    ["Zandalari Infiltrator"]       = 8,
-    ["Zandalari Pterror Wing"]      = 5,     -- beast, trappable
-    ["Zandalari Terror Rider"]      = 8,
-    ["Zandalari War Wyvern"]        = 5,     -- beast, trappable
-    ["Undying Shadows"]             = 8,   -- Gara'jal add
-    ["Emperor's Rage"]              = 8,
-    ["Titan Spark"]                 = 8,
-    ["Energy Charge"]               = 8,
-    ["Celestial Protector"]         = 8,
-    ["Amethyst Guardian"]           = 8,
-    ["Cobalt Guardian"]             = 8,
-    ["Jade Guardian"]               = 8,
-    ["Jasper Guardian"]             = 8,
+    ["Mogu'shan Arcanist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Mogu'shan Secret-Keeper"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Mogu'shan Warden"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Mogu'shan Ritualist"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Mogu Archer"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Sorcerer Mogu"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Fire-Dancer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Infiltrator"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Pterror Wing"]      = { mark = 5, creatureType = "Beast" },
+    ["Zandalari Terror Rider"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari War Wyvern"]        = { mark = 5, creatureType = "Beast" },
+    ["Undying Shadows"]             = { mark = 8, creatureType = "Elemental" },
+    ["Emperor's Rage"]              = { mark = 8, creatureType = "Elemental" },
+    ["Titan Spark"]                 = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Energy Charge"]               = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Celestial Protector"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Amethyst Guardian"]           = { mark = 8, creatureType = "Elemental" },
+    ["Cobalt Guardian"]             = { mark = 8, creatureType = "Elemental" },
+    ["Jade Guardian"]               = { mark = 8, creatureType = "Elemental" },
+    ["Jasper Guardian"]             = { mark = 8, creatureType = "Elemental" },
+    ["Jasper Fragment"]             = "SKIP",
 }
 
 db["Heart of Fear"] = {
-    ["Kor'thik Elite Blademaster"]  = 8,
-    ["Kor'thik Extremist"]          = 8,
-    ["Kor'thik Warsinger"]          = 8,
-    ["Sra'thik Ambercaller"]        = 8,
-    ["Sra'thik Amber-Trapper"]      = 8,
-    ["Zar'thik Battle-Mender"]      = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Zar'thik Augurer"]            = 8,
-    ["Set'thik Gale-Slicer"]        = 8,
-    ["Set'thik Tempest"]            = 8,
-    ["Set'thik Zephyrian"]          = 8,
-    ["Amber Monstrosity"]           = 8,
-    ["Living Amber"]                = 8,
-    ["Garalon's Leg"]               = 8,   -- boss limb target
-    ["Kor'thik Swarmer"]            = "SKIP",   -- filler swarmers
+    ["Kor'thik Elite Blademaster"]  = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'thik Extremist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'thik Warsinger"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'thik Wind-Blade"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Sra'thik Ambercaller"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sra'thik Amber-Trapper"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Sra'thik Pincer"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Zar'thik Battle-Mender"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Zar'thik Augurer"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Zar'thik Zealot"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Set'thik Gale-Slicer"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Set'thik Tempest"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Set'thik Zephyrian"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Set'thik Windblade"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Amber Monstrosity"]           = { mark = 8, creatureType = "Aberration" },
+    ["Living Amber"]                = { mark = 8, creatureType = "Elemental" },
+    ["Garalon's Leg"]               = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Kor'thik Swarmer"]            = "SKIP",
 }
 
 db["Terrace of Endless Spring"] = {
-    ["Corrupted Protector"]         = 8,
-    ["Corrupted Waters"]            = 8,
-    ["Apparition of Fear"]          = 8,
-    ["Apparition of Terror"]        = 8,
-    ["Embodied Terror"]             = 8,
-    ["Terror Spawn"]                = 8,
-    ["Dread Spawn"]                 = 8,
-    ["Night Terror"]                = 8,
-    ["Unstable Sha"]                = 8,
+    ["Corrupted Protector"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Corrupted Waters"]            = { mark = 8, creatureType = "Elemental" },
+    ["Apparition of Fear"]          = { mark = 8, creatureType = "Elemental" },
+    ["Apparition of Terror"]        = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Terror"]             = { mark = 8, creatureType = "Elemental" },
+    ["Terror Spawn"]                = { mark = 5, creatureType = "Elemental" },
+    ["Dread Spawn"]                 = { mark = 8, creatureType = "Elemental" },
+    ["Night Terror"]                = { mark = 8, creatureType = "Elemental" },
+    ["Unstable Sha"]                = { mark = 8, creatureType = "Elemental" },
 }
 
 db["Throne of Thunder"] = {
-    ["Amani'shi Beast Shaman"]      = 8,
-    ["Amani'shi Flame Caster"]      = 8,
-    ["Amani'shi Flame Chanter"]     = 8,
-    ["Drakkari Frost Warden"]       = 8,
-    ["Farraki Sand Conjurer"]       = 8,
-    ["Gurubashi Bloodlord"]         = 8,
-    ["Gurubashi Venom Priest"]      = 8,
-    ["Zandalari Dinomancer"]        = 8,
-    ["Zandalari High Priest"]       = 8,
-    ["Zandalari Prophet"]           = 8,
-    ["Zandalari Storm-Caller"]      = 8,
-    ["Zandalari Water-Binder"]      = 8,
-    ["Massive Anima Golem"]         = 8,
-    ["Spirit Flayer"]               = 8,
-    ["Amani Warbear"]               = 5,     -- beast, trappable
-    ["Ancient Python"]              = 5,     -- beast, trappable
-    ["Vampiric Cave Bat"]           = 5,     -- beast, trappable
-    ["Beast of Nightmares"]         = 8,
-    ["War-God Jalak"]               = 8,   -- Horridon add
-    ["Venomous Effusion"]           = 8,
-    ["Ball Lightning"]              = 8,
-    ["Diffused Lightning"]          = 8,
-    ["Lesser Diffused Lightning"]   = 8,
-    ["Greater Diffused Lightning"]  = 8,
-    ["Crackling Stalker"]           = 8,
+    ["Amani'shi Beast Shaman"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Flame Caster"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Flame Chanter"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Blade Master"]      = { mark = 5, creatureType = "Humanoid" },
+    ["Drakkari Frost Warden"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Drakkari Frozen Warlord"]     = { mark = 5, creatureType = "Humanoid" },
+    ["Farraki Sand Conjurer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Farraki Wastewalker"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Gurubashi Bloodlord"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Gurubashi Venom Priest"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Dinomancer"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Zandalari High Priest"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Zandalari Prophet"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Storm-Caller"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Water-Binder"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Zandalari Warbringer"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Zandalari Beast Ward"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Massive Anima Golem"]         = { mark = 8, creatureType = "Elemental" },
+    ["Lesser Anima Golem"]          = { mark = 5, creatureType = "Elemental" },
+    ["Spirit Flayer"]               = { mark = 8, creatureType = "Elemental" },
+    ["Amani Warbear"]               = { mark = 5, creatureType = "Beast" },
+    ["Ancient Python"]              = { mark = 5, creatureType = "Beast" },
+    ["Vampiric Cave Bat"]           = { mark = 5, creatureType = "Beast" },
+    ["Beast of Nightmares"]         = { mark = 8, creatureType = "Beast" },
+    ["War-God Jalak"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Venomous Effusion"]           = { mark = 8, creatureType = "Elemental" },
+    ["Ball Lightning"]              = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Diffused Lightning"]          = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Lesser Diffused Lightning"]   = { mark = 5, creatureType = "Elemental", ccImmune = true },
+    ["Greater Diffused Lightning"]  = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Crackling Stalker"]           = { mark = 8, creatureType = "Elemental" },
+    ["Mindbender Kaartish"]         = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["Siege of Orgrimmar"] = {
-    ["Tormented Initiate"]          = 8,
-    ["Fallen Pool Tender"]          = 8,
-    ["Lesser Sha Puddle"]           = "SKIP",   -- filler puddles on Immerseus
-    ["Embodied Misery"]             = 8,
-    ["Embodied Sorrow"]             = 8,
-    ["Embodied Gloom"]              = 8,
-    ["Embodied Anguish"]            = 8,
-    ["Embodied Despair"]            = 8,
-    ["Embodied Desperation"]        = 8,
-    ["Despair Spawn"]               = 8,
-    ["Manifestation of Corruption"] = 8,
-    ["Essence of Corruption"]       = 8,
-    ["Titanic Corruption"]          = 8,
-    ["Manifestation of Pride"]      = 8,
-    ["Reflection"]                  = 8,
-    ["Dragonmaw Bonecrusher"]       = 8,
-    ["Dragonmaw Tidal Shaman"]      = 8,
-    ["Dragonmaw Flameslinger"]      = 8,
-    ["Dragonmaw Ebon Stalker"]      = 8,
-    ["Kor'kron Demolisher"]         = 8,
-    ["Crawler Mine"]                = 8,
-    ["Blind Blademaster"]           = 8,
-    ["Kor'kron Shadowmage"]         = 8,
-    ["Kor'kron Arcweaver"]          = 8,
-    ["Kor'kron Assassin"]           = 8,
-    ["Kor'kron Warshaman"]          = 8,
-    ["Kor'kron Dark Farseer"]       = 8,
-    ["Corrupted Skullsplitter"]     = 8,
-    ["Living Corruption"]           = 8,
-    ["Kor'kron Machinist"]          = 8,
-    ["Kor'kron Shredder"]           = 8,
-    ["Automated Shredder"]          = 8,
-    ["Blackfuse Engineer"]          = 8,
-    ["Harbinger of Y'Shaarj"]       = 8,
-    ["Manifestation"]               = 8,
-    ["Ichor of Y'Shaarj"]           = 8,
-    ["Sra'thik Amber-Master"]       = 8,
-    ["Desecrated Weapon"]           = 8,
-    ["Kor'kron Warbringer"]         = 8,
-    ["Farseer Wolf Rider"]          = 8,
-    ["Siege Engineer"]              = 8,
-    ["Manifestation of Rage"]       = 8,
-    ["Minion of Y'Shaarj"]          = 8,
+    ["Tormented Initiate"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Fallen Pool Tender"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Lesser Sha Puddle"]           = "SKIP",
+    ["Embodied Misery"]             = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Sorrow"]             = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Gloom"]              = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Anguish"]            = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Despair"]            = { mark = 8, creatureType = "Elemental" },
+    ["Embodied Desperation"]        = { mark = 8, creatureType = "Elemental" },
+    ["Despair Spawn"]               = { mark = 5, creatureType = "Elemental" },
+    ["Manifestation of Corruption"] = { mark = 8, creatureType = "Aberration" },
+    ["Essence of Corruption"]       = { mark = 8, creatureType = "Aberration" },
+    ["Titanic Corruption"]          = { mark = 8, creatureType = "Aberration" },
+    ["Manifestation of Pride"]      = { mark = 8, creatureType = "Elemental" },
+    ["Reflection"]                  = { mark = 8, creatureType = "Humanoid" },
+    ["Dragonmaw Bonecrusher"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Dragonmaw Tidal Shaman"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Dragonmaw Flameslinger"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Dragonmaw Ebon Stalker"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Dragonmaw War Runner"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Kor'kron Demolisher"]         = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Crawler Mine"]                = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Blind Blademaster"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Shadowmage"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Arcweaver"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Assassin"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Warshaman"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Kor'kron Dark Farseer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Reaver"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Kor'kron Trooper"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Corrupted Skullsplitter"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Living Corruption"]           = { mark = 8, creatureType = "Aberration" },
+    ["Kor'kron Machinist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Kor'kron Shredder"]           = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Automated Shredder"]          = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Blackfuse Engineer"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Harbinger of Y'Shaarj"]       = { mark = 8, creatureType = "Aberration" },
+    ["Manifestation"]               = { mark = 8, creatureType = "Elemental" },
+    ["Ichor of Y'Shaarj"]           = { mark = 8, creatureType = "Aberration" },
+    ["Sra'thik Amber-Master"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Desecrated Weapon"]           = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Kor'kron Warbringer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Farseer Wolf Rider"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Siege Engineer"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Manifestation of Rage"]       = { mark = 8, creatureType = "Elemental" },
+    ["Minion of Y'Shaarj"]          = { mark = 8, creatureType = "Aberration" },
+    ["Saurok Stalker"]              = { mark = 5, creatureType = "Humanoid" },
+    ["Iron Juggernaut"]             = { mark = 8, creatureType = "Mechanical", ccImmune = true },
 }
 
 -- ============================================================

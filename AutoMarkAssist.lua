@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.0"
+AMA.VERSION    = "3.4.3"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -90,15 +90,24 @@ AMA.DANGER_LEVEL = {
 
 AMA.isHeroicInstance = false
 
+-- Classic-only difficulty IDs where CC is typically valuable (prioritise CC
+-- over second kill).  Retail-only difficulties (Mythic+, scenarios, etc.)
+-- are intentionally omitted -- this addon targets Classic clients only.
+--   2 = 5-man Heroic (all Classic expansions)
+--   8 = MoP Challenge Mode (MoP Classic)
+AMA.HEROIC_DIFFICULTY_IDS = {
+    [2] = true,
+    [8] = true,
+}
+
 function AMA.RefreshDifficulty()
-    local inInstance, instanceType = IsInInstance()
+    local inInstance = IsInInstance()
     if not inInstance then
         AMA.isHeroicInstance = false
         return
     end
-    -- difficultyID: 2 = 5-man Heroic, 174 = Heroic (timewalking)
     local _, _, difficultyID = GetInstanceInfo()
-    AMA.isHeroicInstance = (difficultyID == 2 or difficultyID == 174)
+    AMA.isHeroicInstance = AMA.HEROIC_DIFFICULTY_IDS[difficultyID] == true
     AMA.VPrint("Difficulty: " .. tostring(difficultyID) .. (AMA.isHeroicInstance and " (heroic)" or " (normal)"))
 end
 
@@ -130,19 +139,6 @@ AMA.PROXIMITY_RANGE_LABELS = {
 }
 
 -- ============================================================
--- KEYWORD HEURISTICS
--- Used by Core to classify mobs not in the zone database.
--- ============================================================
-
-AMA.HIGH_KEYWORDS = {
-    -- Kept for future logic if needed, but priority system removed
-}
-
-AMA.CC_KEYWORDS = {
-    "beast", "animal", "hound", "wolf", "serpent", "hawk", "bat", "whelp",
-}
-
--- ============================================================
 -- SAVED VARIABLE DEFAULTS
 -- ============================================================
 
@@ -168,7 +164,6 @@ AMA.DB_DEFAULTS = {
     silentMode         = false,
     lockMarksInCombat  = false,
     rebalanceOnDeath   = true,
-    autoReset          = true,
     skipCritters       = true,
     markingMode        = "proximity",   -- "proximity" | "mouseover" | "manual"
     proximityRange     = 4,

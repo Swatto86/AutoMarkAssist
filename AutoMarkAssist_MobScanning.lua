@@ -565,21 +565,36 @@ end
 -- ============================================================
 
 -- Spell IDs of CC abilities we track for immunity detection.
+-- Covers all ranks and known variants across Classic expansions.
 AMA.CC_SPELL_IDS = {
-    -- Polymorph variants
+    -- Polymorph (base + all ranks + cosmetic forms)
     [118]   = true, [12824] = true, [12825] = true, [12826] = true,
-    [28271] = true, [28272] = true, [61305] = true, [61025] = true,
-    [61721] = true, [61780] = true,
+    [28270] = true, -- Cow
+    [28271] = true, -- Turtle
+    [28272] = true, -- Pig
+    [61305] = true, -- Black Cat
+    [61025] = true, -- Serpent
+    [61721] = true, -- Rabbit
+    [61780] = true, -- Turkey
     -- Sap
-    [6770]  = true, [2070]  = true, [11297] = true,
+    [6770]  = true, [2070]  = true, [11297] = true, [51724] = true,
     -- Banish
     [710]   = true, [18647] = true,
     -- Shackle Undead
     [9484]  = true, [9485]  = true, [10955] = true,
     -- Hibernate
     [2637]  = true, [18657] = true, [18658] = true,
-    -- Freezing Trap
+    -- Freezing Trap / Wyvern Sting (Hunter CC)
     [3355]  = true, [14308] = true, [14309] = true,
+    [60192] = true, -- Freezing Arrow
+    [19386] = true, [24132] = true, [24133] = true, [27068] = true,
+    [49011] = true, [49012] = true, -- Wyvern Sting WotLK ranks
+    -- Seduction (Succubus pet)
+    [6358]  = true,
+    -- Repentance (Paladin, TBC+)
+    [20066] = true,
+    -- Mind Control (Priest; not always CC but often mistaken as such)
+    [605]   = true,
 }
 
 function AMA.HandleCCImmune(destName)
@@ -720,7 +735,7 @@ function AMA.CascadeMarksAfterDeath()
         return bestMark, bestGuid, bestToken
     end
 
-    -- === Skull died: always promote Cross → Skull ===
+    -- === Skull died: promote Cross → Skull if Cross exists ===
     -- CC'd mobs are locked down; the kill target (Cross) becomes the new Skull.
     if AMA.IsMarkEnabled(MARK_SKULL) and IsMarkSlotFree(MARK_SKULL) then
         if AMA.markOwners[MARK_CROSS] then
@@ -735,6 +750,21 @@ function AMA.CascadeMarksAfterDeath()
                 end
             else
                 AMA.ForgetMark(crossGuid)
+            end
+        elseif AMA.IsMarkEnabled(MARK_CROSS) then
+            -- No Cross exists to promote.  If only CC'd mobs remain, pull the
+            -- highest-priority CC mob up to Skull so the next kill target is
+            -- always marked.
+            local _, ccGuid, ccToken = FindBestCCPromotion()
+            if ccGuid and ccToken then
+                local oldMark = AMA.markedGUIDs[ccGuid]
+                local oldName = oldMark and AMA.MARK_NAMES[oldMark] or "?"
+                AMA.ForgetMark(ccGuid)
+                local applied = AMA.TrySetRaidTarget(ccToken, MARK_SKULL)
+                if applied then
+                    AMA.RecordMark(ccGuid, MARK_SKULL, ccToken)
+                    AMA.VPrint("Promoted " .. oldName .. " to Skull: " .. (UnitName(ccToken) or "?"))
+                end
             end
         end
     end

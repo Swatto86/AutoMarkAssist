@@ -736,11 +736,18 @@ do
         self:EnableKeyboard(true)
     end)
     resetHotkeyBtn:SetScript("OnKeyDown", function(self, key)
+        -- Ignore lone modifier presses; wait for the actual key.
+        if key == "LSHIFT" or key == "RSHIFT"
+        or key == "LCTRL" or key == "RCTRL"
+        or key == "LALT"  or key == "RALT" then
+            return
+        end
         self:EnableKeyboard(false)
         if key == "ESCAPE" then
             AutoMarkAssistDB.resetMarksKey = ""
         else
-            AutoMarkAssistDB.resetMarksKey = key
+            local combo = AMA.FormatHotkeyCombo and AMA.FormatHotkeyCombo(key) or key
+            AutoMarkAssistDB.resetMarksKey = combo ~= "" and combo or key
         end
         AMA.ApplyResetKeybind()
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end

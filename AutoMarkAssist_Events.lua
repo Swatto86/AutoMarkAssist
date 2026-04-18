@@ -132,6 +132,21 @@ function AMA.ApplyResetKeybind()
     end
 end
 
+-- Build a modifier-aware key string from a raw key press, e.g. "SHIFT-F1".
+function AMA.FormatHotkeyCombo(key)
+    if not key or key == "" then return "" end
+    if key == "LSHIFT" or key == "RSHIFT"
+    or key == "LCTRL" or key == "RCTRL"
+    or key == "LALT"  or key == "RALT" then
+        return ""
+    end
+    local prefix = ""
+    if IsAltKeyDown and IsAltKeyDown() then prefix = prefix .. "ALT-" end
+    if IsControlKeyDown and IsControlKeyDown() then prefix = prefix .. "CTRL-" end
+    if IsShiftKeyDown and IsShiftKeyDown() then prefix = prefix .. "SHIFT-" end
+    return prefix .. key
+end
+
 -- ============================================================
 -- ANNOUNCE TICK (OnUpdate)
 -- ============================================================
@@ -230,12 +245,20 @@ frame:SetScript("OnEvent", function(self, event, ...)
 
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
         if not AMA.IsAddonEnabled() then return end
-        local _, subevent, _, _, _, _, _, destGUID, destName, _, _, spellId, _, _, missType = CombatLogGetCurrentEventInfo()
+        local _, subevent, _, _, _, _, _, destGUID, destName, destFlags, _, spellId, _, _, missType = CombatLogGetCurrentEventInfo()
 
         -- Detect CC immunity: if a tracked CC spell was IMMUNE, record it.
+        -- Skip when the target is a player (BGs/arenas/duels) to avoid
+        -- polluting the mob DB with character names.
         if subevent == "SPELL_MISSED" and missType == "IMMUNE" then
             if AMA.CC_SPELL_IDS and AMA.CC_SPELL_IDS[spellId] then
-                AMA.HandleCCImmune(destName)
+                local COMBATLOG_OBJECT_TYPE_PLAYER = 0x00000400
+                local isPlayer = destFlags
+                    and bit and bit.band
+                    and bit.band(destFlags, COMBATLOG_OBJECT_TYPE_PLAYER) ~= 0
+                if not isPlayer then
+                    AMA.HandleCCImmune(destName)
+                end
             end
             return
         end

@@ -11,115 +11,203 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- ============================================================
 
 db["Blackrock Caverns"] = {
-    ["Twilight Flame Caller"]       = { mark = 8, dangerLevel = 2 },  -- fire caster; interrupt
-    ["Twilight Torturer"]           = 8,   -- shadow damage + chains
-    ["Twilight Sadist"]             = 8,   -- damage caster
-    ["Mad Prisoner"]                = 5,     -- humanoid, CC-able
-    ["Twilight Element Warden"]     = 8,   -- summons elementals
-    ["Incendiary Spark"]            = "SKIP",   -- spark filler
+    ["Twilight Flame Caller"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+    ["Twilight Torturer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Sadist"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Obsidian Borer"]     = { mark = 5, creatureType = "Beast" },
+    ["Twilight Element Warden"]     = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Twilight Loyalist"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Mad Prisoner"]                = { mark = 5, creatureType = "Humanoid" },
+    ["Crazed Mage"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Conflagration"]               = { mark = 5, creatureType = "Elemental" },
+    ["Incendiary Spark"]            = "SKIP",
+    ["Conflagrous Fume"]            = "SKIP",
 }
 
 db["Throne of the Tides"] = {
-    ["Naz'jar Tempest Witch"]       = 8,   -- frost + lightning caster
-    ["Naz'jar Spiritmender"]        = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Faceless Watcher"]            = 8,   -- shadow damage + mind flay
-    ["Gilgoblin Aquamage"]          = 8,   -- water caster
-    ["Gilgoblin Hunter"]            = 5,     -- humanoid, CC-able
-    ["Deep Murloc Drudge"]          = "SKIP",   -- mass murloc filler
+    ["Naz'jar Tempest Witch"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Naz'jar Spiritmender"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Naz'jar Honor Guard"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Naz'jar Invader"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Naz'jar Myrmidon"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Naz'jar Sentinel"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Faceless Watcher"]            = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Gilgoblin Aquamage"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Gilgoblin Hunter"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Unyielding Behemoth"]         = { mark = 8, creatureType = "Elemental" },
+    ["Vicious Mindlasher"]          = { mark = 8, creatureType = "Aberration" },
+    ["Deep Attendant"]              = { mark = 5, creatureType = "Beast" },
+    ["Deep Murloc Drudge"]          = "SKIP",
 }
 
 db["The Stonecore"] = {
-    ["Stonecore Earthshaper"]       = 8,   -- earth caster + ground AoE
-    ["Stonecore Magmalord"]         = 8,   -- fire caster; interrupt
-    ["Stonecore Rift Conjurer"]     = { mark = 8, dangerLevel = 3 },  -- summons voidwalkers
-    ["Millhouse Manastorm"]         = 8,   -- arcane caster (as trash)
-    ["IMP"]                         = "SKIP",   -- summoned imp filler
+    ["Stonecore Earthshaper"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Stonecore Magmalord"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Stonecore Rift Conjurer"]     = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Stonecore Flayer"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Stonecore Berserker"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Stonecore Warbringer"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Stonecore Bruiser"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Millhouse Manastorm"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Crystalspawn Giant"]          = { mark = 5, creatureType = "Elemental" },
+    ["Twilight Excavator"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Twilight Hammerer"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Twilight Inciter"]            = { mark = 8, creatureType = "Humanoid" },
+    ["Impaling Shards"]             = "SKIP",
+    ["Shadowy Tendril"]             = { mark = 5, creatureType = "Elemental" },
+    ["IMP"]                         = "SKIP",
 }
 
 db["The Vortex Pinnacle"] = {
-    ["Lurking Tempest"]             = 8,   -- lightning caster
-    ["Minister of Air"]             = 8,   -- chain lightning + heal
-    ["Temple Adept"]                = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Turbulent Squall"]            = 8,   -- lightning caster
-    ["Wild Vortex"]                 = 5,     -- elemental, banishable
-    ["Young Storm Dragon"]          = 5,     -- dragonkin, CC-able
-    ["Howling Gale"]                = "SKIP",   -- environmental filler
+    ["Lurking Tempest"]             = { mark = 8, creatureType = "Elemental" },
+    ["Minister of Air"]             = { mark = 8, creatureType = "Elemental" },
+    ["Temple Adept"]                = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Turbulent Squall"]            = { mark = 8, creatureType = "Elemental" },
+    ["Empyrean Assassin"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Skyfall Star"]                = { mark = 5, creatureType = "Elemental" },
+    ["Wild Vortex"]                 = { mark = 4, creatureType = "Elemental" },
+    ["Young Storm Dragon"]          = { mark = 5, creatureType = "Dragonkin" },
+    ["Grounding Field"]             = "SKIP",
+    ["Howling Gale"]                = "SKIP",
+    ["Executor of the Caliph"]      = { mark = 8, creatureType = "Elemental" },
+    ["Servant of Asaad"]            = { mark = 5, creatureType = "Elemental" },
 }
 
 db["Lost City of the Tol'vir"] = {
-    ["Neferset Darkcaster"]         = 8,   -- shadow caster
-    ["Neferset Plaguebringer"]      = 8,   -- disease + shadow damage
-    ["Oathsworn Pathfinder"]        = 8,   -- ranged + multishot
-    ["Oathsworn Skinner"]           = 5,     -- humanoid, CC-able
-    ["Pygmy Scout"]                 = "SKIP",   -- pygmy filler
+    ["Neferset Darkcaster"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Neferset Plaguebringer"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Neferset Theurgist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Neferset Overseer"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Neferset Footsoldier"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Neferset Guardian"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Oathsworn Pathfinder"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Oathsworn Skinner"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Oathsworn Axe Master"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Oathsworn Wavecaller"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Oathsworn Captain"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Oathsworn Myrmidon"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Oathsworn Rifleman"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Pygmy Scout"]                 = "SKIP",
+    ["Venomblood Scorpid"]          = { mark = 5, creatureType = "Beast" },
 }
 
 db["Halls of Origination"] = {
-    ["Temple Runecaster"]           = { mark = 8, dangerLevel = 2 },  -- rune caster; interrupt
-    ["Temple Shadowlancer"]         = 8,   -- stealth + shadow damage
-    ["Temple Fireshaper"]           = 8,   -- fire caster
-    ["Temple Swiftstalker"]         = 8,   -- ranged + rapid shot
-    ["Air Warden"]                  = 5,     -- elemental, banishable
-    ["Flame Warden"]                = 5,     -- elemental, banishable
-    ["Water Warden"]                = { mark = 8, dangerLevel = 3 },  -- healer elemental
+    ["Temple Runecaster"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+    ["Temple Shadowlancer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Temple Fireshaper"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Temple Swiftstalker"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Jeweled Scarab"]              = "SKIP",
+    ["Jeweled Camel"]               = "SKIP",
+    ["Sun-Touched Scarab"]          = { mark = 5, creatureType = "Beast" },
+    ["Sun-Touched Scout"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Sun-Touched Rockshaper"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Sun-Touched Servant"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Sun-Touched Sandguard"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Sun-Touched Sandstalker"]     = { mark = 5, creatureType = "Humanoid" },
+    ["Sun-Touched Sandweaver"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Sun-Touched Speaker"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Sun-Touched Warden"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Air Warden"]                  = { mark = 4, creatureType = "Elemental" },
+    ["Flame Warden"]                = { mark = 4, creatureType = "Elemental" },
+    ["Water Warden"]                = { mark = 8, creatureType = "Elemental", dangerLevel = 3 },
+    ["Earth Warden"]                = { mark = 5, creatureType = "Elemental" },
 }
 
 db["Grim Batol"] = {
-    ["Twilight Beguiler"]           = { mark = 8, dangerLevel = 2 },  -- mind control + shadow
-    ["Twilight Earthcaller"]        = 8,   -- earth caster; summons
-    ["Twilight Firecatcher"]        = 8,   -- fire caster
-    ["Twilight Shadow Weaver"]      = 8,   -- shadow bolt volley
-    ["Twilight Stormbreaker"]       = 8,   -- chain lightning
-    ["Twilight Thundercaller"]      = 8,   -- lightning + storm caster
-    ["Twilight War-Mage"]           = 8,   -- polymorph + fireball
-    ["Twilight Wyrmcaller"]         = { mark = 8, dangerLevel = 3 },  -- calls drake adds
-    ["Azureborne Seer"]             = 8,   -- twilight caster
+    ["Twilight Beguiler"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+    ["Twilight Earthcaller"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Firecatcher"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Shadow Weaver"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Stormbreaker"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Thundercaller"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight War-Mage"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Wyrmcaller"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Twilight Dragonspawn"]        = { mark = 5, creatureType = "Dragonkin" },
+    ["Twilight Drakonaar"]          = { mark = 5, creatureType = "Dragonkin" },
+    ["Azureborne Seer"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Azureborne Destroyer"]        = { mark = 5, creatureType = "Dragonkin" },
+    ["Valiona's Aspect"]            = { mark = 8, creatureType = "Dragonkin" },
+    ["Ghastly Miner"]               = { mark = 5, creatureType = "Undead" },
 }
 
 db["Zul'Aman"] = {
-    ["Amani'shi Flame Caster"]      = 8,   -- fire caster
-    ["Amani'shi Medicine Man"]      = { mark = 8, dangerLevel = 3 },  -- healer + hex
-    ["Amani'shi Scout"]             = { mark = 8, dangerLevel = 3 },  -- calls reinforcements
-    ["Amani'shi Beast Tamer"]       = 8,   -- beast caller
-    ["Amani'shi Guardian"]          = 5,     -- humanoid, CC-able
-    ["Amani Lynx"]                  = 5,     -- beast, trappable
-    ["Forest Frog"]                 = "SKIP",   -- hex target filler
+    ["Amani'shi Flame Caster"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Medicine Man"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Amani'shi Scout"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Amani'shi Beast Tamer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Guardian"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Amani'shi Warbringer"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Amani'shi Savage"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Amani'shi Reinforcement"]     = { mark = 5, creatureType = "Humanoid" },
+    ["Amani'shi Tempest"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Amani'shi Wind Walker"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Amani Lynx"]                  = { mark = 5, creatureType = "Beast" },
+    ["Amani Bear"]                  = { mark = 5, creatureType = "Beast" },
+    ["Amani Dragonhawk"]            = { mark = 5, creatureType = "Beast" },
+    ["Amani Eagle"]                 = { mark = 5, creatureType = "Beast" },
+    ["Hatching Egg"]                = "SKIP",
+    ["Forest Frog"]                 = "SKIP",
 }
 
 db["Zul'Gurub"] = {
-    ["Gurubashi Shadow Hunter"]     = 8,   -- shadow bolt + hex
-    ["Gurubashi Blood Drinker"]     = 8,   -- life drain caster
-    ["Gurubashi Cauldron Mixer"]    = 8,   -- poison caster
-    ["Tiki Lord Zim'wae"]           = 8,   -- fire caster + totems
-    ["Florawing Hive Queen"]        = 8,   -- poison + summons
-    ["Venomancer T'Kulu"]           = 8,   -- poison caster
-    ["Zanzili Zombie"]              = "SKIP",   -- mass zombie filler
+    ["Gurubashi Shadow Hunter"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Gurubashi Blood Drinker"]     = { mark = 8, creatureType = "Humanoid" },
+    ["Gurubashi Cauldron Mixer"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Gurubashi Berserker"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Gurubashi Headhunter"]        = { mark = 5, creatureType = "Humanoid" },
+    ["Gurubashi Warrior"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Gurubashi Master Chef"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Tiki Lord Zim'wae"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Florawing Hive Queen"]        = { mark = 8, creatureType = "Beast" },
+    ["Florawing Needler"]           = "SKIP",
+    ["Venomancer T'Kulu"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Zanzili Witch Doctor"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Zanzili Zombie"]              = "SKIP",
+    ["Zanzili Naga"]                = { mark = 5, creatureType = "Humanoid" },
+    ["Zanzili Berserker"]           = { mark = 5, creatureType = "Humanoid" },
 }
 
 db["End Time"] = {
-    ["Time-Twisted Geist"]          = 5,     -- undead, shackleable
-    ["Time-Twisted Nightsaber"]     = 5,     -- beast, trappable
-    ["Time-Twisted Priest"]         = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Time-Twisted Rifleman"]       = 8,   -- ranged; multishot
-    ["Time-Twisted Seer"]           = 8,   -- arcane caster
-    ["Time-Twisted Sorceress"]      = 8,   -- frost + fire caster
+    ["Time-Twisted Geist"]          = { mark = 5, creatureType = "Undead" },
+    ["Time-Twisted Nightsaber"]     = { mark = 5, creatureType = "Beast" },
+    ["Time-Twisted Priest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Time-Twisted Rifleman"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Twisted Seer"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Twisted Sorceress"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Twisted Druid"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Time-Twisted Ranger"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Echo of Tyrande"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Echo of Sylvanas"]            = { mark = 8, creatureType = "Undead" },
+    ["Echo of Baine"]               = { mark = 8, creatureType = "Humanoid" },
+    ["Echo of Jaina"]               = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["Well of Eternity"] = {
-    ["Dreadlord Defender"]          = { mark = 8, dangerLevel = 2 },  -- shadow damage + fear
-    ["Enchanted Highmistress"]      = 8,   -- arcane caster
-    ["Eye of the Legion"]           = 8,   -- shadow beam
-    ["Fel Crystal"]                 = "SKIP",   -- crystal filler
-    ["Legion Demon"]                = 5,     -- demon, banishable
-    ["Shadowbat"]                   = 5,     -- beast, trappable
-    ["Var'azun"]                    = 8,   -- shadow caster
+    ["Dreadlord Defender"]          = { mark = 8, creatureType = "Demon", dangerLevel = 2 },
+    ["Enchanted Highmistress"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Highborne Lightwielder"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Highborne Elementalist"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Highborne Guardsman"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Eye of the Legion"]           = { mark = 8, creatureType = "Demon" },
+    ["Fel Crystal"]                 = "SKIP",
+    ["Legion Demon"]                = { mark = 4, creatureType = "Demon" },
+    ["Doomguard Commander"]         = { mark = 4, creatureType = "Demon" },
+    ["Wrathguard Legionnaire"]      = { mark = 4, creatureType = "Demon" },
+    ["Abyssal"]                     = { mark = 4, creatureType = "Demon" },
+    ["Shadowbat"]                   = { mark = 5, creatureType = "Beast" },
+    ["Corrupted Arcanist"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Var'azun"]                    = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["Hour of Twilight"] = {
-    ["Twilight Assassin"]           = 8,   -- stealth + garrote
-    ["Twilight Ranger"]             = 8,   -- ranged + ice trap
-    ["Faceless Shadow Weaver"]      = 8,   -- shadow + void
-    ["Crystalline Elemental"]       = 5,     -- elemental, banishable
+    ["Twilight Assassin"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Ranger"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Pounder"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Twilight Elite Commander"]    = { mark = 5, creatureType = "Humanoid" },
+    ["Faceless Shadow Weaver"]      = { mark = 8, creatureType = "Aberration" },
+    ["Crystalline Elemental"]       = { mark = 4, creatureType = "Elemental" },
+    ["Lesser Aspect of Ruin"]       = { mark = 8, creatureType = "Elemental" },
+    ["Burning Tendril"]             = { mark = 5, creatureType = "Elemental" },
 }
 
 -- ============================================================
@@ -127,84 +215,103 @@ db["Hour of Twilight"] = {
 -- ============================================================
 
 db["Blackwing Descent"] = {
-    ["Arcanotron"]                  = 8,   -- Omnotron target caller
-    ["Electron"]                    = 8,   -- Omnotron target caller
-    ["Magmatron"]                   = 8,   -- Omnotron target caller
-    ["Toxitron"]                    = 8,   -- Omnotron target caller
-    ["Aberration"]                  = 8,   -- Maloriak add
-    ["Prime Subject"]               = 8,   -- Maloriak add
-    ["Lava Parasite"]               = 8,   -- Magmaw add
-    ["Blazing Bone Construct"]      = 8,   -- Nefarian add
-    ["Drakonid Chainwielder"]       = 8,
+    ["Arcanotron"]                  = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Electron"]                    = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Magmatron"]                   = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Toxitron"]                    = { mark = 8, creatureType = "Mechanical", ccImmune = true },
+    ["Aberration"]                  = { mark = 8, creatureType = "Undead" },
+    ["Prime Subject"]               = { mark = 8, creatureType = "Undead" },
+    ["Lava Parasite"]               = { mark = 8, creatureType = "Beast" },
+    ["Blazing Bone Construct"]      = { mark = 8, creatureType = "Undead" },
+    ["Drakonid Chainwielder"]       = { mark = 8, creatureType = "Dragonkin" },
+    ["Drakonid Drake-Rider"]        = { mark = 8, creatureType = "Dragonkin" },
+    ["Chromatic Drakonid"]          = { mark = 5, creatureType = "Dragonkin" },
+    ["Chromatic Sculptor"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Chromatic Enforcer"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Experimental Chromatic Behemoth"] = { mark = 8, creatureType = "Dragonkin" },
+    ["Blackwing Mage"]              = { mark = 8, creatureType = "Humanoid" },
 }
 
 db["The Bastion of Twilight"] = {
-    ["Chosen Seer"]                 = 8,   -- healer/caster trash
-    ["Twilight Dark Mender"]        = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Twilight Shadow Mender"]      = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Twilight Elementalist"]       = 8,   -- dangerous caster trash
-    ["Twilight Soul Blade"]         = 8,   -- dangerous melee burst
-    ["Faceless Guardian"]           = 8,
-    ["Corrupting Adherent"]         = 8,   -- Cho'gall add
-    ["Darkened Creation"]           = 8,   -- Cho'gall add
-    ["Blood of the Old God"]        = 8,   -- Cho'gall add
-    ["Spiked Tentacle"]             = 8,   -- Sinestra add
-    ["Elementium Monstrosity"]      = 8,   -- Ascendant Council fusion target
+    ["Chosen Seer"]                 = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Dark Mender"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Twilight Shadow Mender"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },
+    ["Twilight Elementalist"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Soul Blade"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Chosen Warrior"]              = { mark = 5, creatureType = "Humanoid" },
+    ["Chosen Assassin"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Faceless Guardian"]           = { mark = 8, creatureType = "Aberration" },
+    ["Corrupting Adherent"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Darkened Creation"]           = { mark = 8, creatureType = "Aberration" },
+    ["Blood of the Old God"]        = { mark = 8, creatureType = "Aberration" },
+    ["Spiked Tentacle"]             = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Elementium Monstrosity"]      = { mark = 8, creatureType = "Elemental" },
+    ["Twilight Drake"]              = { mark = 8, creatureType = "Dragonkin" },
+    ["Twilight Archers"]            = { mark = 5, creatureType = "Humanoid" },
 }
 
 db["Throne of the Four Winds"] = {
-    ["Ravenous Creeper"]            = 8,   -- Anshal add
-    ["Stormling"]                   = 8,   -- Al'Akir add
+    ["Ravenous Creeper"]            = { mark = 8, creatureType = "Beast" },
+    ["Stormling"]                   = { mark = 8, creatureType = "Elemental" },
+    ["Squall Line"]                 = "SKIP",
 }
 
 db["Baradin Hold"] = {
-    ["Disciple of Hate"]            = 8,   -- Alizabal add
-    ["Eye of Occu'thar"]            = 8,   -- Occu'thar add
+    ["Disciple of Hate"]            = { mark = 8, creatureType = "Demon" },
+    ["Eye of Occu'thar"]            = { mark = 8, creatureType = "Demon", ccImmune = true },
 }
 
 db["Firelands"] = {
-    ["Flamewaker Cauterizer"]       = { mark = 8, dangerLevel = 3 },  -- healer
-    ["Flamewaker Subjugator"]       = 8,   -- dangerous caster
-    ["Flamewaker Pathfinder"]       = 8,
-    ["Flamewaker Beast Handler"]    = 8,
-    ["Flamewaker Hound Master"]     = 8,
-    ["Flamewaker Animator"]         = 8,
-    ["Unbound Pyrelord"]            = 8,
-    ["Unbound Smoldering Elemental"] = 5,    -- elemental, banishable
-    ["Molten Lord"]                 = 8,
-    ["Ancient Core Hound"]          = 5,     -- beast, trappable
-    ["Cinderweb Spinner"]           = 8,
-    ["Cinderweb Spiderling"]        = "SKIP",   -- filler spiderlings
-    ["Blazing Talon Initiate"]      = 8,
-    ["Voracious Hatchling"]         = 8,
-    ["Harbinger of Flame"]          = 8,
-    ["Druid of the Flame"]          = 8,
-    ["Rageface"]                    = 8,   -- Shannox dog
-    ["Riplimb"]                     = 8,   -- Shannox dog
+    ["Flamewaker Cauterizer"]       = { mark = 8, creatureType = "Elemental", dangerLevel = 3 },
+    ["Flamewaker Subjugator"]       = { mark = 8, creatureType = "Elemental" },
+    ["Flamewaker Pathfinder"]       = { mark = 8, creatureType = "Elemental" },
+    ["Flamewaker Beast Handler"]    = { mark = 8, creatureType = "Elemental" },
+    ["Flamewaker Hound Master"]     = { mark = 8, creatureType = "Elemental" },
+    ["Flamewaker Animator"]         = { mark = 8, creatureType = "Elemental" },
+    ["Flamewaker Elite"]            = { mark = 5, creatureType = "Elemental" },
+    ["Unbound Pyrelord"]            = { mark = 8, creatureType = "Elemental" },
+    ["Unbound Smoldering Elemental"] = { mark = 4, creatureType = "Elemental" },
+    ["Molten Lord"]                 = { mark = 8, creatureType = "Elemental" },
+    ["Molten Behemoth"]             = { mark = 8, creatureType = "Elemental" },
+    ["Ancient Core Hound"]          = { mark = 5, creatureType = "Beast" },
+    ["Cinderweb Spinner"]           = { mark = 8, creatureType = "Beast" },
+    ["Cinderweb Creeper"]           = { mark = 5, creatureType = "Beast" },
+    ["Cinderweb Spiderling"]        = "SKIP",
+    ["Blazing Talon Initiate"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Blazing Talon Clawshaper"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Blazing Monstrosity"]         = { mark = 8, creatureType = "Elemental" },
+    ["Voracious Hatchling"]         = { mark = 8, creatureType = "Dragonkin" },
+    ["Harbinger of Flame"]          = { mark = 8, creatureType = "Elemental" },
+    ["Druid of the Flame"]          = { mark = 8, creatureType = "Humanoid" },
+    ["Rageface"]                    = { mark = 8, creatureType = "Beast" },
+    ["Riplimb"]                     = { mark = 8, creatureType = "Beast" },
 }
 
 db["Dragon Soul"] = {
-    ["Twilight Elite Dreadblade"]   = 8,
-    ["Twilight Elite Slayer"]       = 8,
-    ["Twilight Frost Evoker"]       = 8,
-    ["Twilight Siege Captain"]      = 8,
-    ["Twilight Sapper"]             = 8,   -- Warmaster add
-    ["Harbinger of Twilight"]       = 8,
-    ["Harbinger of Destruction"]    = 8,
-    ["Faceless Corruptor"]          = 8,
-    ["Ancient Water Lord"]          = 8,
-    ["Stormbinder Adept"]           = 8,
-    ["Elementium Bolt"]             = 8,
-    ["Elementium Terror"]           = 8,
-    ["Mutated Corruption"]          = 8,
-    ["Wing Tentacle"]               = 8,
-    ["Claw of Go'rath"]             = 8,
-    ["Eye of Go'rath"]              = 8,
-    ["Flail of Go'rath"]            = 8,
-    ["Blistering Tentacle"]         = 8,
-    ["Hideous Amalgamation"]        = 8,
-    ["Burning Tendons"]             = 8,
-    ["Congealing Blood"]            = 8,
+    ["Twilight Elite Dreadblade"]   = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Elite Slayer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Frost Evoker"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Shadow Gazer"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Earth Bender"]       = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Siege Captain"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Twilight Sapper"]             = { mark = 8, creatureType = "Humanoid" },
+    ["Harbinger of Twilight"]       = { mark = 8, creatureType = "Elemental" },
+    ["Harbinger of Destruction"]    = { mark = 8, creatureType = "Elemental" },
+    ["Faceless Corruptor"]          = { mark = 8, creatureType = "Aberration" },
+    ["Ancient Water Lord"]          = { mark = 8, creatureType = "Elemental" },
+    ["Stormbinder Adept"]           = { mark = 8, creatureType = "Humanoid" },
+    ["Elementium Bolt"]             = { mark = 8, creatureType = "Elemental", ccImmune = true },
+    ["Elementium Terror"]           = { mark = 8, creatureType = "Elemental" },
+    ["Mutated Corruption"]          = { mark = 8, creatureType = "Aberration" },
+    ["Wing Tentacle"]               = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Claw of Go'rath"]             = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Eye of Go'rath"]              = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Flail of Go'rath"]            = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Blistering Tentacle"]         = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Hideous Amalgamation"]        = { mark = 8, creatureType = "Aberration" },
+    ["Burning Tendons"]             = { mark = 8, creatureType = "Aberration", ccImmune = true },
+    ["Congealing Blood"]            = { mark = 8, creatureType = "Aberration" },
+    ["Corrupted Parasite"]          = "SKIP",
 }
 
 -- ============================================================

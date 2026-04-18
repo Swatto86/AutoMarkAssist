@@ -1,5 +1,23 @@
 # AutoMarkAssist Changelog
 
+## 3.4.3
+
+### Database Enrichment
+- **Full Creature-Type Coverage:** Every mob entry across Classic, WotLK, Cataclysm, and MoP databases now carries a `creatureType` field matching the format used by the TBC database. This unlocks accurate CC matching across ~870 additional mobs that were previously stored as plain integers, so Polymorph / Sap / Banish / Shackle / Hibernate / Freezing Trap now resolve correctly in every supported dungeon and raid.
+- **Expanded Trash Rosters:** Added hundreds of missing trash mobs (non-caster vrykul, guards, dragonspawn, quilen, etc.) across all expansions so they get sensible default marks instead of falling through to FCFS.
+- **CC-Immune Flags:** Tagged titan constructs, tentacles, faceless horrors, mechanicals, portals, and boss-mechanic adds with `ccImmune = true` so the allocator stops wasting CC marks on them.
+- **Danger Flags:** Added `dangerLevel` tags to additional healers, necromancers, and reinforcement-callers found during the audit pass.
+
+## 3.4.2
+
+### Bug Fixes
+- **Cascade Promotion Hole Closed:** When the Skull target died, an empty Cross slot, and only CC-marked mobs remained alive, nothing was ever re-marked as the new kill target. `CascadeMarksAfterDeath` now promotes the highest-scoring CC mob directly to Skull when Cross is unoccupied.
+- **Player-Target Filter in CC-Immunity Auto-Learn:** The combat log handler now reads destFlags and skips player targets, preventing player names from being written into the mob DB when CC bounces in battlegrounds or arenas.
+- **Modifier Hotkey Capture:** The reset-hotkey binder now captures SHIFT/CTRL/ALT combos (e.g. `SHIFT-F1`) via a shared `FormatHotkeyCombo` helper instead of only accepting the base key.
+- **Classic-Only Heroic Detection:** `HEROIC_DIFFICULTY_IDS` trimmed to `{2, 8}` (5-man Heroic, MoP Challenge Mode). Retail Mythic/Mythic+ IDs removed since this addon targets Classic-era clients only.
+- **CC Spell-ID Coverage:** `CC_SPELL_IDS` expanded to cover Sap rank 4, Freezing Arrow, all Wyvern Sting ranks, Seduction, Repentance, Mind Control, and cosmetic Polymorph forms so auto-immunity learning fires on the full set of CC spells.
+- **Cleanups:** Removed a duplicate `autoReset` key in `DB_DEFAULTS` and dead `HIGH_KEYWORDS`/`CC_KEYWORDS` tables.
+
 ## 3.4.1
 
 ### Bug Fixes
