@@ -188,7 +188,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
         frame:RegisterEvent("PLAYER_REGEN_ENABLED")
         frame:RegisterEvent("RAID_TARGET_UPDATE")
         frame:RegisterEvent("MODIFIER_STATE_CHANGED")
-        frame:RegisterEvent("PLAYER_TARGET_CHANGED")
 
         -- Initialise minimap.
         AMA.UpdateMinimapPosition()
@@ -242,14 +241,6 @@ frame:SetScript("OnEvent", function(self, event, ...)
         if not AutoMarkAssistDB then return end
         if AMA.GetMarkingMode() == "manual" then
             AMA.ShowMarkPickerForMouseover()
-        end
-
-    elseif event == "PLAYER_TARGET_CHANGED" then
-        -- Tank-target follow: snap Skull onto the player's new target so the
-        -- group's kill icon tracks the tank's intent.  Internal guards in
-        -- SnapSkullToPlayerTarget handle mode/permission/CC/range checks.
-        if AMA.SnapSkullToPlayerTarget then
-            AMA.SnapSkullToPlayerTarget()
         end
 
     elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then

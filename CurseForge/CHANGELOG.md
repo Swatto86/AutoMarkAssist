@@ -1,5 +1,12 @@
 # AutoMarkAssist Changelog
 
+## 3.4.6
+
+### Reverted
+- **Skull-Follows-Tank-Target Removed:** v3.4.5's `PLAYER_TARGET_CHANGED` snap is removed. Tab-targeting is core tanking gameplay (Thunder Clap → tab → Devastate → tab → Sunder Armor → tab to spread threat in TBC; taunt rotations in Classic/Wrath), and snapping Skull on every target change made the kill icon flicker across 4-5 mobs in the first seconds of every pull. Party DPS would either chase the moving icon or learn to ignore Skull entirely. Skull is now stable from the moment it's allocated.
+- The +50 tank-target tie-break (v3.4.5) is retained — it only matters at *initial* allocation when a pack is first scanned, so the tank's pick wins the first Skull placement without affecting it afterwards.
+- The hard-skip on live-CC mobs in cascade promotion (v3.4.5) is retained — it only fires after a kill, not on routine target changes.
+
 ## 3.4.5
 
 ### Changes
