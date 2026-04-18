@@ -1,5 +1,12 @@
 # AutoMarkAssist Changelog
 
+## 3.4.5
+
+### Changes
+- **Skull Follows Tank Target (proximity mode):** When the player switches target to a different markable hostile mob, Skull snaps onto the new target. The previous Skull holder is freed so the next scan tick re-marks it appropriately (Cross / CC / nothing). Tanks no longer have to live with Skull glued to whatever the addon picked first. Snap is suppressed if the new target is currently CC'd with more than 3 s of CC remaining (avoids breaking active CC), if combat lock is on, or in mouseover/manual modes.
+- **Tank Target Tie-Break Boosted (+1 → +50):** The player's current target now wins decisively against equally-tiered mobs. Big enough to override one dangerLevel step in the same band, small enough that a Critical-danger healer in the pack still beats a Normal-tier tank target.
+- **Hard Skip on Live CC in Cascade:** v3.4.4's CC-time penalty is replaced with a hard skip when CC has more than 3 s remaining. Promoting a freshly-Polymorphed/Sapped/Banished mob to Skull or Cross would put the kill icon on a locked-down target and the party would instantly break the CC. Below the 3 s grace, the per-second penalty still applies so the closest-to-expiring mob wins ties.
+
 ## 3.4.4
 
 ### Changes

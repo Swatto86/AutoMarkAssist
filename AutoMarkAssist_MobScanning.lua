@@ -280,9 +280,12 @@ local function ScoreMob(mobName, unitToken)
         end
     end
 
-    -- Tie-break: nudge the player's current target so ambiguous packs
-    -- break toward what the tank is already on.
-    if UnitIsUnit and UnitIsUnit(unitToken, "target") then score = score + 1 end
+    -- Tank target priority: the player's current target wins decisively
+    -- against equally-tiered mobs.  Big enough to override a +100 dangerLevel
+    -- step (so a tank pulling a Critical-danger healer still gets Skull on
+    -- whatever they're actually facing) but small enough that a Critical
+    -- mob in the pack still beats a Normal-tier tank target.
+    if UnitIsUnit and UnitIsUnit(unitToken, "target") then score = score + 50 end
 
     return score
 end
@@ -527,12 +530,115 @@ local function CollectSortedPack(proximityOnly)
     return candidates
 end
 
+-- ============================================================
+-- CC TIME / TOKEN HELPERS (used by cascade and tank-target snap)
+-- ============================================================
+
+local function ResolveToken(guid, cachedToken)
+    if cachedToken and UnitExists(cachedToken) and UnitGUID(cachedToken) == guid then
+        if not (UnitIsDead and UnitIsDead(cachedToken)) then
+            return cachedToken
+        end
+        return nil
+    end
+    return ValidateOwner(guid)
+end
+
+-- Cascade and tank-target snap will HARD-SKIP any CC-marked mob with more
+-- than this many seconds of CC debuff remaining.  Promoting a fully-locked-
+-- down mob to Skull/Cross causes the party to see a kill icon and instantly
+-- break the CC.  Below the threshold (CC about to wear off anyway), the mob
+-- is a viable kill target and gets a small per-second penalty so the
+-- closest-to-expiring mob wins ties.
+local CC_PROMOTION_GRACE_SEC   = 3
+local CC_TIME_PENALTY_PER_SEC  = 10
+
+--- Return seconds remaining on any CC debuff present on unitToken, or 0.
+--- Iterates the unit's debuffs and matches against AMA.CC_SPELL_IDS.
+local function GetCCTimeRemaining(unitToken)
+    if not unitToken or not UnitExists(unitToken) then return 0 end
+    if not UnitDebuff then return 0 end
+    local ccIds = AMA.CC_SPELL_IDS
+    if not ccIds then return 0 end
+    local now = GetTime and GetTime() or 0
+    local best = 0
+    for i = 1, 40 do
+        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
+            pcall(UnitDebuff, unitToken, i)
+        if not ok then break end
+        if not spellId then break end
+        if ccIds[spellId] and expirationTime and expirationTime > now then
+            local remaining = expirationTime - now
+            if remaining > best then best = remaining end
+        end
+    end
+    return best
+end
+
 --- Proximity mode: scan all in-range mobs, sort by danger score, then apply
 --- marks in that order so the most dangerous mob always receives Skull.
 function AMA.HolisticScanAndMark()
     local sorted = CollectSortedPack(true)
     for _, candidate in ipairs(sorted) do
         AMA.AssignMark(candidate.token, false, "proximity")
+    end
+end
+
+--- Snap Skull to whatever the player is currently targeting (proximity mode).
+--- Tanks frequently switch kill priority on the fly; without this the Skull
+--- icon stays glued to the mob the addon picked first and the rest of the
+--- group looks at the wrong target.
+---
+--- Conditions for the swap:
+---   * Marking mode is proximity (manual is user-driven; mouseover is
+---     already context-aware on the hovered mob).
+---   * Player has a hostile, alive, markable target in proximity range.
+---   * Target isn't already Skull.
+---   * If the new target currently holds a CC mark with active CC, leave it
+---     alone -- swapping would break the CC.
+---   * The current Skull holder, if any, is forgotten so the next scan tick
+---     re-evaluates a fresh mark for it (Cross / CC / nothing).
+function AMA.SnapSkullToPlayerTarget()
+    if AMA.GetMarkingMode() ~= "proximity" then return end
+    if not AMA.IsAddonEnabled() then return end
+    if not UnitExists("target") then return end
+    if not UnitCanAttack("player", "target") then return end
+    if UnitIsDead and UnitIsDead("target") then return end
+    if not AMA.IsMarkEnabled(MARK_SKULL) then return end
+    if AMA.IsCombatMarkLockActive() then return end
+    if not AMA.IsUnitInAutoMarkRange("target") then return end
+
+    local targetGuid = UnitGUID and UnitGUID("target")
+    if not targetGuid then return end
+
+    -- Already Skull: nothing to do.
+    if AMA.markOwners[MARK_SKULL] == targetGuid then return end
+
+    -- Filterable target?
+    local isValid, mobName = IsMarkableTarget("target")
+    if not isValid then return end
+
+    -- Don't break a live CC on this mob.
+    local existingMark = AMA.markedGUIDs[targetGuid]
+    if existingMark and existingMark ~= MARK_SKULL and existingMark ~= MARK_CROSS then
+        if GetCCTimeRemaining("target") > CC_PROMOTION_GRACE_SEC then return end
+    end
+
+    -- Free the current Skull holder so the next scan can re-mark it.
+    local oldSkullGuid = AMA.markOwners[MARK_SKULL]
+    if oldSkullGuid and oldSkullGuid ~= targetGuid then
+        local oldToken = ResolveToken(oldSkullGuid, AMA.markTokens[MARK_SKULL])
+        AMA.ForgetMark(oldSkullGuid)
+        if oldToken then pcall(SetRaidTarget, oldToken, 0) end
+    end
+
+    -- If the target already holds another mark slot, free it.
+    if existingMark then AMA.ForgetMark(targetGuid) end
+
+    local applied = AMA.TrySetRaidTarget("target", MARK_SKULL)
+    if applied then
+        AMA.RecordMark(targetGuid, MARK_SKULL, "target")
+        AMA.VPrint("Skull snapped to player target: " .. (mobName or "?"))
     end
 end
 
@@ -696,46 +802,6 @@ end
 -- REBALANCE AFTER DEATH
 -- ============================================================
 
-local function ResolveToken(guid, cachedToken)
-    if cachedToken and UnitExists(cachedToken) and UnitGUID(cachedToken) == guid then
-        if not (UnitIsDead and UnitIsDead(cachedToken)) then
-            return cachedToken
-        end
-        return nil
-    end
-    return ValidateOwner(guid)
-end
-
--- Score penalty applied per second of remaining CC time when choosing which
--- CC-marked mob to promote.  Mobs with lots of CC time left are locked down
--- safely and should be killed LAST.  Weight 10/sec means a 30 s Sap subtracts
--- 300 points — small enough that a Critical-danger healer still wins over
--- a fresh-CC'd trash mob, but large enough to push mobs with long CC left
--- below equally-dangerous mobs whose CC is about to expire.
-local CC_TIME_PENALTY_PER_SEC = 10
-
---- Return seconds remaining on any CC debuff present on unitToken, or 0.
---- Iterates the unit's debuffs and matches against AMA.CC_SPELL_IDS.
-local function GetCCTimeRemaining(unitToken)
-    if not unitToken or not UnitExists(unitToken) then return 0 end
-    if not UnitDebuff then return 0 end
-    local ccIds = AMA.CC_SPELL_IDS
-    if not ccIds then return 0 end
-    local now = GetTime and GetTime() or 0
-    local best = 0
-    for i = 1, 40 do
-        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
-            pcall(UnitDebuff, unitToken, i)
-        if not ok then break end
-        if not spellId then break end
-        if ccIds[spellId] and expirationTime and expirationTime > now then
-            local remaining = expirationTime - now
-            if remaining > best then best = remaining end
-        end
-    end
-    return best
-end
-
 function AMA.CascadeMarksAfterDeath()
     if AMA.GetMarkingMode() == "manual" then return end
     if AMA.IsCombatMarkLockActive() then return end
@@ -744,9 +810,11 @@ function AMA.CascadeMarksAfterDeath()
     AMA.SyncVisibleMarks()
 
     -- Helper: find the highest-score living CC-marked mob to promote.
-    -- Adjusted score = base score − (CC-time-remaining × penalty).
-    -- Mobs still fully locked down drop in priority so we don't break their
-    -- CC by promoting them to Skull; mobs whose CC is wearing off rise.
+    -- Mobs with active CC longer than CC_PROMOTION_GRACE_SEC are HARD SKIPPED
+    -- so we never re-mark a Polymorphed/Sapped/Banished mob as a kill target
+    -- (which would make the party DPS it and instantly break the CC).
+    -- Within the grace window, a per-second penalty makes the closest-to-
+    -- expiring mob win when base scores are equal.
     local function FindBestCCPromotion()
         local bestMark, bestGuid, bestToken, bestScore = nil, nil, nil, -math.huge
         for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
@@ -755,11 +823,13 @@ function AMA.CascadeMarksAfterDeath()
                 if ownerGuid then
                     local token = ResolveToken(ownerGuid, AMA.markTokens[m])
                     if token then
-                        local base = ScoreMob(UnitName(token) or "", token)
                         local ccLeft = GetCCTimeRemaining(token)
-                        local score = base - (ccLeft * CC_TIME_PENALTY_PER_SEC)
-                        if score > bestScore then
-                            bestMark, bestGuid, bestToken, bestScore = m, ownerGuid, token, score
+                        if ccLeft <= CC_PROMOTION_GRACE_SEC then
+                            local base = ScoreMob(UnitName(token) or "", token)
+                            local score = base - (ccLeft * CC_TIME_PENALTY_PER_SEC)
+                            if score > bestScore then
+                                bestMark, bestGuid, bestToken, bestScore = m, ownerGuid, token, score
+                            end
                         end
                     else
                         AMA.ForgetMark(ownerGuid)
