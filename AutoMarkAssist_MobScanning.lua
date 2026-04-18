@@ -706,6 +706,36 @@ local function ResolveToken(guid, cachedToken)
     return ValidateOwner(guid)
 end
 
+-- Score penalty applied per second of remaining CC time when choosing which
+-- CC-marked mob to promote.  Mobs with lots of CC time left are locked down
+-- safely and should be killed LAST.  Weight 10/sec means a 30 s Sap subtracts
+-- 300 points — small enough that a Critical-danger healer still wins over
+-- a fresh-CC'd trash mob, but large enough to push mobs with long CC left
+-- below equally-dangerous mobs whose CC is about to expire.
+local CC_TIME_PENALTY_PER_SEC = 10
+
+--- Return seconds remaining on any CC debuff present on unitToken, or 0.
+--- Iterates the unit's debuffs and matches against AMA.CC_SPELL_IDS.
+local function GetCCTimeRemaining(unitToken)
+    if not unitToken or not UnitExists(unitToken) then return 0 end
+    if not UnitDebuff then return 0 end
+    local ccIds = AMA.CC_SPELL_IDS
+    if not ccIds then return 0 end
+    local now = GetTime and GetTime() or 0
+    local best = 0
+    for i = 1, 40 do
+        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
+            pcall(UnitDebuff, unitToken, i)
+        if not ok then break end
+        if not spellId then break end
+        if ccIds[spellId] and expirationTime and expirationTime > now then
+            local remaining = expirationTime - now
+            if remaining > best then best = remaining end
+        end
+    end
+    return best
+end
+
 function AMA.CascadeMarksAfterDeath()
     if AMA.GetMarkingMode() == "manual" then return end
     if AMA.IsCombatMarkLockActive() then return end
@@ -714,15 +744,20 @@ function AMA.CascadeMarksAfterDeath()
     AMA.SyncVisibleMarks()
 
     -- Helper: find the highest-score living CC-marked mob to promote.
+    -- Adjusted score = base score − (CC-time-remaining × penalty).
+    -- Mobs still fully locked down drop in priority so we don't break their
+    -- CC by promoting them to Skull; mobs whose CC is wearing off rise.
     local function FindBestCCPromotion()
-        local bestMark, bestGuid, bestToken, bestScore = nil, nil, nil, -1
+        local bestMark, bestGuid, bestToken, bestScore = nil, nil, nil, -math.huge
         for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
             if m ~= MARK_SKULL and m ~= MARK_CROSS then
                 local ownerGuid = AMA.markOwners[m]
                 if ownerGuid then
                     local token = ResolveToken(ownerGuid, AMA.markTokens[m])
                     if token then
-                        local score = ScoreMob(UnitName(token) or "", token)
+                        local base = ScoreMob(UnitName(token) or "", token)
+                        local ccLeft = GetCCTimeRemaining(token)
+                        local score = base - (ccLeft * CC_TIME_PENALTY_PER_SEC)
                         if score > bestScore then
                             bestMark, bestGuid, bestToken, bestScore = m, ownerGuid, token, score
                         end

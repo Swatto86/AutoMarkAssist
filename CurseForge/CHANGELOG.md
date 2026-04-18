@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.4
+
+### Changes
+- **CC Time-Aware Cascade Promotion:** When cascading Skull after a kill, CC-marked mobs are now ranked by adjusted score = base priority − (CC time remaining × 10). Mobs still fully locked down (e.g. a freshly-Polymorphed caster with 40 s left) drop in promotion priority so the addon prefers to promote mobs whose CC is about to expire. A Critical-danger healer still wins over light-danger trash regardless of CC state; this only changes the ordering between mobs of similar base danger.
+
 ## 3.4.3
 
 ### Database Enrichment
