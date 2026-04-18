@@ -212,6 +212,12 @@ local function IsMarkableTarget(unitToken)
     local name = UnitName(unitToken)
     if not name or name == "" then return false end
 
+    -- Skip mind-controlled / charmed friendly players.  They appear hostile
+    -- to UnitCanAttack while charmed; without this filter the addon would
+    -- happily slap Skull on a party member.
+    if UnitIsPlayer and UnitIsPlayer(unitToken) then return false end
+    if UnitPlayerControlled and UnitPlayerControlled(unitToken) then return false end
+
     if AutoMarkAssistDB and AutoMarkAssistDB.skipCritters then
         local ctype = UnitCreatureType and UnitCreatureType(unitToken)
         if ctype == "Critter" then return false end
@@ -493,6 +499,109 @@ function AMA.AssignMark(unitToken, force, source)
 end
 
 -- ============================================================
+-- CC TIME / TOKEN HELPERS (used by manual override, cascade, etc.)
+-- ============================================================
+
+local function ResolveToken(guid, cachedToken)
+    if cachedToken and UnitExists(cachedToken) and UnitGUID(cachedToken) == guid then
+        if not (UnitIsDead and UnitIsDead(cachedToken)) then
+            return cachedToken
+        end
+        return nil
+    end
+    return ValidateOwner(guid)
+end
+
+-- Cascade promotion will HARD-SKIP any CC-marked mob with more than this
+-- many seconds of CC debuff remaining.  Promoting a fully-locked-down mob
+-- to Skull/Cross causes the party to see a kill icon and instantly break
+-- the CC.  Below the threshold (CC about to wear off anyway), the mob is
+-- a viable kill target and gets a small per-second penalty so the closest-
+-- to-expiring mob wins ties.
+local CC_PROMOTION_GRACE_SEC   = 3
+local CC_TIME_PENALTY_PER_SEC  = 10
+
+--- Return seconds remaining on any CC debuff present on unitToken, or 0.
+--- Iterates the unit's debuffs and matches against AMA.CC_SPELL_IDS.
+local function GetCCTimeRemaining(unitToken)
+    if not unitToken or not UnitExists(unitToken) then return 0 end
+    if not UnitDebuff then return 0 end
+    local ccIds = AMA.CC_SPELL_IDS
+    if not ccIds then return 0 end
+    local now = GetTime and GetTime() or 0
+    local best = 0
+    for i = 1, 40 do
+        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
+            pcall(UnitDebuff, unitToken, i)
+        if not ok then break end
+        if not spellId then break end
+        if ccIds[spellId] and expirationTime and expirationTime > now then
+            local remaining = expirationTime - now
+            if remaining > best then best = remaining end
+        end
+    end
+    return best
+end
+
+-- ============================================================
+-- MANUAL MARK OVERRIDE
+-- Slash-command driven; lets the player explicitly stamp a kill mark on
+-- their current target without leaving proximity/mouseover mode.  The
+-- override clears any existing mark on the slot and on the target, applies
+-- the requested mark, and records it as a normal local mark.  Subsequent
+-- scan ticks see the GUID is already marked and skip it, so the mark is
+-- stable until the mob dies or someone reassigns it externally.
+-- ============================================================
+
+--- Stamp `markIdx` (1-8) onto the player's current target, or 0 to clear.
+--- Returns true on success, false + reason on failure.
+function AMA.ManualMarkPlayerTarget(markIdx)
+    if not UnitExists("target") then
+        return false, "no target"
+    end
+    if not UnitCanAttack("player", "target") then
+        return false, "target not hostile"
+    end
+    if UnitIsDead and UnitIsDead("target") then
+        return false, "target is dead"
+    end
+    local targetGuid = UnitGUID and UnitGUID("target")
+    if not targetGuid then return false, "no GUID" end
+
+    -- Clear case: remove any tracked mark on the target.
+    if markIdx == 0 or markIdx == nil then
+        AMA.ForgetMark(targetGuid)
+        local ok, reason = AMA.TrySetRaidTarget("target", 0)
+        if not ok then return false, reason end
+        AMA.VPrint("Cleared mark on " .. (UnitName("target") or "?"))
+        return true
+    end
+
+    if type(markIdx) ~= "number" or markIdx < 1 or markIdx > 8 then
+        return false, "invalid mark index"
+    end
+
+    -- Free the existing holder of the slot (if any, and different from target).
+    local oldHolder = AMA.markOwners[markIdx]
+    if oldHolder and oldHolder ~= targetGuid then
+        local oldToken = ResolveToken(oldHolder, AMA.markTokens[markIdx])
+        AMA.ForgetMark(oldHolder)
+        if oldToken then pcall(SetRaidTarget, oldToken, 0) end
+    end
+
+    -- Free any other slot the target currently holds.
+    if AMA.markedGUIDs[targetGuid] then AMA.ForgetMark(targetGuid) end
+
+    local applied, reason = AMA.TrySetRaidTarget("target", markIdx)
+    if not applied then return false, reason end
+
+    AMA.RecordMark(targetGuid, markIdx, "target")
+    AMA.VPrint(string.format("Manually set %s -> %s",
+        UnitName("target") or "?", AMA.MARK_NAMES[markIdx] or tostring(markIdx)))
+    return true
+end
+
+-- ============================================================
 -- HOLISTIC PACK SCAN
 -- Collects all visible hostile mobs, scores them by danger, and
 -- assigns marks in priority order.  Used by proximity mode and as
@@ -533,47 +642,6 @@ end
 -- ============================================================
 -- CC TIME / TOKEN HELPERS (used by cascade and tank-target snap)
 -- ============================================================
-
-local function ResolveToken(guid, cachedToken)
-    if cachedToken and UnitExists(cachedToken) and UnitGUID(cachedToken) == guid then
-        if not (UnitIsDead and UnitIsDead(cachedToken)) then
-            return cachedToken
-        end
-        return nil
-    end
-    return ValidateOwner(guid)
-end
-
--- Cascade and tank-target snap will HARD-SKIP any CC-marked mob with more
--- than this many seconds of CC debuff remaining.  Promoting a fully-locked-
--- down mob to Skull/Cross causes the party to see a kill icon and instantly
--- break the CC.  Below the threshold (CC about to wear off anyway), the mob
--- is a viable kill target and gets a small per-second penalty so the
--- closest-to-expiring mob wins ties.
-local CC_PROMOTION_GRACE_SEC   = 3
-local CC_TIME_PENALTY_PER_SEC  = 10
-
---- Return seconds remaining on any CC debuff present on unitToken, or 0.
---- Iterates the unit's debuffs and matches against AMA.CC_SPELL_IDS.
-local function GetCCTimeRemaining(unitToken)
-    if not unitToken or not UnitExists(unitToken) then return 0 end
-    if not UnitDebuff then return 0 end
-    local ccIds = AMA.CC_SPELL_IDS
-    if not ccIds then return 0 end
-    local now = GetTime and GetTime() or 0
-    local best = 0
-    for i = 1, 40 do
-        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
-            pcall(UnitDebuff, unitToken, i)
-        if not ok then break end
-        if not spellId then break end
-        if ccIds[spellId] and expirationTime and expirationTime > now then
-            local remaining = expirationTime - now
-            if remaining > best then best = remaining end
-        end
-    end
-    return best
-end
 
 --- Proximity mode: scan all in-range mobs, sort by danger score, then apply
 --- marks in that order so the most dangerous mob always receives Skull.

@@ -330,6 +330,40 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "reset" or cmd == "clear" then
         AMA.ResetWithMessage(true)
 
+    elseif cmd == "mark" then
+        -- Manual override: stamp a named mark on the current target.
+        -- Usage: /ama mark <name|index>
+        --   names: skull, cross, moon, diamond, triangle, square, star, circle
+        --   index: 1-8, or 0 / "off" / "clear" to remove the mark.
+        local NAME_TO_IDX = {
+            skull = 8, cross = 7, x = 7,
+            moon = 5, diamond = 3, triangle = 4,
+            square = 6, star = 1, circle = 2,
+            off = 0, clear = 0, none = 0,
+        }
+        local key = string.lower(argStr)
+        local idx = NAME_TO_IDX[key] or tonumber(key)
+        if idx == nil or type(idx) ~= "number" or idx < 0 or idx > 8 then
+            AMA.Print("Usage: /ama mark <skull|cross|moon|diamond|triangle|square|star|circle|clear>")
+        else
+            local ok, reason = AMA.ManualMarkPlayerTarget(idx)
+            if not ok then
+                AMA.Print("|cFFFF6666Manual mark failed:|r " .. (reason or "unknown"))
+            end
+        end
+
+    elseif cmd == "skull" then
+        local ok, reason = AMA.ManualMarkPlayerTarget(8)
+        if not ok then AMA.Print("|cFFFF6666Skull failed:|r " .. (reason or "unknown")) end
+
+    elseif cmd == "cross" then
+        local ok, reason = AMA.ManualMarkPlayerTarget(7)
+        if not ok then AMA.Print("|cFFFF6666Cross failed:|r " .. (reason or "unknown")) end
+
+    elseif cmd == "unmark" then
+        local ok, reason = AMA.ManualMarkPlayerTarget(0)
+        if not ok then AMA.Print("|cFFFF6666Unmark failed:|r " .. (reason or "unknown")) end
+
     elseif cmd == "announce" then
         AMA.AnnounceMarkPlan(true)
 
@@ -429,6 +463,8 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AMA.Print("  /ama - Open options")
         AMA.Print("  /ama enable | disable | toggle")
         AMA.Print("  /ama reset - Clear all marks")
+        AMA.Print("  /ama mark <name> - Stamp a mark on current target (macro-friendly)")
+        AMA.Print("  /ama skull | cross | unmark - Quick aliases for /ama mark")
         AMA.Print("  /ama announce - Send mark plan")
         AMA.Print("  /ama preview - Preview locally")
         AMA.Print("  /ama mode <proximity|mouseover|manual>")

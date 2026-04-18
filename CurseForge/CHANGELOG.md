@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 3.4.7
+
+### New Features
+- **Manual Mark Override (Macro-Friendly):** New `/ama mark <name>` command stamps any raid icon onto your current target without leaving proximity/mouseover mode. Quick aliases `/ama skull`, `/ama cross`, `/ama unmark` are macro/keybind ready. Useful when the tank wants explicit Skull on a specific mob the addon hasn't prioritised, without losing automatic marking elsewhere.
+  - Names accepted: `skull cross moon diamond triangle square star circle`
+  - Indices accepted: `1`-`8`
+  - Clear: `0`, `off`, `clear`, `none`, or `/ama unmark`
+  - The override frees any previous holder of the slot and any previous mark on the target, then applies the requested mark and tracks it like an auto-placed local mark (so cascade-on-death still works).
+
+### Bug Fixes
+- **Mind-Controlled Friendly Filter:** `IsMarkableTarget` now skips units flagged as players or player-controlled. Without this, a mind-controlled party member appears hostile to `UnitCanAttack` and would receive a kill mark — embarrassing and confusing in PvE encounters with MC mechanics.
+
 ## 3.4.6
 
 ### Reverted
