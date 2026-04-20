@@ -67,6 +67,9 @@ db["The Underbog"] = {
     ["Lykul Wasp"]                  = { mark = 5, creatureType = "Beast" },
     ["Spore Bat"]                   = { mark = 5, creatureType = "Beast" },
     ["Black Stalker Spawn"]         = { mark = 5, creatureType = "Beast" },
+    -- Fen Ray is a Beast but immune to Hibernate / sleep effects; force a
+    -- kill mark so Circle never gets allocated to one.
+    ["Fen Ray"]                     = { mark = 8, creatureType = "Beast", ccImmune = true },
 }
 
 db["The Steamvault"] = {

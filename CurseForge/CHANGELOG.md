@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.13
+
+### Database
+- **Fen Ray (The Underbog) Flagged CC-Immune:** Fen Rays are classified as Beasts but are immune to Hibernate and other sleep effects, so the allocator previously handed them Circle in Druid groups only for the Hibernate to fail. They're now tagged `ccImmune = true` in the static TBC database and will only receive a kill mark.
+
 ## 3.4.12
 
 ### New Features
