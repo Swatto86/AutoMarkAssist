@@ -719,10 +719,22 @@ do
     E.Label(t1, "Prefix:", 16, y)
     announcePrefixEdit = E.EditBox(t1, 200, 20)
     announcePrefixEdit:SetPoint("TOPLEFT", t1, "TOPLEFT", 80, y)
-    announcePrefixEdit:SetScript("OnEnterPressed", function(self)
+    local function CommitAnnouncePrefix(self)
         if AutoMarkAssistDB then
-            AutoMarkAssistDB.announcePrefixText = self:GetText()
+            AutoMarkAssistDB.announcePrefixText = self:GetText() or ""
         end
+    end
+    announcePrefixEdit:SetScript("OnEnterPressed", function(self)
+        CommitAnnouncePrefix(self)
+        self:ClearFocus()
+    end)
+    -- Save on focus loss too so users who type a prefix and click away (or
+    -- close the config frame) don't silently lose their changes.  HookScript
+    -- preserves the border-colour reset provided by E.EditBox.
+    announcePrefixEdit:HookScript("OnEditFocusLost", CommitAnnouncePrefix)
+    announcePrefixEdit:SetScript("OnEscapePressed", function(self)
+        -- Revert any unsaved edit back to the stored value, then drop focus.
+        self:SetText(AutoMarkAssistDB and AutoMarkAssistDB.announcePrefixText or "")
         self:ClearFocus()
     end)
     y = y - 28

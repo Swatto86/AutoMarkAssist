@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.11
+
+### Bug Fixes
+- **Announcement Prefix Now Saves on Focus Loss:** The Prefix edit box in the config previously only committed the typed text when the user explicitly pressed Enter. Clicking anywhere else or closing the config dropped the change silently, so a custom prefix appeared to "not work". The field now also saves on focus loss, and Escape reverts any in-flight edit back to the stored value.
+
 ## 3.4.10
 
 ### Bug Fixes

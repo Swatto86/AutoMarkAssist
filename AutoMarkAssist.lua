@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.10"
+AMA.VERSION    = "3.4.11"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
