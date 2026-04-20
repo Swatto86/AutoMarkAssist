@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.11"
+AMA.VERSION    = "3.4.12"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -54,16 +54,23 @@ AMA.ALL_MARKS_ORDERED = { 8, 7, 5, 3, 4, 1, 2, 6 }
 -- ============================================================
 
 AMA.CC_ASSIGNMENTS = {
-    MAGE    = { mark = 5, label = "Polymorph", creatureTypes = { Humanoid = true, Beast = true, Critter = true } },
-    ROGUE   = { mark = 3, label = "Sap",       creatureTypes = { Humanoid = true } },
+    MAGE    = { mark = 5, label = "Polymorph",  creatureTypes = { Humanoid = true, Beast = true, Critter = true } },
+    ROGUE   = { mark = 3, label = "Sap",        creatureTypes = { Humanoid = true } },
     WARLOCK = { mark = 4, label = "Banish",     creatureTypes = { Demon = true, Elemental = true } },
     PRIEST  = { mark = 1, label = "Shackle",    creatureTypes = { Undead = true } },
     DRUID   = { mark = 2, label = "Hibernate",  creatureTypes = { Beast = true, Dragonkin = true } },
     HUNTER  = { mark = 6, label = "Trap",       creatureTypes = { Humanoid = true, Beast = true, Demon = true, Dragonkin = true, Giant = true, Undead = true } },
+    -- Paladin Repentance (TBC+): shares Moon with Mage since there are only
+    -- six non-kill raid icons.  When both a Mage and a Paladin are present
+    -- the Mage owns Moon (Polymorph has broader creature-type coverage);
+    -- solo-Paladin groups still get Moon allocated to Repentance.
+    PALADIN = { mark = 5, label = "Repentance", creatureTypes = { Humanoid = true, Demon = true, Dragonkin = true, Giant = true, Undead = true } },
 }
 
--- Ordered list for predictable iteration.
-AMA.CC_CLASS_ORDER = { "MAGE", "ROGUE", "WARLOCK", "PRIEST", "DRUID", "HUNTER" }
+-- Ordered list for predictable iteration.  PALADIN comes last so Mage wins
+-- the shared Moon slot when both classes are in the group (first-wins in
+-- BuildMarkPlanLines / GetReservedCCMarks).
+AMA.CC_CLASS_ORDER = { "MAGE", "ROGUE", "WARLOCK", "PRIEST", "DRUID", "HUNTER", "PALADIN" }
 
 -- Reverse lookup: mark index → class tag (e.g. 5 → "MAGE").
 AMA.CC_MARK_TO_CLASS = {}
@@ -313,12 +320,34 @@ function AMA.GetGroupCCAbilities()
 end
 
 -- Returns a set of mark indices reserved for CC based on group composition.
+-- When multiple classes share a mark (e.g. Mage Polymorph and Paladin
+-- Repentance both on Moon), the first class in CC_CLASS_ORDER that is
+-- actually present owns the mark, and the creature-type filter is the
+-- UNION of all sharing classes' types so the mark can be used against any
+-- mob either class can CC.
 function AMA.GetReservedCCMarks()
     local reserved = {}
     local abilities = AMA.GetGroupCCAbilities()
     for _, ability in ipairs(abilities) do
         if AMA.IsMarkEnabled(ability.mark) then
-            reserved[ability.mark] = ability
+            local existing = reserved[ability.mark]
+            if not existing then
+                local merged = {
+                    classTag     = ability.classTag,
+                    playerName   = ability.playerName,
+                    mark         = ability.mark,
+                    label        = ability.label,
+                    creatureTypes = {},
+                }
+                for t, v in pairs(ability.creatureTypes or {}) do
+                    if v then merged.creatureTypes[t] = true end
+                end
+                reserved[ability.mark] = merged
+            else
+                for t, v in pairs(ability.creatureTypes or {}) do
+                    if v then existing.creatureTypes[t] = true end
+                end
+            end
         end
     end
     return reserved

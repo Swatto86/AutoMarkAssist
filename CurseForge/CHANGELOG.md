@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.12
+
+### New Features
+- **Paladin Repentance Recognised as Group CC (TBC+):** Paladins in the group are now detected as a CC class with Repentance on Moon. Since there are only six non-kill raid icons and all were already claimed, Moon is shared between Mage Polymorph and Paladin Repentance. Mage owns Moon when both classes are present (broader creature-type coverage: Humanoid / Beast / Critter), and solo-Paladin groups get Moon allocated to Repentance against its valid targets (Humanoid / Demon / Dragonkin / Giant / Undead). `GetReservedCCMarks` now unions the creature-type filters for shared marks so a Mage+Paladin group can Moon-CC anything either class can handle, and the Mark Plan announcement deduplicates the shared slot so the Moon line is only printed once. Repentance's spell ID was already tracked by the CC-immunity learner, so auto-learning continues to work as before.
+
 ## 3.4.11
 
 ### Bug Fixes

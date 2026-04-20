@@ -54,9 +54,15 @@ do
     local function BuildMarkPlanLines(iconMap)
         local lines = {}
         local abilities = AMA.GetGroupCCAbilities()
+        -- First-wins so the canonical class (earlier in CC_CLASS_ORDER) owns
+        -- a shared mark — e.g. a Mage+Paladin group announces "Moon -
+        -- Polymorph" rather than Repentance, since Mage covers more creature
+        -- types and is the primary Moon user.
         local ccByMark = {}
         for _, ab in ipairs(abilities) do
-            ccByMark[ab.mark] = ab
+            if not ccByMark[ab.mark] then
+                ccByMark[ab.mark] = ab
+            end
         end
 
         -- Kill marks first.
@@ -68,14 +74,16 @@ do
             end
         end
 
-        -- CC marks: only for classes present in the group.
+        -- CC marks: dedupe by mark so shared-mark classes don't print twice.
+        local printedMarks = {}
         for _, classTag in ipairs(AMA.CC_CLASS_ORDER) do
             local cc = AMA.CC_ASSIGNMENTS[classTag]
-            if cc and ccByMark[cc.mark] then
+            if cc and ccByMark[cc.mark] and not printedMarks[cc.mark] then
                 local ab = ccByMark[cc.mark]
                 local icon = iconMap[cc.mark] or ("[" .. cc.mark .. "]")
                 lines[#lines + 1] = string.format("%s  %s - %s",
                     icon, ab.label, ab.playerName or "?")
+                printedMarks[cc.mark] = true
             end
         end
 
