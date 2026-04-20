@@ -31,7 +31,11 @@ local function UpdateZone()
     AMA.currentZoneMobDB = merged
     AMA.VPrint(string.format("Zone: |cFFFFFFFF%s|r  DB entries: |cFF00FF00%d|r",
         resolved, AMA.CountTable(merged)))
-    AMA.ResetState()
+    -- Do not touch the world when the addon is disabled; the user may have
+    -- turned us off specifically so they can manage marks themselves.
+    if AMA.IsAddonEnabled() then
+        AMA.ResetState()
+    end
 end
 
 -- ============================================================
@@ -203,8 +207,12 @@ frame:SetScript("OnEvent", function(self, event, ...)
         AMA.currentZoneName = ""
         UpdateZone()
         AMA.RefreshDifficulty()
-        AMA.ResetState()
-        if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
+        -- Only reset / sync when enabled so a disabled raid leader keeps
+        -- whatever marks were on the pull when they zoned in.
+        if AMA.IsAddonEnabled() then
+            AMA.ResetState()
+            if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
+        end
         AMA.ApplyResetKeybind()
         AMA.RefreshAnnounceQueue(1.5)
 
@@ -212,12 +220,16 @@ frame:SetScript("OnEvent", function(self, event, ...)
         AMA.currentZoneName = ""
         UpdateZone()
         AMA.RefreshDifficulty()
-        AMA.ResetState()
-        if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
+        if AMA.IsAddonEnabled() then
+            AMA.ResetState()
+            if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
+        end
         AMA.RefreshAnnounceQueue(1.5)
 
     elseif event == "GROUP_ROSTER_UPDATE" then
-        if AMA.SyncVisibleMarks then AMA.SyncVisibleMarks() end
+        if AMA.IsAddonEnabled() and AMA.SyncVisibleMarks then
+            AMA.SyncVisibleMarks()
+        end
         AMA.RefreshAnnounceQueue(1.0)
 
     elseif event == "RAID_TARGET_UPDATE" then

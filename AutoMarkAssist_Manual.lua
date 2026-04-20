@@ -166,6 +166,7 @@ end
 -- ============================================================
 
 local function ManualCycleMarkOnMouseover(delta)
+    if not AMA.IsAddonEnabled() then return end
     if AMA.GetMarkingMode() ~= "manual" then return end
     if not UnitExists("mouseover") then return end
     if not UnitCanAttack("player", "mouseover") then return end
@@ -364,6 +365,7 @@ do
     AMA._scrollCatcher = scrollCatcher
 
     function AMA.ShowMarkPickerForMouseover()
+        if not AMA.IsAddonEnabled() then return end
         if AMA.GetMarkingMode() ~= "manual" then return end
 
         local mod = AutoMarkAssistDB and AutoMarkAssistDB.manualModifier or "ALT"

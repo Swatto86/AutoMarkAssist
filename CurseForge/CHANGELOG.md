@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.9
+
+### Bug Fixes
+- **Honour the Disabled Flag Everywhere:** When `AutoMarkAssistDB.enabled = false`, the addon is now genuinely inert. Zone transitions (`PLAYER_ENTERING_WORLD`, `ZONE_CHANGED_NEW_AREA`, and the internal `UpdateZone` helper) no longer call `ResetState`, so a disabled raid leader keeps whatever marks are on the pull instead of having them wiped every time a new area loads. Manual-mode scroll-wheel cycling and the mouseover mark-picker HUD also refuse to fire while disabled. The combat-end `PLAYER_REGEN_ENABLED` path was already gated; this closes the remaining side-channels that could interfere with party mark placements while the addon is nominally off.
+
 ## 3.4.8
 
 ### New Features
