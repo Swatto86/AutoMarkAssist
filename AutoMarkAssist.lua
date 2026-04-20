@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.7"
+AMA.VERSION    = "3.4.8"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -138,6 +138,15 @@ AMA.PROXIMITY_RANGE_LABELS = {
     [4] = "~28 yd (Long)",
 }
 
+-- Mouseover range gating.  0 disables the range check entirely so any
+-- hovered unit is eligible; 3 and 4 use the same CheckInteractDistance
+-- index values as proximity mode.
+AMA.MOUSEOVER_RANGE_LABELS = {
+    [0] = "Unlimited",
+    [3] = "~10 yd (Short)",
+    [4] = "~28 yd (Long)",
+}
+
 -- ============================================================
 -- SAVED VARIABLE DEFAULTS
 -- ============================================================
@@ -167,6 +176,7 @@ AMA.DB_DEFAULTS = {
     skipCritters       = true,
     markingMode        = "proximity",   -- "proximity" | "mouseover" | "manual"
     proximityRange     = 4,
+    mouseoverRange     = 0,   -- 0 = unlimited, 3 = ~10 yd, 4 = ~28 yd
     manualModifier     = "ALT",
     manualScrollOrder  = { 8, 7, 3, 4, 5, 6, 2, 1 },
     invertScroll       = true,
@@ -419,7 +429,15 @@ function AMA.MigrateFromOldVersion(db)
     db.mobSubPriorities = nil
     db.skipFillerMobs = nil
     db.mouseoverRangeEnabled = nil
-    db.mouseoverRange = nil
+    -- Coerce any legacy mouseoverRange value into the supported set
+    -- (0 = unlimited, 3 = short, 4 = long).  Anything else falls back to 0.
+    if db.mouseoverRange ~= nil
+        and db.mouseoverRange ~= 0
+        and db.mouseoverRange ~= 3
+        and db.mouseoverRange ~= 4
+    then
+        db.mouseoverRange = 0
+    end
     db.announceLineByLine = nil
     db.smartDungeonCC = nil
     db.autoAnnounceDungeonCC = nil

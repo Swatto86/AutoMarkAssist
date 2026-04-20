@@ -390,7 +390,7 @@ end
 local cfgFrame, currentTab, tabContents, tabBtns, ShowTab
 local ApplyResponsiveConfigLayout
 local cfgUserMoved = false
-local modeBtns, proxRangeBtns, modBtns, announceChannelBtns
+local modeBtns, proxRangeBtns, mouseRangeBtns, modBtns, announceChannelBtns
 local announcePrefixEdit, scrollOrderCells, invertScrollBtn, resetHotkeyBtn
 local markToggleBoxes = {}
 local cbCombatLock, cbRebal, cbAutoReset, cbCritters, cbAnnounce
@@ -558,6 +558,22 @@ do
         end)
         rb._val = rangeVal
         proxRangeBtns[#proxRangeBtns + 1] = rb
+    end
+    y = y - 24
+
+    E.Label(t1, "Mouseover Range:", 16, y)
+    mouseRangeBtns = {}
+    for mrIdx, rangeVal in ipairs({ 3, 4, 0 }) do
+        local label = AMA.MOUSEOVER_RANGE_LABELS[rangeVal] or tostring(rangeVal)
+        local rb = E.Btn(t1, label, 100, 22)
+        rb:SetPoint("TOPLEFT", t1, "TOPLEFT", 130 + (mrIdx - 1) * 108, y)
+        rb:SetScript("OnClick", function()
+            if AutoMarkAssistDB then AutoMarkAssistDB.mouseoverRange = rangeVal end
+            AMA.VPrint("Mouseover range: " .. label)
+            if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
+        end)
+        rb._val = rangeVal
+        mouseRangeBtns[#mouseRangeBtns + 1] = rb
     end
     y = y - 24
 
@@ -854,6 +870,14 @@ function AMA.RefreshConfigFrame()
     if proxRangeBtns then
         local range = AutoMarkAssistDB and AutoMarkAssistDB.proximityRange or 4
         for _, rb in ipairs(proxRangeBtns) do
+            rb:SetActive(rb._val == range)
+        end
+    end
+
+    -- Mouseover range.
+    if mouseRangeBtns then
+        local range = AutoMarkAssistDB and AutoMarkAssistDB.mouseoverRange or 0
+        for _, rb in ipairs(mouseRangeBtns) do
             rb:SetActive(rb._val == range)
         end
     end

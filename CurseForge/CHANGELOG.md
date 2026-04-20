@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.8
+
+### New Features
+- **Mouseover Range Setting:** Mouseover mode now has its own range selector alongside Proximity Range, with three options: `~10 yd (Short)`, `~28 yd (Long)`, and `Unlimited`. Unlimited preserves the previous behavior (any hovered hostile is eligible); the short/long options gate marking to `CheckInteractDistance` range so you can hover-mark distant mobs only when you want to. Default is Unlimited so existing users see no behavior change until they pick a range.
+
 ## 3.4.7
 
 ### New Features
