@@ -122,7 +122,13 @@ frame:RegisterEvent("ADDON_LOADED")
 local resetKeyBtn = CreateFrame("Button", "AMA_ResetMarksButton", UIParent)
 resetKeyBtn:SetSize(1, 1)
 resetKeyBtn:SetAlpha(0)
-resetKeyBtn:RegisterForClicks("AnyUp", "AnyDown")
+-- Anchor off-screen and disable mouse so the button can ONLY be activated
+-- via SetOverrideBindingClick; a stray click (e.g. middle mouse over the
+-- parent's anchor point) can never trigger a reset when no bind is set.
+resetKeyBtn:ClearAllPoints()
+resetKeyBtn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -10000, 10000)
+resetKeyBtn:EnableMouse(false)
+resetKeyBtn:RegisterForClicks("LeftButtonUp")
 resetKeyBtn:SetScript("OnClick", function()
     if AMA.ResetWithMessage then AMA.ResetWithMessage(true) end
 end)
@@ -130,6 +136,12 @@ end)
 function AMA.ApplyResetKeybind()
     ClearOverrideBindings(resetKeyBtn)
     local key = AutoMarkAssistDB and AutoMarkAssistDB.resetMarksKey
+    if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(key) then
+        -- Legacy / accidental mouse-button binding: refuse to apply it and
+        -- scrub the saved value so the UI reflects the cleared state.
+        AutoMarkAssistDB.resetMarksKey = ""
+        key = ""
+    end
     if key and key ~= "" then
         SetOverrideBindingClick(resetKeyBtn, true, key, "AMA_ResetMarksButton")
         AMA.VPrint("Reset keybind: " .. key)

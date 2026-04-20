@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.9"
+AMA.VERSION    = "3.4.10"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -201,6 +201,26 @@ function AMA.VPrint(msg)
     end
 end
 
+-- Returns true if `key` is a bare mouse-button / mouse-wheel binding
+-- (optionally prefixed with ALT-/CTRL-/SHIFT-).  Mouse buttons must not be
+-- used for the reset keybind: the binder is captured through OnKeyDown which
+-- is meant for keyboard input, and a stray mouse click should never wipe
+-- raid marks.
+function AMA.IsMouseButtonKey(key)
+    if type(key) ~= "string" or key == "" then return false end
+    local stripped = key
+    stripped = stripped:gsub("^ALT%-", "")
+    stripped = stripped:gsub("^CTRL%-", "")
+    stripped = stripped:gsub("^SHIFT%-", "")
+    if stripped == "MIDDLEMOUSE"
+    or stripped == "MOUSEWHEELUP"
+    or stripped == "MOUSEWHEELDOWN" then
+        return true
+    end
+    if stripped:match("^BUTTON%d+$") then return true end
+    return false
+end
+
 function AMA.CountTable(t)
     local count = 0
     if type(t) == "table" then
@@ -373,6 +393,14 @@ function AMA.MigrateFromOldVersion(db)
     -- Migrate announceOnEntry from old autoAnnounceDungeonCC flag.
     if db.announceOnEntry == nil and db.autoAnnounceDungeonCC ~= nil then
         db.announceOnEntry = db.autoAnnounceDungeonCC
+    end
+
+    -- Scrub any accidentally-saved mouse-button reset binding.  Earlier
+    -- versions exposed this through a key-capture field that could pick up
+    -- things like MIDDLEMOUSE or BUTTON3 in certain clients, resulting in
+    -- raid marks being wiped every time the user middle-clicked.
+    if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(db.resetMarksKey) then
+        db.resetMarksKey = ""
     end
 
     -- Migrate old priority-string DB format (mobOverrides/mobRemovals/zoneAdditions)

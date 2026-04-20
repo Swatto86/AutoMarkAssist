@@ -1,5 +1,10 @@
 # AutoMarkAssist Changelog
 
+## 3.4.10
+
+### Bug Fixes
+- **Middle Mouse No Longer Clears Marks:** Fixed a long-standing bug where pressing the middle mouse button could trigger a full mark reset even when no reset keybind was configured. The hidden action button used by `SetOverrideBindingClick` is now anchored off-screen with mouse input disabled and registered only for `LeftButtonUp`, so a stray click cannot reach it. The config's bind capture now also refuses mouse-button / mouse-wheel keys (`MIDDLEMOUSE`, `BUTTON3`, `MOUSEWHEELUP`, etc.) because `OnKeyDown` forwards them on some clients. Existing saved mouse-button bindings are scrubbed during migration, so upgrading users with a rogue `MIDDLEMOUSE` value will see it cleared to "Click to Bind" on next login.
+
 ## 3.4.9
 
 ### Bug Fixes

@@ -758,12 +758,25 @@ do
         or key == "LALT"  or key == "RALT" then
             return
         end
+        -- Refuse mouse-button and mouse-wheel keys.  WoW routes these
+        -- through OnKeyDown in some clients, and binding them to "clear all
+        -- marks" would wipe the raid every time the user middle-clicks.
+        if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(key) then
+            self:SetText("Mouse buttons not allowed - press a key")
+            return
+        end
         self:EnableKeyboard(false)
         if key == "ESCAPE" then
             AutoMarkAssistDB.resetMarksKey = ""
         else
             local combo = AMA.FormatHotkeyCombo and AMA.FormatHotkeyCombo(key) or key
+            if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(combo) then
+                combo = ""
+            end
             AutoMarkAssistDB.resetMarksKey = combo ~= "" and combo or key
+            if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(AutoMarkAssistDB.resetMarksKey) then
+                AutoMarkAssistDB.resetMarksKey = ""
+            end
         end
         AMA.ApplyResetKeybind()
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
