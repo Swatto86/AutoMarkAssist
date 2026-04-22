@@ -524,6 +524,7 @@ do
     -- ── Enabled ──
     E.Chk(t1, "Enable Marking", 12, y, "enabled", function()
         AMA.UpdateMinimapState()
+        if AMA.ApplyResetKeybind then AMA.ApplyResetKeybind() end
     end)
     y = y - 24
 

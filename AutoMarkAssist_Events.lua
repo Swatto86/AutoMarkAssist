@@ -130,11 +130,15 @@ resetKeyBtn:SetPoint("TOPLEFT", UIParent, "TOPLEFT", -10000, 10000)
 resetKeyBtn:EnableMouse(false)
 resetKeyBtn:RegisterForClicks("LeftButtonUp")
 resetKeyBtn:SetScript("OnClick", function()
+    if not AMA.IsAddonEnabled() then return end
     if AMA.ResetWithMessage then AMA.ResetWithMessage(true) end
 end)
 
 function AMA.ApplyResetKeybind()
     ClearOverrideBindings(resetKeyBtn)
+    if not AMA.IsAddonEnabled() then
+        return
+    end
     local key = AutoMarkAssistDB and AutoMarkAssistDB.resetMarksKey
     if AMA.IsMouseButtonKey and AMA.IsMouseButtonKey(key) then
         -- Legacy / accidental mouse-button binding: refuse to apply it and
@@ -333,6 +337,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "enable" then
         AutoMarkAssistDB.enabled = true
         AMA.UpdateMinimapState()
+        AMA.ApplyResetKeybind()
         AMA.RefreshAnnounceQueue(0.5)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.VPrint("Auto-marking |cFF00FF00ENABLED|r.")
@@ -340,18 +345,24 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "disable" then
         AutoMarkAssistDB.enabled = false
         AMA.UpdateMinimapState()
+        AMA.ApplyResetKeybind()
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.VPrint("Auto-marking |cFFFF0000DISABLED|r.")
 
     elseif cmd == "toggle" then
         AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
         AMA.UpdateMinimapState()
+        AMA.ApplyResetKeybind()
         AMA.RefreshAnnounceQueue(0.5)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.VPrint("Auto-marking " .. (AutoMarkAssistDB.enabled
             and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
 
     elseif cmd == "reset" or cmd == "clear" then
+        if not AMA.IsAddonEnabled() then
+            AMA.Print("AutoMarkAssist is disabled. Enable marking first (minimap, options, or /ama enable).")
+            return
+        end
         AMA.ResetWithMessage(true)
 
     elseif cmd == "mark" then

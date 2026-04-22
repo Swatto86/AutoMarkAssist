@@ -99,6 +99,7 @@ do
                 AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
             end
             AMA.UpdateMinimapState()
+            if AMA.ApplyResetKeybind then AMA.ApplyResetKeybind() end
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
             AMA.Print(AutoMarkAssistDB.enabled
                 and "Marking |cFF00FF00ENABLED|r."

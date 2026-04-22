@@ -556,6 +556,9 @@ end
 --- Stamp `markIdx` (1-8) onto the player's current target, or 0 to clear.
 --- Returns true on success, false + reason on failure.
 function AMA.ManualMarkPlayerTarget(markIdx)
+    if not AMA.IsAddonEnabled() then
+        return false, "add-on disabled"
+    end
     if not UnitExists("target") then
         return false, "no target"
     end
