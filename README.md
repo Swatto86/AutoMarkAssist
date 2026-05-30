@@ -35,7 +35,7 @@ Skull and Cross are always kill targets. CC marks are only used when the matchin
 ## Three Marking Modes
 
 - **Proximity** (default) — Auto-marks hostile mobs within range on a 0.5s scan timer. Evaluates the entire pack, scores every mob, and assigns marks in priority order.
-- **Mouseover** — Marks when you hover over a mob. Reserves mark slots for higher-priority mobs so the hovered target gets the correct mark.
+- **Mouseover** — Marks when you hover over a mob, choosing the correct mark for what is currently on the field based on the standard kill/CC priority.
 - **Manual** — Hold a modifier key (or choose "NONE") and scroll your mouse wheel over a target to pick your own marks via a HUD. No automatic logic runs. Inside instances, your choices are saved to the database for future auto-marking.
 
 Only one mode is active at a time.
@@ -69,7 +69,7 @@ Other commands:
 - `AutoMarkAssist_Core.lua` — Mark tracking, permission checks, unit token list, combat lock.
 - `AutoMarkAssist_MobScanning.lua` — Zone DB management, mob scoring, holistic pack scan, mark allocation, CC specificity, cascade-on-death, reset, sync.
 - `AutoMarkAssist_Proximity.lua` — 0.5s OnUpdate scan loop for proximity mode.
-- `AutoMarkAssist_Mouseover.lua` — UPDATE_MOUSEOVER_UNIT handler with context-aware soft-reservation.
+- `AutoMarkAssist_Mouseover.lua` — UPDATE_MOUSEOVER_UNIT handler for mouseover marking.
 - `AutoMarkAssist_Manual.lua` — Scroll-wheel mark picker HUD for manual mode.
 - `AutoMarkAssist_Events.lua` — Zone tracking, event routing, slash commands, combat log immunity detection.
 - `AutoMarkAssist_Config.lua` — Options UI, announcement tools, database browser.

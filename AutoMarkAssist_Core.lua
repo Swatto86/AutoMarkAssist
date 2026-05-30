@@ -19,6 +19,7 @@ AMA.markedGUIDs    = {}   -- guid -> markIdx
 AMA.markOwners     = {}   -- markIdx -> guid
 AMA.markTokens     = {}   -- markIdx -> unitToken
 AMA.guidMarkSource = {}   -- guid -> "local" | "observed"
+AMA.markLastSeen   = {}   -- guid -> GetTime() when last confirmed visible
 
 -- ============================================================
 -- UNIT TOKEN LIST
@@ -116,6 +117,9 @@ function AMA.RecordMark(guid, markIdx, token)
     AMA.markOwners[markIdx] = guid
     AMA.markTokens[markIdx] = token
     AMA.guidMarkSource[guid] = MARK_SOURCE_LOCAL
+    -- Seed last-seen so a freshly marked mob is never swept as stale before
+    -- the next visibility pass has a chance to confirm it.
+    AMA.markLastSeen[guid] = GetTime and GetTime() or 0
 end
 
 local function ForgetTrackedMark(guid)
@@ -127,6 +131,7 @@ local function ForgetTrackedMark(guid)
     end
     AMA.markedGUIDs[guid] = nil
     AMA.guidMarkSource[guid] = nil
+    AMA.markLastSeen[guid] = nil
     return markIdx
 end
 

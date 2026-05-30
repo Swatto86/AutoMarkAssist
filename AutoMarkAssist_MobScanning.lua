@@ -16,19 +16,49 @@ local MARK_NONE     = 0
 local MARK_SOURCE_LOCAL    = "local"
 local MARK_SOURCE_OBSERVED = "observed"
 
--- Soft-reserved mark slots used during holistic context building for
--- mouseover mode.  Populated inside AssignMarkHolistic, cleared after.
-local softReservedMarks = {}
+-- A tracked mark is only recycled once its mob has been UNSEEN through every
+-- scanned unit token for this long.  Without the grace window, simply moving
+-- the mouse off a marked mob (mouseover mode) or a mob briefly leaving
+-- nameplate range (proximity mode) freed its icon, so the next mob received
+-- the same icon -- producing duplicate world markers.  Deaths still free the
+-- icon instantly via the combat-log handler, so this only delays cleanup of
+-- mobs that genuinely despawned or wandered off without dying.
+local STALE_MARK_GRACE_SEC = 8
 
 -- ============================================================
 -- RANGE CHECKS
 -- ============================================================
 
+-- Range detection for proximity mode.
+--
+-- CheckInteractDistance is unreliable for HOSTILE units on the Classic
+-- Anniversary (1.15) client -- it frequently returns nil for mobs regardless of
+-- their real distance.  The old code treated that nil as "out of range" and
+-- returned false, which silently filtered out every candidate and made
+-- proximity mode mark nothing at all.
+--
+-- Strategy:
+--   1. Trust CheckInteractDistance only when it returns a POSITIVE (in range);
+--      this still honours the 10yd / 28yd setting whenever the client answers.
+--   2. Otherwise fall back to nameplate presence -- an enemy nameplate only
+--      renders for a nearby unit, so it is a reliable "this mob is close to me"
+--      signal even when the interact-distance API refuses to report.
 local function IsUnitInRange(unitToken, rangeIdx)
     if rangeIdx == 2 then rangeIdx = 3 end
-    local ok, result = pcall(CheckInteractDistance, unitToken, rangeIdx or 4)
-    if not ok then return false end
-    return result == 1 or result == true
+    rangeIdx = rangeIdx or 4
+
+    local ok, result = pcall(CheckInteractDistance, unitToken, rangeIdx)
+    if ok and (result == 1 or result == true) then
+        return true
+    end
+
+    -- Fallback: nameplate units are inherently nearby.  Keeps proximity working
+    -- when CheckInteractDistance gives no usable answer for hostiles.
+    if type(unitToken) == "string" and unitToken:find("^nameplate%d+$") then
+        return true
+    end
+
+    return false
 end
 
 function AMA.IsUnitInAutoMarkRange(unitToken)
@@ -246,15 +276,27 @@ local function ValidateOwner(guid)
 end
 
 local function IsMarkSlotFree(markIdx)
-    if softReservedMarks[markIdx] then return false end
     local ownerGuid = AMA.markOwners[markIdx]
     if not ownerGuid then return true end
     local token = ValidateOwner(ownerGuid)
-    if not token then
-        AMA.ForgetMark(ownerGuid)
-        return true
+    if token then return false end
+
+    -- Owner is not on any unit token right now.  That does NOT mean it is dead:
+    -- a marked mob with no nameplate and that nobody is targeting has no token
+    -- at all.  Releasing the slot here was the cause of duplicate world icons --
+    -- moving the mouse off a marked mob (mouseover) or a mob briefly leaving
+    -- nameplate range (proximity) freed its icon, so the next mob got the same
+    -- one.  Keep the slot reserved until the stale grace window elapses; deaths
+    -- free it instantly via the combat-log handler, so this only holds slots for
+    -- mobs that are alive but momentarily unseen.
+    local lastSeen = AMA.markLastSeen[ownerGuid]
+    local now = GetTime and GetTime() or 0
+    if lastSeen and (now - lastSeen) <= STALE_MARK_GRACE_SEC then
+        return false
     end
-    return false
+
+    AMA.ForgetMark(ownerGuid)
+    return true
 end
 
 --- Compute a numeric priority score for holistic pack allocation.
@@ -433,9 +475,12 @@ function AMA.SyncVisibleMarks()
         end
     end
 
+    local now = GetTime and GetTime() or 0
     local staleGuids = {}
     for guid in pairs(AMA.markedGUIDs) do
-        if not seenGuids[guid] then
+        if seenGuids[guid] then
+            AMA.markLastSeen[guid] = now
+        elseif (now - (AMA.markLastSeen[guid] or now)) > STALE_MARK_GRACE_SEC then
             staleGuids[#staleGuids + 1] = guid
         end
     end
@@ -531,7 +576,11 @@ local function GetCCTimeRemaining(unitToken)
     local now = GetTime and GetTime() or 0
     local best = 0
     for i = 1, 40 do
-        local ok, _, _, _, _, _, _, expirationTime, _, _, _, spellId =
+        -- UnitDebuff (Classic) returns:
+        --   name(1) icon(2) count(3) debuffType(4) duration(5)
+        --   expirationTime(6) source(7) isStealable(8)
+        --   nameplateShowPersonal(9) spellId(10) ...
+        local ok, _, _, _, _, _, expirationTime, _, _, _, spellId =
             pcall(UnitDebuff, unitToken, i)
         if not ok then break end
         if not spellId then break end
@@ -655,27 +704,26 @@ function AMA.HolisticScanAndMark()
     end
 end
 
---- Mouseover mode: assign the hovered mob the mark it deserves based on its
---- rank among ALL currently visible mobs.  Higher-priority unassigned mobs
---- soft-reserve their mark slots so the hovered mob receives the correct
---- mark rather than whichever slot happens to be free.
+--- Mouseover mode: assign the hovered mob the best mark it can take given the
+--- marks that are ACTUALLY in play right now.
+---
+--- This used to run a "soft-reserve" dry-run that pre-claimed mark slots for
+--- every higher-priority mob the player had NOT yet marked, on the theory that
+--- the hovered mob should receive a mark matching its rank in the whole pack.
+--- In practice that broke mouseover marking: because those higher mobs are not
+--- actually marked (and in mouseover the player may only ever hover a couple),
+--- the reservations denied the hovered mob its rightful mark -- a kill-priority
+--- mob would get a leftover CC mark (e.g. Polymorph on a Skull target, which
+--- the party then breaks), or no mark at all once enough phantom slots were
+--- reserved.  The misfire only happened when other unmarked mobs were visible,
+--- which is why marking "didn't always" work.
+---
+--- AllocateMark already honours each mob's DB-preferred mark first and only
+--- falls back to Skull/Cross/CC when that slot is genuinely taken, so assigning
+--- the hovered mob directly gives it the correct mark for what is really on the
+--- field.
 function AMA.AssignMarkHolistic(unitToken)
-    local sorted     = CollectSortedPack(false)
-    local targetGuid = UnitGUID and UnitGUID(unitToken)
-
-    -- Dry-run: soft-reserve slots for every unassigned mob ranked above target.
-    for _, candidate in ipairs(sorted) do
-        if candidate.guid == targetGuid then break end
-        if not AMA.markedGUIDs[candidate.guid] then
-            local markIdx = AllocateMark(candidate.token, candidate.name)
-            if markIdx then
-                softReservedMarks[markIdx] = true
-            end
-        end
-    end
-
     AMA.AssignMark(unitToken, false, "mouseover")
-    wipe(softReservedMarks)
 end
 
 -- ============================================================
@@ -802,6 +850,7 @@ function AMA.ResetState(forceAll)
     wipe(AMA.markOwners)
     wipe(AMA.markTokens)
     wipe(AMA.guidMarkSource)
+    wipe(AMA.markLastSeen)
 end
 
 function AMA.ResetWithMessage(forceAll)
