@@ -1,5 +1,17 @@
 # AutoMarkAssist Changelog
 
+## 3.4.15
+
+### Bug Fixes
+- **Proximity Mode Now Marks Again:** Proximity marking could stop working entirely. `CheckInteractDistance` returns `nil` for hostile units on the Classic Anniversary (1.15) client, and that `nil` was treated as "out of range", so every candidate was filtered out and nothing was ever marked. The range check now trusts a positive result and falls back to nameplate presence — a reliable nearby-only signal — when the API gives no answer, so the mobs closest to you are marked again.
+- **Mouseover Picks the Correct Mark:** In mouseover mode the hovered mob could receive the wrong mark, or no mark, whenever other unmarked mobs were nearby. The holistic "soft-reserve" pass pre-claimed mark slots for higher-priority mobs that were not actually marked, starving the hovered mob of its rightful mark (for example Polymorph landing on an intended Skull target, which the group then breaks) or leaving it unmarked once enough phantom slots were reserved. The hovered mob is now allocated directly via the normal mark priority (DB preference, then Skull, Cross, and CC).
+- **No More Duplicate World Icons:** Marks were forgotten the instant a mob lost its unit token — when the mouse moved away, or a mob briefly left nameplate range — which freed the icon and let the next mob receive a duplicate. A short last-seen grace window now retains a mark until its mob has genuinely been unseen for a while. Deaths still free the icon immediately via the combat log.
+- **CC-Aware Cascade Restored:** The crowd-control duration check in the after-death cascade read `UnitDebuff` return values from the wrong positions, so the guard that prevents promoting a still-CC'd mob to a kill mark never fired. Corrected to the live return-value layout, so a Polymorphed/Sapped/Banished mob is no longer pulled up to Skull while its CC is active.
+- **Mouseover Range No Longer Blocks Silently:** The optional mouseover range limit (10/28 yd) could silently block marking for the same `CheckInteractDistance` reason. It is now fail-open — it only rejects on a definite out-of-range answer.
+
+### Performance
+- **Lighter Mouseover Handling:** Mouseover marking now skips the expensive whole-pack scan for non-hostile or dead mouseover units instead of running it on every cursor movement.
+
 ## 3.4.13
 
 ### Database
