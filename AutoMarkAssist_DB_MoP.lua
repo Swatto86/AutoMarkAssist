@@ -190,7 +190,7 @@ db["Throne of Thunder"] = {
     ["Venomous Effusion"]           = { mark = 8, creatureType = "Elemental" },
     ["Ball Lightning"]              = { mark = 8, creatureType = "Elemental", ccImmune = true },
     ["Diffused Lightning"]          = { mark = 8, creatureType = "Elemental", ccImmune = true },
-    ["Lesser Diffused Lightning"]   = { mark = 5, creatureType = "Elemental", ccImmune = true },
+    ["Lesser Diffused Lightning"]   = { mark = 8, creatureType = "Elemental", ccImmune = true },
     ["Greater Diffused Lightning"]  = { mark = 8, creatureType = "Elemental", ccImmune = true },
     ["Crackling Stalker"]           = { mark = 8, creatureType = "Elemental" },
     ["Mindbender Kaartish"]         = { mark = 8, creatureType = "Humanoid" },

@@ -127,9 +127,9 @@ AutoMarkAssist_MobDB = {
         ["Dark Iron Agent"]             = { mark = 8, creatureType = "Humanoid" },  -- stealth
         ["Dark Iron Ambassador"]        = { mark = 8, creatureType = "Humanoid" },
         ["Crowd Pummeler 9-60"]         = { mark = 8, creatureType = "Mechanical", ccImmune = true },
-        ["Peacekeeper Security Suit"]   = { mark = 5, creatureType = "Mechanical", ccImmune = true },
+        ["Peacekeeper Security Suit"]   = { mark = 8, creatureType = "Mechanical", ccImmune = true },
         ["Alarm-a-bomb 2600"]           = { mark = 8, creatureType = "Mechanical", ccImmune = true },
-        ["Security Golem"]              = { mark = 5, creatureType = "Mechanical", ccImmune = true },
+        ["Security Golem"]              = { mark = 8, creatureType = "Mechanical", ccImmune = true },
         ["Walking Bomb"]                = "SKIP",
     },
 

@@ -43,6 +43,7 @@ db["The Shattered Halls"] = {
     ["Shattered Hand Zealot"]       = { mark = 8, creatureType = "Humanoid" },
     ["Shattered Hand Assassin"]     = { mark = 8, creatureType = "Humanoid" },
     ["Shattered Hand Heathen"]      = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Legionnaire"]  = { mark = 8, creatureType = "Humanoid", ccImmune = true },  -- immune to CC
     ["Shattered Hand Reaver"]       = { mark = 5, creatureType = "Humanoid" },
     ["Shattered Hand Savage"]       = { mark = 5, creatureType = "Humanoid" },
     ["Shattered Hand Berserker"]    = { mark = 8, creatureType = "Humanoid" },

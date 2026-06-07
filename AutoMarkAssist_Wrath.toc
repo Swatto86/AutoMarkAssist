@@ -1,8 +1,8 @@
-## Interface: 38000, 30405
+## Interface: 30405
 ## Title: |cFF00CCFFAutoMark|r|cFFFFFFFFAssist|r
 ## Notes: Automatic dungeon and raid marking with intelligent CC assignment based on group composition. Supports proximity, mouseover, and manual marking modes.
 ## Author: Swatto
-## Version: 3.4.15
+## Version: 3.4.16
 ## X-Website: https://www.curseforge.com/wow/addons/automarkassist
 ## X-Curse-Project-ID: 1479940
 ## X-WoWI-ID: 0

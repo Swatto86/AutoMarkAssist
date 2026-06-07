@@ -1,5 +1,15 @@
 # AutoMarkAssist Changelog
 
+## 3.4.16
+
+### Database
+- **CC-Immune Mobs Corrected to Kill Marks:** Eight mechanical and elemental mobs that are immune to crowd control were stored with a Polymorph (Moon) preference alongside their `ccImmune` flag. The flag already forced them onto a kill mark at run time, but the stored preference was dead and misleading. They now carry a kill-mark preference that matches their behaviour: Peacekeeper Security Suit and Security Golem (Gnomeregan); Iron Golem Custodian, Titanium Vanguard, Centrifuge Core, Junk Bot and Emergency Fire Bot (WotLK); and Lesser Diffused Lightning (Throne of Thunder).
+- **Shattered Hand Legionnaire Flagged CC-Immune:** The Shattered Hand Legionnaire (The Shattered Halls) is immune to crowd control and now only receives a kill mark instead of a CC assignment.
+
+### Packaging
+- **Mists of Pandaria Classic Build Now Generated:** The MoP TOC used the unrecognised `_MoP` filename suffix, so the packager never produced a Mists of Pandaria Classic build and the file shipped as dead weight. Renamed to the recognised `_Mists` suffix so the MoP Classic build is built and uploaded.
+- **Removed Bogus Wrath Interface Number:** The WotLK TOC listed a non-existent client build (`38000`) alongside the real one; removed so only the correct interface version (`30405`) remains.
+
 ## 3.4.15
 
 ### Bug Fixes
