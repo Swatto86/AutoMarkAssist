@@ -5,6 +5,11 @@ on:
     tags:
       - "*"
   workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to create and package (e.g. v3.4.18). Leave empty to package without tagging.'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -19,6 +24,18 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Allows launching a release from environments that cannot push tags:
+      # dispatch with a tag name and the workflow tags HEAD itself, so the
+      # packager sees a tagged commit and produces a full release build.
+      - name: Create release tag (manual dispatch)
+        if: github.event_name == 'workflow_dispatch' && inputs.tag != ''
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag "${{ inputs.tag }}"
+          git push origin "refs/tags/${{ inputs.tag }}"
+
       - name: Package addon
         uses: BigWigsMods/packager@v2
         with:
@@ -28,10 +45,13 @@ jobs:
           GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename GitHub release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.tag != '')
         shell: bash
         run: |
           release_tag="${GITHUB_REF_NAME}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.tag }}" ]; then
+            release_tag="${{ inputs.tag }}"
+          fi
           release_version="${release_tag#v}"
           gh release edit "$release_tag" --title "AutoMarkAssist v${release_version}"
         env:
