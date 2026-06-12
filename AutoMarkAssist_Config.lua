@@ -137,14 +137,19 @@ do
     end
 
     -- Auto-announce on dungeon entry (called from Events).
-    function AMA.AutoAnnounceOnEntry()
+    -- When `ignoreInstance` is true (the user just enabled the addon inside a
+    -- formed group) the dungeon check is skipped so the mark key is announced
+    -- wherever the party is.
+    function AMA.AutoAnnounceOnEntry(ignoreInstance)
         if not AutoMarkAssistDB or not AutoMarkAssistDB.announceOnEntry then return false end
         if not AutoMarkAssistDB.enabled then return false end
         if AMA.GetMarkingMode() == "manual" then return false end
 
-        local inInstance, instanceType = IsInInstance()
-        if not inInstance then return false end
-        if instanceType ~= "party" and instanceType ~= "raid" then return false end
+        if not ignoreInstance then
+            local inInstance, instanceType = IsInInstance()
+            if not inInstance then return false end
+            if instanceType ~= "party" and instanceType ~= "raid" then return false end
+        end
         if not (IsInGroup() or (IsInRaid and IsInRaid())) then return false end
 
         local canMark = AMA.CanMarkReason()
@@ -525,6 +530,10 @@ do
     E.Chk(t1, "Enable Marking", 12, y, "enabled", function()
         AMA.UpdateMinimapState()
         if AMA.ApplyResetKeybind then AMA.ApplyResetKeybind() end
+        if AutoMarkAssistDB and AutoMarkAssistDB.enabled
+        and AMA.RefreshAnnounceQueue then
+            AMA.RefreshAnnounceQueue(0.5, true)
+        end
     end)
     y = y - 24
 

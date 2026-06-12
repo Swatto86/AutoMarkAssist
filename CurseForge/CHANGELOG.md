@@ -1,5 +1,13 @@
 # AutoMarkAssist Changelog
 
+## 3.4.17
+
+### Bug Fixes
+- **No More Announcement Spam When the Group Breaks Up:** The auto-announcement deduplicated on an exact zone-plus-roster snapshot, so any roster change — including someone *leaving* at the end of a dungeon — produced a "new" key and re-sent the full mark plan to the remaining players. The announcer now only fires when the roster **grows** (a new member who hasn't heard the mark key) or the zone changes; departures update the tracked roster silently. Announce coverage resets when you leave the instance or group, so the next fresh run announces normally.
+
+### New Features
+- **Enabling Mid-Party Announces the Mark Key:** Turning the addon on while already in a formed group — via `/ama enable`, `/ama toggle`, the minimap button, or the Enable Marking checkbox — now announces the mark plan to the group (subject to the existing announce-on-entry setting, Silent Mode, marking permission, and manual-mode checks). Previously the announcement only triggered on dungeon entry, so a leader who enabled the addon after zoning in never shared the key.
+
 ## 3.4.16
 
 ### Database

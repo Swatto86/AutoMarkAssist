@@ -100,6 +100,10 @@ do
             end
             AMA.UpdateMinimapState()
             if AMA.ApplyResetKeybind then AMA.ApplyResetKeybind() end
+            if AutoMarkAssistDB and AutoMarkAssistDB.enabled
+            and AMA.RefreshAnnounceQueue then
+                AMA.RefreshAnnounceQueue(0.5, true)
+            end
             if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
             AMA.Print(AutoMarkAssistDB.enabled
                 and "Marking |cFF00FF00ENABLED|r."

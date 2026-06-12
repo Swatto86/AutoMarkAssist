@@ -9,7 +9,8 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 local pendingAnnounceAt = nil
-local lastAnnounceKey = nil
+local lastAnnouncedZone = nil
+local announcedMembers = {}   -- set of "name:class" covered by the last announce
 
 -- ============================================================
 -- ZONE DATABASE HELPER
@@ -44,24 +45,9 @@ end
 -- full roster is available.
 -- ============================================================
 
-local function BuildAnnounceKey()
-    if not AutoMarkAssistDB or not AutoMarkAssistDB.enabled then return nil end
-    if not AutoMarkAssistDB.announceOnEntry then return nil end
-    if AMA.GetMarkingMode() == "manual" then return nil end
-
-    local canMark = AMA.CanMarkReason and AMA.CanMarkReason()
-    if not canMark then return nil end
-
-    local inInstance, instanceType = IsInInstance()
-    if not inInstance then return nil end
-    if instanceType ~= "party" and instanceType ~= "raid" then return nil end
-    if not (IsInGroup() or (IsInRaid and IsInRaid())) then return nil end
-
-    local zone = AMA.currentZoneName or GetRealZoneText() or ""
-    if zone == "" then return nil end
-
-    -- Build a key from zone + group members to avoid duplicate announces.
-    local parts = { zone }
+--- Returns a set of "name:class" strings for every current group member.
+local function GetGroupMemberSet()
+    local set = {}
     local tokens = {}
     if IsInRaid and IsInRaid() then
         for i = 1, 40 do
@@ -76,10 +62,35 @@ local function BuildAnnounceKey()
     for _, t in ipairs(tokens) do
         local name = UnitName(t)
         local _, classTag = UnitClass(t)
-        parts[#parts + 1] = (name or "") .. ":" .. (classTag or "")
+        set[(name or "") .. ":" .. (classTag or "")] = true
     end
-    return table.concat(parts, "|")
+    return set
 end
+
+--- Common gate for auto-announcements.  When `ignoreInstance` is true
+--- (enable-triggered announce) the dungeon check is skipped so enabling the
+--- addon in an already-formed party announces the mark key immediately.
+local function IsAnnounceEligible(ignoreInstance)
+    if not AutoMarkAssistDB or not AutoMarkAssistDB.enabled then return false end
+    if not AutoMarkAssistDB.announceOnEntry then return false end
+    if AMA.GetMarkingMode() == "manual" then return false end
+
+    local canMark = AMA.CanMarkReason and AMA.CanMarkReason()
+    if not canMark then return false end
+
+    if not (IsInGroup() or (IsInRaid and IsInRaid())) then return false end
+
+    if not ignoreInstance then
+        local inInstance, instanceType = IsInInstance()
+        if not inInstance then return false end
+        if instanceType ~= "party" and instanceType ~= "raid" then return false end
+        local zone = AMA.currentZoneName or GetRealZoneText() or ""
+        if zone == "" then return false end
+    end
+    return true
+end
+
+local pendingForce = false
 
 local function QueueAnnounce(delay)
     pendingAnnounceAt = (GetTime and GetTime() or 0) + (delay or 1.5)
@@ -90,21 +101,66 @@ local function TryPendingAnnounce()
     if (GetTime and GetTime() or 0) < pendingAnnounceAt then return end
     pendingAnnounceAt = nil
 
-    local key = BuildAnnounceKey()
-    if not key then return end
-    if key == lastAnnounceKey then return end
+    local force = pendingForce
+    pendingForce = false
 
-    if AMA.AutoAnnounceOnEntry and AMA.AutoAnnounceOnEntry() then
-        lastAnnounceKey = key
+    if not IsAnnounceEligible(force) then return end
+
+    local zone = AMA.currentZoneName or GetRealZoneText() or ""
+    local members = GetGroupMemberSet()
+
+    if not force then
+        -- Only announce when the roster GREW (a new member needs the mark
+        -- key) or the zone changed.  A member LEAVING the party must never
+        -- re-trigger the announcement -- the remaining players already
+        -- heard it (this used to spam the party when the dungeon was over
+        -- and people started dropping group).
+        local hasNew = (zone ~= lastAnnouncedZone)
+        if not hasNew then
+            for memberKey in pairs(members) do
+                if not announcedMembers[memberKey] then
+                    hasNew = true
+                    break
+                end
+            end
+        end
+        if not hasNew then
+            -- Roster shrank or is unchanged: refresh coverage silently so a
+            -- leaver who later rejoins is treated as new again.
+            announcedMembers = members
+            return
+        end
+    end
+
+    if AMA.AutoAnnounceOnEntry and AMA.AutoAnnounceOnEntry(force) then
+        lastAnnouncedZone = zone
+        announcedMembers = members
     end
 end
 
-function AMA.RefreshAnnounceQueue(delay)
-    if BuildAnnounceKey() then
+--- Queue (or cancel) an auto-announce.  Pass `force = true` from
+--- enable-toggle paths: it bypasses the dungeon requirement and the
+--- roster-growth dedupe so the mark key is always (re)announced when the
+--- user switches the addon on inside a formed group.
+function AMA.RefreshAnnounceQueue(delay, force)
+    if force then
+        pendingForce = true
+        QueueAnnounce(delay or 0.5)
+        return
+    end
+    if IsAnnounceEligible(false) then
         QueueAnnounce(delay or 1.5)
     else
         pendingAnnounceAt = nil
-        lastAnnounceKey = nil
+        pendingForce = false
+        -- Forget announce coverage once we are out of the instance or out
+        -- of the group, so the next dungeon run announces fresh.
+        local inInstance = IsInInstance()
+        if not inInstance
+        or not (IsInGroup() or (IsInRaid and IsInRaid())) then
+            lastAnnouncedZone = nil
+            announcedMembers = {}
+        end
     end
 end
 
@@ -338,7 +394,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AutoMarkAssistDB.enabled = true
         AMA.UpdateMinimapState()
         AMA.ApplyResetKeybind()
-        AMA.RefreshAnnounceQueue(0.5)
+        AMA.RefreshAnnounceQueue(0.5, true)
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.VPrint("Auto-marking |cFF00FF00ENABLED|r.")
 
@@ -353,7 +409,9 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AutoMarkAssistDB.enabled = not AutoMarkAssistDB.enabled
         AMA.UpdateMinimapState()
         AMA.ApplyResetKeybind()
-        AMA.RefreshAnnounceQueue(0.5)
+        if AutoMarkAssistDB.enabled then
+            AMA.RefreshAnnounceQueue(0.5, true)
+        end
         if AMA.RefreshConfigFrame then AMA.RefreshConfigFrame() end
         AMA.VPrint("Auto-marking " .. (AutoMarkAssistDB.enabled
             and "|cFF00FF00ENABLED|r" or "|cFFFF0000DISABLED|r"))
