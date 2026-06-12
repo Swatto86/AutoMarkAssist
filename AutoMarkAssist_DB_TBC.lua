@@ -21,205 +21,290 @@ local order   = AutoMarkAssist_ExpansionOrder
 -- --- Hellfire Citadel ---------------------------------
 
 db["Hellfire Ramparts"] = {
-    ["Hellfire Channeler"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- AoE fire; Hellfire channel
-    ["Bonechewer Beastmaster"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summons Bonechewer Destroyers
-    ["Bonechewer Blood Drinker"]    = { mark = 8, creatureType = "Humanoid" },
-    ["Hellfire Watcher"]            = { mark = 5, creatureType = "Humanoid" },
-    ["Hellfire Watchtower"]         = { mark = 5, creatureType = "Humanoid" },
-    ["Bonechewer Hungerer"]         = "SKIP",
+    ["Hellfire Watcher"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer flanking Watchkeeper Gargolmar
+    ["Bonechewer Beastmaster"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3, ccImmune = true },  -- summons Shattered Hand Warhounds; Poly/Trap immune
+    ["Bleeding Hollow Scryer"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- fear-casting caster, comes in packs of four
+    ["Bonechewer Ravener"]          = { mark = 8, creatureType = "Humanoid" },  -- Kidney Shot on the tank; snare immune
+    ["Bonechewer Hungerer"]         = { mark = 8, creatureType = "Humanoid" },
+    ["Hellfire Sentry"]             = { mark = 8, creatureType = "Humanoid" },  -- killing the bridge pair starts Vazruden
+    ["Bonechewer Destroyer"]        = { mark = 5, creatureType = "Humanoid" },  -- Mortal Strike; prime CC target on heroic
+    ["Bleeding Hollow Darkcaster"]  = { mark = 5, creatureType = "Humanoid" },  -- warlock caster; good Polymorph
+    ["Shattered Hand Warhound"]     = "SKIP",  -- non-elite hounds; cleave down on the tank
 }
 
 db["The Blood Furnace"] = {
-    ["Bleeding Hollow Scryer"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- shadow AoE caster
-    ["Laughing Skull Warden"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Laughing Skull Rogue"]        = { mark = 8, creatureType = "Humanoid" },
-    ["Fel Orc Convert"]             = { mark = 5, creatureType = "Humanoid" },
-    ["Bleeding Hollow Torturer"]    = { mark = 8, creatureType = "Humanoid" },
-    ["Bleeding Hollow Skulker"]     = { mark = 8, creatureType = "Humanoid" },
-    ["Fel Orc Neophyte"]            = "SKIP",
+    ["Shadowmoon Summoner"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summons felhound/seductress pets
+    ["Shadowmoon Technician"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- proximity bombs + long silence
+    ["Nascent Fel Orc"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- stuns the tank; Broggok waves and cells
+    ["Felguard Annihilator"]        = { mark = 4, creatureType = "Demon", dangerLevel = 3 },  -- drops threat + Intercepts party; Banish or kill first
+    ["Felguard Brute"]              = { mark = 4, creatureType = "Demon" },  -- Mortal Strike
+    ["Felhound Manastalker"]        = { mark = 8, creatureType = "Demon" },  -- summoned; kill immediately
+    ["Laughing Skull Warden"]       = { mark = 8, creatureType = "Humanoid" },  -- Battle Shout; hits very hard on heroic
+    ["Laughing Skull Legionnaire"]  = { mark = 8, creatureType = "Humanoid" },  -- knockback melee
+    ["Laughing Skull Rogue"]        = { mark = 8, creatureType = "Humanoid" },  -- stealthed; opens on rear party members
+    ["Laughing Skull Enforcer"]     = { mark = 5, creatureType = "Humanoid" },
+    ["Shadowmoon Adept"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Hellfire Imp"]                = "SKIP",  -- low HP; cleave down
+    ["Fel Orc Neophyte"]            = "SKIP",  -- Broggok wave filler; AoE
 }
 
 db["The Shattered Halls"] = {
-    ["Shattered Hand Zealot"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Shattered Hand Assassin"]     = { mark = 8, creatureType = "Humanoid" },
-    ["Shattered Hand Heathen"]      = { mark = 8, creatureType = "Humanoid" },
-    ["Shattered Hand Legionnaire"]  = { mark = 8, creatureType = "Humanoid", ccImmune = true },  -- immune to CC
-    ["Shattered Hand Reaver"]       = { mark = 5, creatureType = "Humanoid" },
-    ["Shattered Hand Savage"]       = { mark = 5, creatureType = "Humanoid" },
-    ["Shattered Hand Berserker"]    = { mark = 8, creatureType = "Humanoid" },
-    ["Shattered Hand Warhound"]     = "SKIP",
+    ["Shattered Hand Legionnaire"]  = { mark = 8, creatureType = "Humanoid", dangerLevel = 3, ccImmune = true },  -- calls endless reinforcements until dead; kill first in every pack
+    ["Shadowmoon Acolyte"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer (Heal, PW: Shield)
+    ["Shattered Hand Scout"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- heroic only; sprints to trigger the archer gauntlet
+    ["Shattered Hand Savage"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- attack-speed enrage; skull when no Legionnaire present
+    ["Shattered Hand Sharpshooter"] = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- ranged; will not walk to the tank
+    ["Shattered Hand Archer"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- gauntlet volleys
+    ["Shattered Hand Assassin"]     = { mark = 8, creatureType = "Humanoid" },  -- stealthed entrance packs; Saps a party member
+    ["Shattered Hand Centurion"]    = { mark = 8, creatureType = "Humanoid" },
+    ["Shattered Hand Reaver"]       = { mark = 8, creatureType = "Humanoid" },  -- high-damage berserker
+    ["Shattered Hand Houndmaster"]  = { mark = 8, creatureType = "Humanoid" },  -- paired with Rabid Warhounds
+    ["Shadowmoon Darkcaster"]       = { mark = 5, creatureType = "Humanoid" },  -- warlock caster; Polymorph or LoS-pull
+    ["Shattered Hand Heathen"]      = { mark = 5, creatureType = "Humanoid" },
+    ["Shattered Hand Brawler"]      = { mark = 5, creatureType = "Humanoid" },
+    ["Shattered Hand Gladiator"]    = { mark = 5, creatureType = "Humanoid" },  -- O'mrogg arena ring
+    ["Shattered Hand Sentry"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Shattered Hand Zealot"]       = "SKIP",  -- weak Legionnaire escorts; AoE after the skull dies
+    ["Rabid Warhound"]              = "SKIP",  -- non-elite hounds; cleave down first
 }
 
 -- --- Coilfang Reservoir ---------------------------------
 
 db["The Slave Pens"] = {
-    ["Coilfang Collaborator"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- arcane AoE caster
-    ["Coilfang Observer"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Coilfang Slavehandler"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Coilfang Water Elemental"]    = { mark = 5, creatureType = "Elemental" },
-    ["Underbat"]                    = { mark = 5, creatureType = "Beast" },
-    ["Wastewalker Slave"]           = "SKIP",
+    ["Coilfang Soothsayer"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Mind Control + AoE intellect drain
+    ["Coilfang Scale-Healer"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Greater Heal / Holy Nova
+    ["Coilfang Slavehandler"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- killing him frees the enslaved Wastewalkers
+    ["Coilfang Champion"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Intimidating Shout (AoE fear)
+    ["Coilfang Ray"]                = { mark = 2, creatureType = "Beast", dangerLevel = 2 },  -- Psychic Horror on non-tanks; Hibernate it
+    ["Coilfang Observer"]           = { mark = 8, creatureType = "Humanoid" },  -- Immolate; escorts the Rays
+    ["Coilfang Tempest"]            = { mark = 8, creatureType = "Humanoid" },  -- storm caster
+    ["Coilfang Enchantress"]        = { mark = 5, creatureType = "Humanoid" },  -- frost + roots caster
+    ["Coilfang Technician"]         = { mark = 5, creatureType = "Humanoid" },  -- Rain of Fire
+    ["Coilfang Defender"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Coilfang Collaborator"]       = { mark = 5, creatureType = "Humanoid" },  -- enrages; stun or CC
+    ["Wastewalker Slave"]           = "SKIP",  -- freed when the Slavehandler dies
+    ["Wastewalker Worker"]          = "SKIP",
+    ["Bogstrok"]                    = "SKIP",
+    ["Greater Bogstrok"]            = "SKIP",
 }
 
 db["The Underbog"] = {
-    ["Lykul Bloodseeker"]           = { mark = 8, creatureType = "Beast" },
-    ["Underbog Colossus"]           = { mark = 8, creatureType = "Giant" },
-    ["Underbog Shambler"]           = { mark = 5, creatureType = "Elemental" },
-    ["Lykul Wasp"]                  = { mark = 5, creatureType = "Beast" },
-    ["Spore Bat"]                   = { mark = 5, creatureType = "Beast" },
-    ["Black Stalker Spawn"]         = { mark = 5, creatureType = "Beast" },
-    -- Fen Ray is a Beast but immune to Hibernate / sleep effects; force a
-    -- kill mark so Circle never gets allocated to one.
+    ["Murkblood Healer"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Prayer of Healing heals the whole pack
+    ["Underbog Lord"]               = { mark = 8, creatureType = "Giant", dangerLevel = 3 },  -- pre-Black Stalker pair; hits harder than the boss
+    ["Underbog Shambler"]           = { mark = 4, creatureType = "Elemental", dangerLevel = 3 },  -- Fungal Regrowth mass heal; Banish or kill first
+    ["Underbog Lurker"]             = { mark = 4, creatureType = "Elemental", dangerLevel = 2 },  -- Wild Growth: +50% physical damage
+    ["Bog Giant"]                   = { mark = 8, creatureType = "Giant", dangerLevel = 2 },  -- heavy tank damage; no CC
+    ["Murkblood Oracle"]            = { mark = 8, creatureType = "Humanoid" },  -- Amplify Damage caster
+    ["Murkblood Spearman"]          = { mark = 5, creatureType = "Humanoid" },  -- Viper Sting mana drain
+    ["Murkblood Tribesman"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Wrathfin Myrmidon"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Wrathfin Sentry"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Wrathfin Warrior"]            = { mark = 5, creatureType = "Humanoid" },
+    -- Fen Ray is a Beast but immune to Hibernate / sleep effects (verified
+    -- in-game, v3.4.13); force a kill mark so Circle never lands on one.
     ["Fen Ray"]                     = { mark = 8, creatureType = "Beast", ccImmune = true },
+    ["Lykul Wasp"]                  = { mark = 8, creatureType = "Beast", ccImmune = true },  -- immune to CC
+    ["Lykul Stinger"]               = { mark = 8, creatureType = "Beast", ccImmune = true },  -- immune to CC
+    ["Underbat"]                    = { mark = 2, creatureType = "Beast" },
+    ["Underbog Frenzy"]             = "SKIP",  -- trivial fish in the water passage
 }
 
 db["The Steamvault"] = {
-    ["Coilfang Oracle"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Coilfang Technician"]         = { mark = 8, creatureType = "Humanoid" },
-    ["Coilfang Engineer"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Coilfang Myrmidon"]           = { mark = 5, creatureType = "Humanoid" },
-    ["Spore Bat"]                   = { mark = 8, creatureType = "Beast" },
-    ["Steam Surger"]                = { mark = 8, creatureType = "Elemental" },
-    ["Tidal Surger"]                = { mark = 8, creatureType = "Elemental" },
-    ["Steamrigger Mechanic"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Coilfang Oracle"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer + instant AoE silence
+    ["Coilfang Slavemaster"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- killing him frees the Dreghood slaves
+    ["Bog Overlord"]                = { mark = 8, creatureType = "Giant", dangerLevel = 3 },  -- enrage + poison; brutal on heroic, no CC
+    ["Coilfang Siren"]              = { mark = 5, creatureType = "Humanoid", dangerLevel = 3 },  -- instant AoE fear; Polymorph or kill first
+    ["Coilfang Engineer"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- heavy AoE bombs
+    ["Coilfang Water Elemental"]    = { mark = 4, creatureType = "Elemental", dangerLevel = 2 },  -- Banish; never tank two at once
+    ["Tidal Surger"]                = { mark = 4, creatureType = "Elemental", dangerLevel = 2 },  -- Frost Nova + knockback; frost immune
+    ["Steam Surger"]                = { mark = 4, creatureType = "Elemental" },  -- low HP; Banish or burn
+    ["Coilfang Myrmidon"]           = { mark = 8, creatureType = "Humanoid" },  -- heavy cleave; face away from party
+    ["Coilfang Sorceress"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Coilfang Warrior"]            = { mark = 5, creatureType = "Humanoid" },  -- Battle Shout
+    ["Steamrigger Mechanic"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- boss adds; repair Mekgineer Steamrigger
+    ["Dreghood Slave"]              = "SKIP",  -- freed when the Slavemaster dies
     ["Coilfang Leper"]              = "SKIP",
 }
 
 -- --- Auchindoun ---------------------------------
 
 db["Mana-Tombs"] = {
-    ["Ethereal Theurgist"]          = { mark = 8, creatureType = "Humanoid" },
-    ["Ethereal Darkcaster"]         = { mark = 8, creatureType = "Humanoid" },
-    ["Ethereal Sorcerer"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Ethereal Spellbinder"]        = { mark = 8, creatureType = "Humanoid" },
-    ["Haunt"]                       = { mark = 5, creatureType = "Undead" },
-    ["Mana Leech"]                  = { mark = 8, creatureType = "Beast" },
-    ["Nexus Stalker"]               = { mark = 5, creatureType = "Humanoid" },
-    ["Ethereal Priest"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Ethereal Assassin"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Ethereal Summoned Warrior"]   = "SKIP",
+    ["Ethereal Priest"]             = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer (Heal, Holy Nova, PW: Shield)
+    ["Ethereal Darkcaster"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Mana Burn drains the healer
+    ["Ethereal Sorcerer"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- summons Arcane Fiends if left up
+    ["Nexus Terror"]                = { mark = 8, creatureType = "Demon", dangerLevel = 2 },  -- Psychic Scream; pull solo so fears don't chain
+    ["Ethereal Wraith"]             = { mark = 8, dangerLevel = 2 },  -- Spellbinder summon; Shadow Bolt Volley
+    ["Ethereal Theurgist"]          = { mark = 5, creatureType = "Humanoid" },  -- Blast Wave + random Polymorph
+    ["Ethereal Spellbinder"]        = { mark = 5, creatureType = "Humanoid" },  -- CC to stop the wraith summon
+    ["Ethereal Crypt Raider"]       = { mark = 5, creatureType = "Humanoid" },  -- Charge; best CC target
+    ["Nexus Stalker"]               = { mark = 5, creatureType = "Humanoid" },  -- Gouge swaps it onto DPS/healer
+    ["Mana Leech"]                  = "SKIP",  -- explodes on death; ranged-kill spread out
+    ["Arcane Fiend"]                = "SKIP",  -- summoned filler; AoE
 }
 
 db["Auchenai Crypts"] = {
-    ["Auchenai Monk"]               = { mark = 8, creatureType = "Humanoid" },
-    ["Auchenai Soulpriest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Ghostly Philanthropist"]      = { mark = 5, creatureType = "Undead" },
-    ["Worshipper of Eternos"]       = { mark = 5, creatureType = "Humanoid" },
-    ["Cultist Shard Watcher"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Death's Head Cultist"]        = { mark = 8, creatureType = "Humanoid" },
-    ["Angered Skeleton"]            = "SKIP",
+    ["Auchenai Soulpriest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- shadow priest; CC before pull prevents its spirit add
+    ["Phantasmal Possessor"]        = { mark = 8, creatureType = "Undead", dangerLevel = 3 },  -- mind-controls a player; kill the instant it spawns
+    ["Auchenai Necromancer"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },
+    ["Auchenai Monk"]               = { mark = 8, creatureType = "Humanoid", dangerLevel = 2, ccImmune = true },  -- high burst; tank facing away
+    ["Unliving Cleric"]             = { mark = 8, creatureType = "Undead", dangerLevel = 2 },  -- healer spirit
+    ["Unliving Sorcerer"]           = { mark = 8, creatureType = "Undead" },  -- caster spirit; interrupt
+    ["Auchenai Vindicator"]         = { mark = 5, creatureType = "Humanoid" },  -- CC before pull prevents its spirit add
+    ["Unliving Stalker"]            = { mark = 1, creatureType = "Undead" },
+    ["Unliving Soldier"]            = { mark = 1, creatureType = "Undead" },
+    ["Raging Skeleton"]             = { mark = 1, creatureType = "Undead" },  -- entrance swarm; Shackle one on heroic, AoE the rest
 }
 
 db["Sethekk Halls"] = {
-    ["Arakkoa Diviner"]             = { mark = 8, creatureType = "Humanoid" },
-    ["Time-Lost Controller"]        = { mark = 8, creatureType = "Humanoid" },
-    ["Time-Lost Scryer"]            = { mark = 8, creatureType = "Humanoid" },
-    ["Cobalt Serpent"]              = { mark = 5, creatureType = "Beast" },
-    ["Avian Darkhawk"]              = { mark = 5, creatureType = "Beast" },
-    ["Avian Warhawk"]               = { mark = 8, creatureType = "Beast" },
-    ["Sethekk Oracle"]              = { mark = 8, creatureType = "Humanoid" },
-    ["Sethekk Ravenguard"]          = { mark = 8, creatureType = "Humanoid" },
-    ["Avian Flitter"]               = "SKIP",
-    ["Raven Hatchling"]             = "SKIP",
+    ["Time-Lost Controller"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Charming Totem mind control
+    ["Sethekk Ravenguard"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2, ccImmune = true },  -- enrages; burn before healing falls behind
+    ["Time-Lost Scryer"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- heal + Arcane Destruction buff
+    ["Sethekk Oracle"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Arcane Lightning chain silence
+    ["Sethekk Shaman"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Earth Shock + summons Dark Vortex
+    ["Time-Lost Shadowmage"]        = { mark = 8, creatureType = "Humanoid" },
+    ["Sethekk Talon Lord"]          = { mark = 8, creatureType = "Humanoid" },  -- stuns the tank; dispel it
+    ["Sethekk Prophet"]             = { mark = 5, creatureType = "Humanoid" },  -- fear; CC and kill LAST, then avoid its death spirit
+    ["Sethekk Guard"]               = { mark = 5, creatureType = "Humanoid" },
+    ["Sethekk Initiate"]            = { mark = 5, creatureType = "Humanoid" },  -- Spell Reflection
+    ["Avian Darkhawk"]              = { mark = 2, creatureType = "Beast" },  -- Sonic Charge onto squishies
+    ["Avian Ripper"]                = { mark = 2, creatureType = "Beast" },
+    ["Avian Warhawk"]               = { mark = 2, creatureType = "Beast" },
+    ["Cobalt Serpent"]              = { mark = 2, creatureType = "Beast" },
+    ["Charming Totem"]              = "SKIP",  -- one-hit the totem; don't waste a mark
+    ["Sethekk Spirit"]              = "SKIP",  -- Prophet death-spirit; run away, don't fight it
 }
 
 db["Shadow Labyrinth"] = {
-    ["Cabal Shadow Priest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer + shadow mend
-    ["Cabal Hexer"]                 = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- hex; sleep/fear effects
-    ["Cabal Cultist"]               = { mark = 8, creatureType = "Humanoid" },
-    ["Cabal Soldier"]               = { mark = 5, creatureType = "Humanoid" },
-    ["Cabal Assassin"]              = { mark = 8, creatureType = "Humanoid" },
-    ["Cabal Rogue"]                 = { mark = 8, creatureType = "Humanoid" },
-    ["Cabal Warlock"]               = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summoner; calls demons
-    ["Cabal Deathsworn"]            = { mark = 8, creatureType = "Humanoid" },
-    ["Fel Overseer"]                = { mark = 8, creatureType = "Demon" },
-    ["Void Traveler"]               = { mark = 8, creatureType = "Demon", ccImmune = true },
-    ["Shadow Imp"]                  = "SKIP",
+    ["Cabal Shadow Priest"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Mind Flay / SW: Pain pressure
+    ["Cabal Summoner"]              = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summons an Acolyte AND a Deathsworn while alive
+    ["Fel Overseer"]                = { mark = 4, creatureType = "Demon", dangerLevel = 3 },  -- Mortal Strike + AoE fear; Banish on heroic
+    ["Cabal Acolyte"]               = { mark = 5, creatureType = "Humanoid", dangerLevel = 3 },  -- healer; CC the whole fight or kill first
+    ["Cabal Executioner"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2, ccImmune = true },  -- can one-shot non-tanks
+    ["Cabal Spellbinder"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Murmur-hall channelers
+    ["Malicious Instructor"]        = { mark = 8, creatureType = "Demon", dangerLevel = 2 },  -- Mark of Malice; tank facing away
+    ["Cabal Deathsworn"]            = { mark = 8, creatureType = "Humanoid" },  -- Knockdown bruiser
+    ["Cabal Assassin"]              = { mark = 8, creatureType = "Humanoid" },  -- stealthed patrols; kill on appearance
+    ["Cabal Fanatic"]               = { mark = 6, creatureType = "Humanoid" },  -- attacks random players; trap it
+    ["Cabal Zealot"]                = { mark = 5, creatureType = "Humanoid" },  -- Shape of the Beast at low HP; purge it
+    ["Cabal Cultist"]               = { mark = 5, creatureType = "Humanoid" },  -- Kick; keep off the healer
+    ["Cabal Ritualist"]             = { mark = 5, creatureType = "Humanoid" },  -- multi-school caster; good CC filler
 }
 
 -- --- Tempest Keep ---------------------------------
 
+db["The Mechanar"] = {
+    ["Bloodwarder Physician"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer + Anesthetic sleep
+    ["Mechanar Tinkerer"]           = { mark = 8, creatureType = "Mechanical", dangerLevel = 3 },  -- netherbomb spam + suicide charge; kill instantly
+    ["Sunseeker Astromage"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Fire Shield burns melee (spellsteal/purge it)
+    ["Sunseeker Netherbinder"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- summons two Arcane Servants
+    ["Bloodwarder Slayer"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Whirlwind + healing debuff; tank away from group
+    ["Tempest-Forge Patroller"]     = { mark = 8, creatureType = "Mechanical" },  -- calls nearby mobs; pull it back
+    ["Tempest-Forge Destroyer"]     = { mark = 8, creatureType = "Mechanical" },  -- Charged Smash AoE slams
+    ["Mechanar Crusher"]            = { mark = 8, creatureType = "Mechanical" },
+    ["Mechanar Driller"]            = { mark = 8, creatureType = "Mechanical" },
+    ["Mechanar Wrecker"]            = { mark = 8, creatureType = "Mechanical" },
+    ["Bloodwarder Centurion"]       = { mark = 3, creatureType = "Humanoid" },  -- Sap on pull
+    ["Sunseeker Engineer"]          = { mark = 5, creatureType = "Humanoid" },
+    ["Arcane Servant"]              = { mark = 4, creatureType = "Elemental" },  -- Netherbinder summon; Banish
+}
+
 db["The Botanica"] = {
-    ["Bloodwarder Mender"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Bloodwarder Physician"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Sunseeker Chemist"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Sunseeker Researcher"]        = { mark = 8, creatureType = "Humanoid" },
-    ["Sunseeker Botanist"]          = { mark = 5, creatureType = "Humanoid" },
-    ["Bloodwarder Protector"]       = { mark = 5, creatureType = "Humanoid" },
-    ["Sunseeker Gene-Splicer"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- AoE + mutation abilities
-    ["Vicious Thornshoots"]         = { mark = 5, creatureType = "Elemental" },
-    ["Treant"]                      = { mark = 5, creatureType = "Elemental" },
-    ["Sunseeker Bloodhawk"]         = "SKIP",
-    ["Bloodpetal Lasher"]           = "SKIP",
-    ["Bloodpetal Flayer"]           = "SKIP",
-    ["Bloodpetal Thorn"]            = "SKIP",
-    ["Mutant Bloodpetal"]           = "SKIP",
-    ["Nether Tendril"]              = "SKIP",
+    ["Bloodwarder Mender"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer; interrupt Greater Heal
+    ["Sunseeker Gene-Splicer"]      = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- lethal ground void zone
+    ["Mutate Fear-Shrieker"]        = { mark = 8, dangerLevel = 3, ccImmune = true },  -- AoE fear, immune to CC
+    ["Sunseeker Geomancer"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 2, ccImmune = true },  -- AoE arcane; immune to CC
+    ["Sunseeker Botanist"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- caster that can heal
+    ["Frayer"]                      = { mark = 8, dangerLevel = 2 },  -- Geomancer escort; grows/enrages on a timer, kill first
+    ["Bloodwarder Falconer"]        = { mark = 8, creatureType = "Humanoid" },  -- Multi-Shot; comes with Bloodfalcons
+    ["Bloodwarder Greenkeeper"]     = { mark = 8, creatureType = "Humanoid" },  -- high-burst pairs
+    ["Nethervine Trickster"]        = { mark = 8 },  -- stealthed plant; not humanoid, no Sap/Poly
+    ["Nethervine Reaper"]           = { mark = 8 },
+    ["Mutate Horror"]               = { mark = 8, ccImmune = true },
+    ["Sunseeker Herbalist"]         = { mark = 5, creatureType = "Humanoid" },  -- Entangling Roots spam
+    ["Sunseeker Researcher"]        = { mark = 5, creatureType = "Humanoid" },  -- Poison Shield (purge it)
+    ["Sunseeker Chemist"]           = { mark = 5, creatureType = "Humanoid" },  -- poison cloud + frontal fire breath
+    ["Sunseeker Channeler"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Sunseeker Harvester"]         = { mark = 5, creatureType = "Humanoid" },
+    ["Bloodwarder Protector"]       = { mark = 3, creatureType = "Humanoid" },
+    ["Bloodwarder Steward"]         = { mark = 3, creatureType = "Humanoid" },
+    ["Bloodfalcon"]                 = "SKIP",  -- bird swarm; cleave or Hibernate
+    ["Frayer Wildling"]             = "SKIP",  -- ramp filler before Laj
+    ["Mutate Fleshlasher"]          = "SKIP",  -- non-elite swarm
 }
 
 db["The Arcatraz"] = {
-    ["Eredar Deathbringer"]         = { mark = 8, creatureType = "Demon" },
-    ["Eredar Soul Eater"]           = { mark = 8, creatureType = "Demon" },
-    ["Blazing Trickster"]           = { mark = 8, creatureType = "Demon" },
-    ["Entrapped Berserker"]         = { mark = 8, creatureType = "Humanoid" },
-    ["Neg'Jin Shackler"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- shackles party members
-    ["Arcatraz Warder"]             = { mark = 5, creatureType = "Humanoid" },
-    ["Protean Horror"]              = { mark = 5, creatureType = "Aberration" },
-    ["Dalliah's Devotee"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Void Spawner"]                = "SKIP",
-    ["Soul Fragment"]               = "SKIP",
-}
-
-db["The Mechanar"] = {
-    ["Sunseeker Astromage"]         = { mark = 8, creatureType = "Humanoid" },
-    ["Sunseeker Netherbinder"]      = { mark = 8, creatureType = "Humanoid" },
-    ["Sunseeker Gene-Splicer"]      = { mark = 8, creatureType = "Humanoid" },
-    ["Blood Elf Reclaimer"]         = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- heals/repairs Mechanar constructs
-    ["Blood Elf Surveyor"]          = { mark = 5, creatureType = "Humanoid" },
-    ["Nether Wraith"]               = { mark = 8, creatureType = "Undead" },
-    ["Mechanar Tinkerer"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Sunseeker Overseer"]          = { mark = 8, creatureType = "Humanoid" },
-    ["Tempest-Forge Destroyer"]     = { mark = 8, creatureType = "Mechanical" },
-    ["Nether Spark"]                = "SKIP",
-    ["Arcane Bomb"]                 = "SKIP",
+    ["Death Watcher"]               = { mark = 8, dangerLevel = 3 },  -- at 50% applies a debuff: it must die within seconds
+    ["Ethereum Life-Binder"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
+    ["Skulking Witch"]              = { mark = 8, creatureType = "Demon", dangerLevel = 3 },  -- stealthed; opens on the healer
+    ["Spiteful Temptress"]          = { mark = 4, creatureType = "Demon", dangerLevel = 3 },  -- Domination mind control; taunt immune, Banish it
+    ["Negaton Warp-Master"]         = { mark = 4, creatureType = "Elemental", dangerLevel = 3 },  -- heals itself from shadow pools; Banish or drag it out
+    ["Arcatraz Sentinel"]           = { mark = 8, creatureType = "Mechanical", dangerLevel = 2 },  -- explodes near death; taunt immune
+    ["Arcatraz Defender"]           = { mark = 8, dangerLevel = 2 },  -- Flaming Weapon + Immolate; brutal on heroic
+    ["Ethereum Wave-Caster"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Sonic Boom; Polymorphs on heroic
+    ["Protean Nightmare"]           = { mark = 8, dangerLevel = 2 },  -- Incubation spawns adds; kill before it finishes
+    ["Entropic Eye"]                = { mark = 8, dangerLevel = 2 },  -- frontal tentacle cleave + Chaos Breath
+    ["Negaton Screamer"]            = { mark = 4, creatureType = "Elemental", dangerLevel = 2 },  -- fears; resists the first spell school used on it
+    ["Soul Devourer"]               = { mark = 4, creatureType = "Demon" },  -- Fel Breath; face away, summons a Sightless Eye
+    ["Eredar Deathbringer"]         = { mark = 4, creatureType = "Demon" },  -- AoE knockback aura
+    ["Eredar Soul-Eater"]           = { mark = 4, creatureType = "Demon" },
+    ["Unbound Devastator"]          = { mark = 4, creatureType = "Demon" },
+    ["Unchained Doombringer"]       = { mark = 4, creatureType = "Demon" },
+    ["Gargantuan Abyssal"]          = { mark = 4, creatureType = "Demon" },  -- fire AoE; stack to handle it
+    ["Arcatraz Warder"]             = { mark = 5 },  -- ranged gunner; LoS-pull to the tank
+    ["Ethereum Slayer"]             = { mark = 5, creatureType = "Humanoid" },
+    ["Protean Horror"]              = "SKIP",  -- non-elite corpse swarm (some feign dead)
+    ["Protean Spawn"]               = "SKIP",
+    ["Sightless Eye"]               = "SKIP",  -- summoned; kill on sight without a mark
 }
 
 -- --- Caverns of Time ---------------------------------
 
 db["Old Hillsbrad Foothills"] = {
-    ["Syndicate Assassin"]          = { mark = 8, creatureType = "Humanoid" },
-    ["Syndicate Watchman"]          = { mark = 8, creatureType = "Humanoid" },
-    ["Syndicate Shadow-Mage"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Hillsbrad Watchman"]          = { mark = 5, creatureType = "Humanoid" },
-    ["Durnholde Veteran"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Durnholde Tracking Hound"]    = { mark = 5, creatureType = "Beast" },
-    ["Durnholde War Horse"]         = "SKIP",
+    ["Durnholde Warden"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- priest: Heal, Psychic Scream, dispels your CC
+    ["Tarren Mill Protector"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Flash Heal; first kill in every Tarren Mill pull
+    ["Durnholde Lookout"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 3, ccImmune = true },  -- runs to call reinforcements; immune to CC
+    ["Infinite Defiler"]            = { mark = 8, creatureType = "Dragonkin", dangerLevel = 2 },  -- Epoch Hunter wave caster; decurse Curse of Mending
+    ["Durnholde Mage"]              = { mark = 8, creatureType = "Humanoid" },
+    ["Tarren Mill Lookout"]         = { mark = 8, creatureType = "Humanoid" },  -- ranged hunter
+    ["Lordaeron Watchman"]          = { mark = 8, creatureType = "Humanoid" },  -- guards Thrall's lever; required kill
+    ["Infinite Saboteur"]           = { mark = 8, creatureType = "Dragonkin" },  -- Shadow Step burst
+    ["Durnholde Rifleman"]          = { mark = 5, creatureType = "Humanoid" },  -- Stun Shot can stun the healer
+    ["Durnholde Veteran"]           = { mark = 5, creatureType = "Humanoid" },
+    ["Durnholde Sentry"]            = { mark = 5, creatureType = "Humanoid" },
+    ["Tarren Mill Guardsman"]       = { mark = 5, creatureType = "Humanoid" },
+    ["Infinite Slayer"]             = { mark = 2, creatureType = "Dragonkin" },  -- Hibernate/Trap only (dragonkin)
+    ["Durnholde Tracking Hound"]    = "SKIP",  -- non-elite dog packs; cleave
 }
 
 db["The Black Morass"] = {
-    ["Rift Keeper"]                 = { mark = 8, creatureType = "Dragonkin" },
-    ["Rift Lord"]                   = { mark = 8, creatureType = "Dragonkin" },
-    ["Infinite Assassin"]           = { mark = 5, creatureType = "Dragonkin" },
-    ["Infinite Executioner"]        = { mark = 5, creatureType = "Dragonkin" },
-    ["Infinite Saboteur"]           = { mark = 5, creatureType = "Dragonkin" },
-    ["Infinite Chrono-Sentinel"]    = { mark = 5, creatureType = "Dragonkin" },
-    ["Rift Spawner"]                = "SKIP",
+    -- Every wave mob is Dragonkin: no Polymorph/Sap/Banish/Shackle.
+    -- Hibernate and Freezing Trap are the only CC that works on the adds.
+    ["Rift Keeper"]                 = { mark = 8, creatureType = "Dragonkin", dangerLevel = 3 },  -- portal guardian (caster); burn to close the rift
+    ["Rift Lord"]                   = { mark = 8, creatureType = "Dragonkin", dangerLevel = 3 },  -- portal guardian (melee); MS/knockback or Thunderclap
+    ["Infinite Assassin"]           = { mark = 8, creatureType = "Dragonkin", dangerLevel = 2 },  -- stealthed; beelines for Medivh
+    ["Infinite Chronomancer"]       = { mark = 8, creatureType = "Dragonkin", dangerLevel = 1 },  -- Sleep caster; hurts Medivh's shield from range
+    ["Infinite Vanquisher"]         = { mark = 8, creatureType = "Dragonkin", dangerLevel = 1 },  -- strongest add (waves 13+)
+    ["Infinite Executioner"]        = { mark = 8, creatureType = "Dragonkin" },
+    ["Infinite Whelp"]              = "SKIP",  -- non-elite packs of three; AoE at Medivh
 }
 
 -- --- Isle of Quel'Danas ---------------------------------
 
 db["Magisters' Terrace"] = {
-    ["Sunblade Physician"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- healer
-    ["Sunblade Blood Knight"]       = { mark = 8, creatureType = "Humanoid" },
-    ["Sunblade Arch Mage"]          = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- AoE arcane caster
-    ["Sunblade Magister"]           = { mark = 8, creatureType = "Humanoid" },
-    ["Sunblade Warlock"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summons Sunblade Imps
-    ["Sunblade Imp Handler"]        = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- summons and controls imps
-    ["Sunblade Imp"]                = { mark = 5, creatureType = "Demon" },
-    ["Felguard Legionnaire"]        = { mark = 5, creatureType = "Demon" },
-    ["Sunblade Vindicator"]         = { mark = 8, creatureType = "Humanoid" },
-    ["Sunblade Imp Swarm"]          = "SKIP",
-    ["Mana Tap Imp"]                = "SKIP",
+    ["Sunblade Blood Knight"]       = { mark = 8, creatureType = "Humanoid", dangerLevel = 3 },  -- Holy Light healer; kill or hard-CC every time
+    ["Sister of Torment"]           = { mark = 4, creatureType = "Demon", dangerLevel = 3 },  -- Deadly Embrace mind control; Banish or kill first
+    ["Ethereum Smuggler"]           = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- teleports to players + Arcane Explosion; ignores the tank
+    ["Sunblade Sentinel"]           = { mark = 8, creatureType = "Demon", dangerLevel = 2, ccImmune = true },  -- fel construct; chain Fel Lightning
+    ["Sunblade Warlock"]            = { mark = 8, creatureType = "Humanoid", dangerLevel = 2 },  -- Incinerate; dispel Immolate, cleave its imp
+    ["Sunblade Magister"]           = { mark = 8, creatureType = "Humanoid" },  -- arcane burst caster
+    ["Sunblade Slayer"]             = { mark = 8, creatureType = "Humanoid" },  -- ranged physical
+    ["Coilskar Witch"]              = { mark = 5, creatureType = "Humanoid" },  -- Forked Lightning; CC or LoS-pull
+    ["Sunblade Mage Guard"]         = { mark = 5, creatureType = "Humanoid" },  -- Glaive Throw + caster-silencing field; comes to the tank
+    ["Sunblade Imp"]                = "SKIP",  -- non-elite; cleave instantly
+    ["Wretched Skulker"]            = "SKIP",
+    ["Wretched Bruiser"]            = "SKIP",
+    ["Wretched Husk"]               = "SKIP",
+    ["Brightscale Wyrm"]            = "SKIP",  -- garden filler; gather and AoE
 }
 
 -- ============================================================
