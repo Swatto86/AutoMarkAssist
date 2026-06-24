@@ -1,5 +1,11 @@
 # AutoMarkAssist Changelog
 
+## 3.4.19
+
+### New Features
+- **Duplicate Crowd Control for Stacked Classes:** Bringing more than one of the same CC class now assigns more than one CC mark — two Mages get two Polymorph targets, two Warlocks two Banish targets, and so on. Each class still claims its usual icon first (Mage → Moon, Warlock → Triangle, …); every extra caster then borrows a spare icon — one belonging to a CC class that is *not* in your group and is still enabled — so the second Polymorph might land on Diamond or Star instead of going to waste. When a Mage and a Paladin are both present the Mage keeps Moon and the Paladin borrows a spare for Repentance. If there are more CC casters than free icons, the extras are simply left unmarked. `/ama cc`, the announced mark plan, and the Preview all list every caster with the icon they were actually assigned.
+- **Resizable Options Window:** The options window can now be resized by dragging the grip in its bottom-right corner, and your chosen size is remembered between sessions. The Database tab's mob-name column grows with the window so long NPC names are no longer cut off. Hovering any row in the Database tab also shows the full mob name in a tooltip, so manual mark configuration no longer means guessing at truncated names.
+
 ## 3.4.18
 
 ### Database

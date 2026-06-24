@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.18"
+AMA.VERSION    = "3.4.19"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -69,7 +69,7 @@ AMA.CC_ASSIGNMENTS = {
 
 -- Ordered list for predictable iteration.  PALADIN comes last so Mage wins
 -- the shared Moon slot when both classes are in the group (first-wins in
--- BuildMarkPlanLines / GetReservedCCMarks).
+-- AMA.BuildCCPlan); a Paladin sharing with a Mage then borrows a spare icon.
 AMA.CC_CLASS_ORDER = { "MAGE", "ROGUE", "WARLOCK", "PRIEST", "DRUID", "HUNTER", "PALADIN" }
 
 -- Reverse lookup: mark index → class tag (e.g. 5 → "MAGE").
@@ -189,6 +189,8 @@ AMA.DB_DEFAULTS = {
     invertScroll       = true,
     mobMarks           = {},
     resetMarksKey      = "",
+    -- configWidth / configHeight: persisted config-window size.  Absent until
+    -- the user resizes the window; Config falls back to its design size.
 }
 
 -- ============================================================
@@ -276,13 +278,11 @@ function AMA.IsMarkAvailable(markIdx, reservedCCMarks)
     return reservedCCMarks[markIdx] ~= nil
 end
 
--- Returns a list of CC abilities available in the current group.
--- Each entry: { classTag, playerName, mark, label, creatureTypes }
--- Only includes CC for classes present AND whose mark is enabled.
-function AMA.GetGroupCCAbilities()
-    local abilities = {}
-    local seen = {}
-
+-- Returns every CC-capable player currently in the group -- one entry PER
+-- PLAYER (not deduped by class) so two Mages produce two entries -- ordered by
+-- CC_CLASS_ORDER and then roster discovery order.  Each entry: { classTag,
+-- playerName }.  Only includes classes whose canonical CC mark is user-enabled.
+function AMA.GetGroupCCCasters()
     local tokens = {}
     if IsInRaid and IsInRaid() then
         for i = 1, 40 do
@@ -295,60 +295,136 @@ function AMA.GetGroupCCAbilities()
         end
     end
 
-    for _, classTag in ipairs(AMA.CC_CLASS_ORDER) do
-        local cc = AMA.CC_ASSIGNMENTS[classTag]
+    -- Bucket casters by class, preserving roster order within each class.
+    local byClass = {}
+    for _, token in ipairs(tokens) do
+        local _, unitClass = UnitClass(token)
+        local cc = unitClass and AMA.CC_ASSIGNMENTS[unitClass]
         if cc and AMA.IsMarkEnabled(cc.mark) then
-            for _, token in ipairs(tokens) do
-                local name = UnitName(token)
-                local _, unitClass = UnitClass(token)
-                if unitClass == classTag and not seen[classTag] then
-                    seen[classTag] = true
-                    abilities[#abilities + 1] = {
-                        classTag = classTag,
-                        playerName = name,
-                        mark = cc.mark,
-                        label = cc.label,
-                        creatureTypes = cc.creatureTypes,
-                    }
-                    break
-                end
-            end
+            local bucket = byClass[unitClass]
+            if not bucket then bucket = {}; byClass[unitClass] = bucket end
+            bucket[#bucket + 1] = { classTag = unitClass, playerName = UnitName(token) }
         end
     end
 
-    return abilities
+    -- Flatten in canonical class order so primary-mark claiming is deterministic.
+    local casters = {}
+    for _, classTag in ipairs(AMA.CC_CLASS_ORDER) do
+        local bucket = byClass[classTag]
+        if bucket then
+            for _, caster in ipairs(bucket) do casters[#casters + 1] = caster end
+        end
+    end
+    return casters
 end
 
--- Returns a set of mark indices reserved for CC based on group composition.
--- When multiple classes share a mark (e.g. Mage Polymorph and Paladin
--- Repentance both on Moon), the first class in CC_CLASS_ORDER that is
--- actually present owns the mark, and the creature-type filter is the
--- UNION of all sharing classes' types so the mark can be used against any
--- mob either class can CC.
-function AMA.GetReservedCCMarks()
-    local reserved = {}
-    local abilities = AMA.GetGroupCCAbilities()
-    for _, ability in ipairs(abilities) do
-        if AMA.IsMarkEnabled(ability.mark) then
-            local existing = reserved[ability.mark]
-            if not existing then
-                local merged = {
-                    classTag     = ability.classTag,
-                    playerName   = ability.playerName,
-                    mark         = ability.mark,
-                    label        = ability.label,
-                    creatureTypes = {},
-                }
-                for t, v in pairs(ability.creatureTypes or {}) do
-                    if v then merged.creatureTypes[t] = true end
-                end
-                reserved[ability.mark] = merged
-            else
-                for t, v in pairs(ability.creatureTypes or {}) do
-                    if v then existing.creatureTypes[t] = true end
-                end
+-- CC marks in canonical display order (kill marks excluded).  Used as the
+-- borrow-pool ordering when extra casters need a spare icon.  Built lazily so
+-- it picks up ALL_MARKS_ORDERED after this file has finished loading.
+local ccMarksOrdered
+local function GetCCMarksOrdered()
+    if ccMarksOrdered then return ccMarksOrdered end
+    ccMarksOrdered = {}
+    for _, m in ipairs(AMA.ALL_MARKS_ORDERED) do
+        if m ~= AMA.MARK_SKULL and m ~= AMA.MARK_CROSS then
+            ccMarksOrdered[#ccMarksOrdered + 1] = m
+        end
+    end
+    return ccMarksOrdered
+end
+
+-- Builds the crowd-control assignment plan for the current group.
+--
+-- Each present CC class claims its canonical mark first (the "primary").  When
+-- a group brings MORE than one caster of a class -- two Mages, two Warlocks --
+-- the surplus casters borrow a spare CC icon (one whose owning class is absent
+-- and which is user-enabled) so a second Polymorph / Banish target gets marked
+-- instead of the icon going to waste.  Classes that share a canonical mark
+-- (Mage Polymorph and Paladin Repentance both on Moon) behave the same way:
+-- the first owner takes Moon and the other borrows a spare.
+--
+-- Returns an ordered list, primaries first:
+--   { mark, classTag, playerName, label, creatureTypes, borrowed }
+function AMA.BuildCCPlan()
+    local casters = AMA.GetGroupCCCasters()
+
+    local plan = {}
+    local markClaimed = {}    -- [markIdx] = true
+    local classClaimed = {}   -- [classTag] = true (claimed its OWN canonical mark)
+    local borrowQueue = {}    -- casters still awaiting an icon
+
+    -- Pass 1: each caster tries to claim its class's canonical mark.
+    for _, caster in ipairs(casters) do
+        local cc = AMA.CC_ASSIGNMENTS[caster.classTag]
+        local primary = cc and cc.mark
+        if primary and AMA.IsMarkEnabled(primary)
+            and not markClaimed[primary] and not classClaimed[caster.classTag] then
+            markClaimed[primary] = true
+            classClaimed[caster.classTag] = true
+            plan[#plan + 1] = {
+                mark          = primary,
+                classTag      = caster.classTag,
+                playerName    = caster.playerName,
+                label         = cc.label,
+                creatureTypes = cc.creatureTypes,
+                borrowed      = false,
+            }
+        else
+            -- A surplus caster of a class that already owns its mark, or a class
+            -- whose canonical mark is owned by another present class (Mage /
+            -- Paladin Moon sharing).  Both queue for a borrowed icon.
+            borrowQueue[#borrowQueue + 1] = caster
+        end
+    end
+
+    -- Pass 2: hand out spare CC icons (enabled, not claimed as a primary).
+    if #borrowQueue > 0 then
+        local spares = {}
+        for _, m in ipairs(GetCCMarksOrdered()) do
+            if not markClaimed[m] and AMA.IsMarkEnabled(m) then
+                spares[#spares + 1] = m
             end
         end
+        local si = 1
+        for _, caster in ipairs(borrowQueue) do
+            local spare = spares[si]
+            if not spare then break end   -- pool exhausted; extra casters go unmarked
+            si = si + 1
+            markClaimed[spare] = true
+            local cc = AMA.CC_ASSIGNMENTS[caster.classTag]
+            plan[#plan + 1] = {
+                mark          = spare,
+                classTag      = caster.classTag,
+                playerName    = caster.playerName,
+                label         = cc.label,
+                creatureTypes = cc.creatureTypes,
+                borrowed      = true,
+            }
+        end
+    end
+
+    return plan
+end
+
+-- Returns a set of mark indices reserved for CC based on the current plan:
+--   { [markIdx] = { classTag, playerName, mark, label, creatureTypes } }
+-- Each reserved mark carries a private copy of its CC ability's creature-type
+-- filter so the allocator only applies it to compatible mobs (and so callers
+-- never mutate the shared CC_ASSIGNMENTS tables).
+function AMA.GetReservedCCMarks()
+    local reserved = {}
+    for _, entry in ipairs(AMA.BuildCCPlan()) do
+        local merged = {
+            classTag      = entry.classTag,
+            playerName    = entry.playerName,
+            mark          = entry.mark,
+            label         = entry.label,
+            creatureTypes = {},
+        }
+        for t, v in pairs(entry.creatureTypes or {}) do
+            if v then merged.creatureTypes[t] = true end
+        end
+        reserved[entry.mark] = merged
     end
     return reserved
 end

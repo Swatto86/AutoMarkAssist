@@ -26,6 +26,13 @@ local CONFIG_SCREEN_PAD  = 24
 local CONFIG_TITLE_H     = 24
 local CONFIG_TOP_OFFSET  = 50
 
+-- User-resize bounds.  Minimum height keeps the (non-scrolling) General tab
+-- fully visible; width can grow so the Database tab shows long NPC names.
+local CONFIG_MIN_W = 520
+local CONFIG_MIN_H = CONFIG_H
+local CONFIG_MAX_W = 1100
+local CONFIG_MAX_H = 1400
+
 -- ============================================================
 -- ANNOUNCE SYSTEM
 -- ============================================================
@@ -53,17 +60,6 @@ do
 
     local function BuildMarkPlanLines(iconMap)
         local lines = {}
-        local abilities = AMA.GetGroupCCAbilities()
-        -- First-wins so the canonical class (earlier in CC_CLASS_ORDER) owns
-        -- a shared mark — e.g. a Mage+Paladin group announces "Moon -
-        -- Polymorph" rather than Repentance, since Mage covers more creature
-        -- types and is the primary Moon user.
-        local ccByMark = {}
-        for _, ab in ipairs(abilities) do
-            if not ccByMark[ab.mark] then
-                ccByMark[ab.mark] = ab
-            end
-        end
 
         -- Kill marks first.
         for _, m in ipairs(AMA.KILL_MARKS) do
@@ -74,17 +70,13 @@ do
             end
         end
 
-        -- CC marks: dedupe by mark so shared-mark classes don't print twice.
-        local printedMarks = {}
-        for _, classTag in ipairs(AMA.CC_CLASS_ORDER) do
-            local cc = AMA.CC_ASSIGNMENTS[classTag]
-            if cc and ccByMark[cc.mark] and not printedMarks[cc.mark] then
-                local ab = ccByMark[cc.mark]
-                local icon = iconMap[cc.mark] or ("[" .. cc.mark .. "]")
-                lines[#lines + 1] = string.format("%s  %s - %s",
-                    icon, ab.label, ab.playerName or "?")
-                printedMarks[cc.mark] = true
-            end
+        -- CC marks: one line per assigned caster, using each caster's actual
+        -- (possibly borrowed) icon so a group with two Mages announces two
+        -- Polymorph lines on two different icons.
+        for _, entry in ipairs(AMA.BuildCCPlan()) do
+            local icon = iconMap[entry.mark] or ("[" .. entry.mark .. "]")
+            lines[#lines + 1] = string.format("%s  %s - %s",
+                icon, entry.label, entry.playerName or "?")
         end
 
         return lines
@@ -401,7 +393,7 @@ end
 -- ============================================================
 
 local cfgFrame, currentTab, tabContents, tabBtns, ShowTab
-local ApplyResponsiveConfigLayout
+local ApplyResponsiveConfigLayout, LayoutTabs
 local cfgUserMoved = false
 local modeBtns, proxRangeBtns, mouseRangeBtns, modBtns, announceChannelBtns
 local announcePrefixEdit, scrollOrderCells, invertScrollBtn, resetHotkeyBtn
@@ -420,12 +412,32 @@ local function GetUIParentSize()
            (GetScreenHeight and GetScreenHeight()) or CONFIG_H
 end
 
+-- Reposition the tab buttons to span the current frame width.  Called on
+-- construction and whenever the user resizes the window.
+LayoutTabs = function()
+    if not cfgFrame or not tabBtns then return end
+    local n = #tabBtns
+    if n == 0 then return end
+    local tabW = math.floor(cfgFrame:GetWidth() / n)
+    for i, tb in ipairs(tabBtns) do
+        tb:SetSize(tabW - 2, TAB_H)
+        tb:ClearAllPoints()
+        tb:SetPoint("TOPLEFT", cfgFrame, "TOPLEFT", 2 + (i - 1) * tabW, -26)
+    end
+end
+
 ApplyResponsiveConfigLayout = function()
     if not cfgFrame then return end
     local uiW, uiH = GetUIParentSize()
     local usableW = math.max(1, uiW - CONFIG_SCREEN_PAD * 2)
     local usableH = math.max(1, uiH - CONFIG_SCREEN_PAD * 2)
-    local scale = math.max(CONFIG_MIN_SCALE, math.min(1, usableW / CONFIG_W, usableH / CONFIG_H))
+    -- Scale off the frame's live size so a user-enlarged window still fits the
+    -- screen (and shrinks no further than CONFIG_MIN_SCALE).
+    local w = cfgFrame:GetWidth()
+    local h = cfgFrame:GetHeight()
+    if not w or w <= 0 then w = CONFIG_W end
+    if not h or h <= 0 then h = CONFIG_H end
+    local scale = math.max(CONFIG_MIN_SCALE, math.min(1, usableW / w, usableH / h))
     cfgFrame:SetScale(scale)
     if not cfgUserMoved then
         cfgFrame:ClearAllPoints()
@@ -450,6 +462,17 @@ do
         cfgUserMoved = true
     end)
     cfgFrame:SetClampedToScreen(true)
+
+    -- Make the window user-resizable so the Database tab can show full NPC
+    -- names.  Bounds keep the General tab readable and stop runaway sizes.
+    cfgFrame:SetResizable(true)
+    if cfgFrame.SetResizeBounds then
+        cfgFrame:SetResizeBounds(CONFIG_MIN_W, CONFIG_MIN_H, CONFIG_MAX_W, CONFIG_MAX_H)
+    else
+        if cfgFrame.SetMinResize then cfgFrame:SetMinResize(CONFIG_MIN_W, CONFIG_MIN_H) end
+        if cfgFrame.SetMaxResize then cfgFrame:SetMaxResize(CONFIG_MAX_W, CONFIG_MAX_H) end
+    end
+
     cfgFrame:Hide()
     E.Skin(cfgFrame)
 
@@ -486,6 +509,40 @@ do
         cBg:SetVertexColor(0.25, 0.07, 0.07, 0); cFS:SetTextColor(0.55, 0.55, 0.55, 1)
     end)
     closeBtn:SetScript("OnClick", function() cfgFrame:Hide() end)
+
+    -- ── RESIZE GRIP (bottom-right corner) ──
+    local sizer = CreateFrame("Button", nil, cfgFrame)
+    sizer:SetSize(16, 16)
+    sizer:SetPoint("BOTTOMRIGHT", cfgFrame, "BOTTOMRIGHT", -2, 2)
+    sizer:SetFrameLevel(cfgFrame:GetFrameLevel() + 20)
+    local grip = sizer:CreateTexture(nil, "OVERLAY")
+    grip:SetAllPoints()
+    grip:SetTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up")
+    grip:SetVertexColor(0.6, 0.6, 0.6, 0.9)
+    sizer:SetScript("OnEnter", function() grip:SetVertexColor(E.ACCENT[1], E.ACCENT[2], E.ACCENT[3], 1) end)
+    sizer:SetScript("OnLeave", function() grip:SetVertexColor(0.6, 0.6, 0.6, 0.9) end)
+    sizer:SetScript("OnMouseDown", function()
+        cfgFrame:StartSizing("BOTTOMRIGHT")
+    end)
+    sizer:SetScript("OnMouseUp", function()
+        cfgFrame:StopMovingOrSizing()
+        -- Treat a resize like a move: StartSizing("BOTTOMRIGHT") pins the
+        -- top-left corner, so the window grew from where it sat.  Mark it as
+        -- user-positioned so the responsive layout does not yank it back to
+        -- screen-centre and snap the dragged corner away from the cursor.
+        cfgUserMoved = true
+        if AutoMarkAssistDB then
+            AutoMarkAssistDB.configWidth  = cfgFrame:GetWidth()
+            AutoMarkAssistDB.configHeight = cfgFrame:GetHeight()
+        end
+        LayoutTabs()
+        ApplyResponsiveConfigLayout()
+    end)
+
+    -- Keep the tab bar spanning the width while the user drags the grip.
+    cfgFrame:SetScript("OnSizeChanged", function()
+        LayoutTabs()
+    end)
 
     -- ── TAB BAR ──
     local TAB_NAMES = { "General", "Database", "About" }
@@ -628,8 +685,11 @@ do
         local isKill = (markIdx == MARK_SKULL or markIdx == MARK_CROSS)
 
         local row = CreateFrame("Frame", nil, t1)
-        row:SetSize(CONFIG_W - 24, 20)
+        row:SetHeight(20)
+        -- Span the live tab width so the right-anchored toggle / "Always On"
+        -- label tracks the right edge when the window is widened.
         row:SetPoint("TOPLEFT", t1, "TOPLEFT", 12, y)
+        row:SetPoint("TOPRIGHT", t1, "TOPRIGHT", -12, y)
 
         -- Mark icon.
         local icon = row:CreateTexture(nil, "ARTWORK")
@@ -873,6 +933,7 @@ do
     end
 
     -- Initial tab.
+    LayoutTabs()
     ShowTab(1)
     ApplyResponsiveConfigLayout()
 end
@@ -956,6 +1017,15 @@ end
 
 function AMA.OpenConfigFrame(tabIdx)
     if not cfgFrame then return end
+    -- Restore the user's saved window size (clamped to the resize bounds).
+    if AutoMarkAssistDB then
+        local w = AutoMarkAssistDB.configWidth  or CONFIG_W
+        local h = AutoMarkAssistDB.configHeight or CONFIG_H
+        w = math.max(CONFIG_MIN_W, math.min(CONFIG_MAX_W, w))
+        h = math.max(CONFIG_MIN_H, math.min(CONFIG_MAX_H, h))
+        cfgFrame:SetSize(w, h)
+        if LayoutTabs then LayoutTabs() end
+    end
     if ApplyResponsiveConfigLayout then ApplyResponsiveConfigLayout() end
     if not cfgFrame:IsShown() then cfgUserMoved = false end
     cfgFrame:Show()

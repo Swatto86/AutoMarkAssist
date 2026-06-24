@@ -157,6 +157,17 @@ local function GetMobRow(parent, index)
     row:SetHeight(ROW_HEIGHT)
     Skin(row)
 
+    -- Hover the row to read the full NPC name even when the column truncates it.
+    row:EnableMouse(true)
+    row:SetScript("OnEnter", function(self)
+        if self._fullName and self._fullName ~= "" then
+            GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
+            GameTooltip:SetText(self._fullName, 1, 1, 1, 1, true)
+            GameTooltip:Show()
+        end
+    end)
+    row:SetScript("OnLeave", function() GameTooltip:Hide() end)
+
     local nameFS = row:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     nameFS:SetPoint("LEFT", row, "LEFT", 6, 0)
     nameFS:SetJustifyH("LEFT")
@@ -340,6 +351,7 @@ local function RefreshMobList()
         row:SetPoint("RIGHT", mobScrollChild, "RIGHT", 0, 0)
 
         row._nameFS:SetText(entry.name)
+        row._fullName = entry.name
         row._overrideFS:SetText(entry.isOverride and "*" or "")
 
         local ctypeText

@@ -30,7 +30,7 @@ Downloads:
 | Circle | :orange_circle: | Hibernate (Druid) |
 | Square | :blue_square: | Trap (Hunter) |
 
-Skull and Cross are always kill targets. CC marks are only used when the matching class is in your group. Unused CC marks become extra kill targets!
+Skull and Cross are always kill targets. CC marks are only used when the matching class is in your group. When you bring more than one of the same CC class, the spare icons of absent classes are borrowed so each extra caster still gets a CC target (e.g. two Mages → two Polymorph marks).
 
 ## Three Marking Modes
 
@@ -53,9 +53,11 @@ The addon reads your group roster and activates CC marks for present classes:
 
 When these classes enter your group, their corresponding marks activate. When multiple CC classes can handle the same creature type, the most specific ability wins.
 
+Bringing more than one of the same class adds more of that CC. Each class claims its usual icon first, then every additional caster borrows a spare icon from a CC class that is not in your group (and still enabled) — so two Mages get two Polymorph targets, two Warlocks two Banish targets, and so on, up to the six available CC icons.
+
 ## Usage
 
-Type `/ama` or `/automarkassist` to open the configuration panel.
+Type `/ama` or `/automarkassist` to open the configuration panel. Drag the grip in the bottom-right corner to resize the window — handy on the Database tab for reading long NPC names — and the size is remembered between sessions.
 
 Other commands:
 - `/ama show`

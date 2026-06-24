@@ -510,15 +510,16 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
         AMA.VPrint("Minimap button hidden. Use /ama show to restore.")
 
     elseif cmd == "cc" then
-        local abilities = AMA.GetGroupCCAbilities()
-        if #abilities == 0 then
+        local plan = AMA.BuildCCPlan()
+        if #plan == 0 then
             AMA.Print("No CC classes detected in group.")
         else
             AMA.Print("Available CC in group:")
-            for _, ab in ipairs(abilities) do
-                local icon = AMA.MARK_ICON_COORDS[ab.mark] or ""
-                AMA.Print(string.format("  %s %s - %s (%s)",
-                    icon, ab.label, ab.playerName or "?", ab.classTag))
+            for _, entry in ipairs(plan) do
+                local icon = AMA.MARK_ICON_COORDS[entry.mark] or ""
+                AMA.Print(string.format("  %s %s - %s (%s%s)",
+                    icon, entry.label, entry.playerName or "?", entry.classTag,
+                    entry.borrowed and ", borrowed icon" or ""))
             end
         end
 
