@@ -129,6 +129,7 @@ do
         GameTooltip:AddLine(" ")
         GameTooltip:AddLine("Left-click: Toggle enabled", 0.7, 0.7, 0.7)
         GameTooltip:AddLine("Right-click: Options", 0.7, 0.7, 0.7)
+        GameTooltip:AddLine("Type /ama tutorial for the walkthrough", 0.55, 0.55, 0.55)
         GameTooltip:Show()
     end)
     btn:SetScript("OnLeave", function()

@@ -59,10 +59,13 @@ Bringing more than one of the same class adds more of that CC. Each class claims
 
 Type `/ama` or `/automarkassist` to open the configuration panel. Drag the grip in the bottom-right corner to resize the window — handy on the Database tab for reading long NPC names — and the size is remembered between sessions.
 
+A first-run walkthrough opens the first time you log in with this version. Replay it with `/ama tutorial`, or read the full reference on the **Tutorial** tab in options (`/ama tutorial tab`).
+
 Other commands:
 - `/ama show`
 - `/ama hide`
 - `/ama help`
+- `/ama tutorial` - Guided walkthrough (add `tab` to open the Tutorial tab)
 - `/ama reset` - Manually clear marks assigned by the addon.
 
 ## Source layout
@@ -73,7 +76,9 @@ Other commands:
 - `AutoMarkAssist_Proximity.lua` — 0.5s OnUpdate scan loop for proximity mode.
 - `AutoMarkAssist_Mouseover.lua` — UPDATE_MOUSEOVER_UNIT handler for mouseover marking.
 - `AutoMarkAssist_Manual.lua` — Scroll-wheel mark picker HUD for manual mode.
-- `AutoMarkAssist_Events.lua` — Zone tracking, event routing, slash commands, combat log immunity detection.
-- `AutoMarkAssist_Config.lua` — Options UI, announcement tools, database browser.
 - `AutoMarkAssist_Minimap.lua` — Minimap button.
+- `AutoMarkAssist_Tutorial.lua` — First-run guided walkthrough overlay and Tutorial options tab.
+- `AutoMarkAssist_DBTab.lua` — Database tab zone browser.
+- `AutoMarkAssist_Config.lua` — Options UI, announcement tools.
+- `AutoMarkAssist_Events.lua` — Zone tracking, event routing, slash commands, combat log immunity detection.
 - `AutoMarkAssist_DB_*.lua` — Per-expansion mob databases with danger classifications.

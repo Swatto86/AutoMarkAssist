@@ -93,8 +93,11 @@ Auto-reset on leaving combat uses a lighter approach that only clears marks the 
 
 Type `/ama` or `/automarkassist` to open the configuration panel.
 
+A first-run walkthrough opens the first time you log in. Replay it with `/ama tutorial`, or open the **Tutorial** tab in options for the full reference (`/ama tutorial tab`).
+
 Other commands:
 - `/ama enable` / `disable` / `toggle`
+- `/ama tutorial` — Guided walkthrough.
 - `/ama reset` — Clear all marks.
 - `/ama announce` — Post mark plan to party chat.
 - `/ama preview` — Preview mark plan locally.

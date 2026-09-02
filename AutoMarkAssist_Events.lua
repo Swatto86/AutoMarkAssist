@@ -272,7 +272,7 @@ frame:SetScript("OnEvent", function(self, event, ...)
             AMA.minimapButton:Hide()
         end
 
-        AMA.Print("v" .. AMA.VERSION .. " loaded.  Type |cFFAAAAAA/ama|r for options.  |cFF444444by|r |cFFFFD700" .. AMA.AUTHOR .. "|r")
+        AMA.Print("v" .. AMA.VERSION .. " loaded.  Type |cFFAAAAAA/ama|r for options, |cFFAAAAAA/ama tutorial|r for the walkthrough.  |cFF444444by|r |cFFFFD700" .. AMA.AUTHOR .. "|r")
         AMA.ApplyResetKeybind()
 
     elseif event == "PLAYER_ENTERING_WORLD" then
@@ -287,6 +287,9 @@ frame:SetScript("OnEvent", function(self, event, ...)
         end
         AMA.ApplyResetKeybind()
         AMA.RefreshAnnounceQueue(1.5)
+        if AMA.MaybeShowFirstRunTutorial then
+            AMA.MaybeShowFirstRunTutorial()
+        end
 
     elseif event == "ZONE_CHANGED_NEW_AREA" then
         AMA.currentZoneName = ""
@@ -389,6 +392,14 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
 
     if cmd == "" or cmd == "options" or cmd == "config" then
         if AMA.OpenConfigFrame then AMA.OpenConfigFrame() end
+
+    elseif cmd == "tutorial" or cmd == "guide" or cmd == "walkthrough" then
+        local sub = string.lower(argStr)
+        if sub == "tab" or sub == "help" or sub == "ref" or sub == "reference" then
+            if AMA.OpenConfigFrame then AMA.OpenConfigFrame(3) end
+        elseif AMA.ShowTutorialGuide then
+            AMA.ShowTutorialGuide(1)
+        end
 
     elseif cmd == "enable" then
         AutoMarkAssistDB.enabled = true
@@ -555,6 +566,7 @@ SlashCmdList["AUTOMARKASSIST"] = function(msg)
     elseif cmd == "help" then
         AMA.Print("Commands:")
         AMA.Print("  /ama - Open options")
+        AMA.Print("  /ama tutorial - Guided walkthrough (add 'tab' for the Tutorial tab)")
         AMA.Print("  /ama enable | disable | toggle")
         AMA.Print("  /ama reset - Clear all marks")
         AMA.Print("  /ama mark <name> - Stamp a mark on current target (macro-friendly)")

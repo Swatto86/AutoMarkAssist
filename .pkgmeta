@@ -7,4 +7,5 @@ ignore:
   - README.md
   - CurseForge/CHANGELOG.md
   - CurseForge/DESCRIPTION.md
+  - AI_CONTEXT.md
   - .release

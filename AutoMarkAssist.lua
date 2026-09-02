@@ -10,7 +10,7 @@ local AMA = AutoMarkAssist
 -- ============================================================
 
 AMA.ADDON_NAME = "AutoMarkAssist"
-AMA.VERSION    = "3.4.19"
+AMA.VERSION    = "3.5.0"
 AMA.AUTHOR     = "Swatto"
 
 -- ============================================================
@@ -189,6 +189,10 @@ AMA.DB_DEFAULTS = {
     invertScroll       = true,
     mobMarks           = {},
     resetMarksKey      = "",
+    -- Set true after the first-run walkthrough is finished, skipped, or
+    -- dismissed.  Absent/false on new installs and on upgrades that have
+    -- never seen the in-game tutorial.
+    tutorialCompleted  = false,
     -- configWidth / configHeight: persisted config-window size.  Absent until
     -- the user resizes the window; Config falls back to its design size.
 }

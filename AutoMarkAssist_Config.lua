@@ -545,7 +545,7 @@ do
     end)
 
     -- ── TAB BAR ──
-    local TAB_NAMES = { "General", "Database", "About" }
+    local TAB_NAMES = { "General", "Database", "Tutorial", "About" }
     tabContents = {}
     tabBtns = {}
     currentTab = 1
@@ -570,6 +570,7 @@ do
             tabBtns[i]:SetActive(i == idx)
         end
         if idx == 2 and AMA._RefreshDBTab then AMA._RefreshDBTab() end
+        if idx == 3 and AMA._RefreshTutorialTab then AMA._RefreshTutorialTab() end
     end
 
     for i, tb in ipairs(tabBtns) do
@@ -882,10 +883,18 @@ do
     AMA.BuildDBTab(tabContents[2])
 
     -- ================================================================
-    -- TAB 3: ABOUT
+    -- TAB 3: TUTORIAL
     -- ================================================================
 
-    local t2 = tabContents[3]
+    if AMA.BuildTutorialTab then
+        AMA.BuildTutorialTab(tabContents[3])
+    end
+
+    -- ================================================================
+    -- TAB 4: ABOUT
+    -- ================================================================
+
+    local t2 = tabContents[4]
     local ay = -24
 
     local function CenterLabel(text, yOff)
@@ -898,13 +907,20 @@ do
 
     CenterLabel("|cFF1A9EC0AutoMarkAssist|r", ay); ay = ay - 20
     CenterLabel("|cFFFFFFFFVersion:|r " .. AMA.VERSION, ay); ay = ay - 16
-    CenterLabel("|cFFFFFFFFAuthor:|r " .. AMA.AUTHOR, ay); ay = ay - 32
+    CenterLabel("|cFFFFFFFFAuthor:|r " .. AMA.AUTHOR, ay); ay = ay - 28
+
+    local tutorialBtn = E.Btn(t2, "Launch Tutorial", 160, 24)
+    tutorialBtn:SetPoint("TOP", t2, "TOP", 0, ay)
+    tutorialBtn:SetScript("OnClick", function()
+        if AMA.ShowTutorialGuide then AMA.ShowTutorialGuide(1) end
+    end)
+    ay = ay - 36
 
     CenterLabel("|cFF1A9EC0Mark Assignments|r", ay); ay = ay - 24
 
     local markInfo = {
         { 8, "First Kill" }, { 7, "Second Kill" },
-        { 5, "Polymorph (Mage)" }, { 3, "Sap (Rogue)" },
+        { 5, "Polymorph (Mage) / Repentance (Paladin)" }, { 3, "Sap (Rogue)" },
         { 4, "Banish (Warlock)" }, { 1, "Shackle (Priest)" },
         { 2, "Hibernate (Druid)" }, { 6, "Trap (Hunter)" },
     }
@@ -920,6 +936,7 @@ do
 
     local commands = {
         "/ama - Open options",
+        "/ama tutorial - Guided walkthrough",
         "/ama enable | disable | toggle",
         "/ama reset - Clear all marks",
         "/ama announce - Send mark plan to chat",

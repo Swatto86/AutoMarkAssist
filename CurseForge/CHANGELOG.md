@@ -1,5 +1,14 @@
 # AutoMarkAssist Changelog
 
+## 3.5.0
+
+### New Features
+- **In-Game Tutorial:** A full tutorial is now built into the addon.
+  - **First-run walkthrough:** On first login (and for existing users who have never seen it) a 10-step guided overlay explains the mark key, the three modes, pack scoring, group CC (including stacked classes and Paladin Repentance), cascade/reset, the Database tab, announcements, and commands. Skip, Back, Next, Finish, and Escape all dismiss it so it will not re-open on every login. Replay with `/ama tutorial` (aliases `/ama guide` and `/ama walkthrough`).
+  - **Tutorial tab:** Options now has a Tutorial tab with a chapter list covering getting started, the mark key, modes, scoring, crowd control, cascade/reset, the database, announcements, commands, and tips. "Replay walkthrough" relaunches the overlay. `/ama tutorial tab` jumps straight to this tab.
+  - **About tab:** "Launch Tutorial" button, Paladin Repentance documented on Moon, and `/ama tutorial` listed with the other commands.
+  - **Minimap tooltip** mentions `/ama tutorial`.
+
 ## 3.4.19
 
 ### New Features
