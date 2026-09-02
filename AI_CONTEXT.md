@@ -30,3 +30,4 @@ Scan (0.5s proximity or mouseover) → score pack (`dangerLevel`, DB preference,
 ## Recent Context & Decisions
 
 - 2026-09-02: v3.5.0 in-game tutorial (guided overlay + Tutorial tab). Version bumped in all TOC files and `AMA.VERSION`. Publish via `v3.5.0` tag / packager. Work stays on `main` (no feature branches) per owner request.
+- 2026-09-02: README and `CurseForge/DESCRIPTION.md` rewritten to the full public description (how marking works, modes, database, tutorial, commands). Packager now uploads `CurseForge/DESCRIPTION.md` to CurseForge with `-d`.
